@@ -179,50 +179,395 @@
 <body>
   <div class="container">
     
-    <!-- MASKOT KUCING GEMOY NGINTIP & MEMEGANG TEPI KOTAK -->
-    <div class="mascot-container">
-      <svg width="130" height="70" viewBox="0 0 130 70" xmlns="http://www.w3.org/2000/svg">
-        <!-- Tangan/Cakar Kucing Kiri & Kanan memegang tepi atas -->
-        <ellipse cx="38" cy="62" rx="9" ry="5" fill="#f59e0b" />
-        <ellipse cx="92" cy="62" rx="9" ry="5" fill="#f59e0b" />
-        <!-- Bantalan cakar merah muda -->
-        <circle cx="38" cy="62" r="3" fill="#fbcfe8" />
-        <circle cx="92" cy="62" r="3" fill="#fbcfe8" />
+   function doPost(e) {
+  try {
+    var postData = JSON.parse(e.postData.contents);
+    var rawData = postData.shopeeData || "";
+    var rows = rawData.split("\n");
+    
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // --- 1. AMBIL KAMUS PIC OTOMATIS DARI SHEET "STOK" (Kolom A = SKU, Kolom M = SWITCH/PIC) ---
+    var picMap = {};
+    var stokSheet = ss.getSheetByName("STOK");
+    if (stokSheet) {
+      var lastRowStok = stokSheet.getLastRow();
+      if (lastRowStok >= 5) {
+        var stokData = stokSheet.getRange(5, 1, lastRowStok - 4, 13).getValues();
+        while (stokData.length > 0) {
+          let lastRowCols = stokData[stokData.length - 1];
+          if (lastRowCols.some(cell => String(cell).trim() !== "")) break;
+          stokData.pop();
+        }
+        for (let p = 0; p < stokData.length; p++) {
+          var skuKey = String(stokData[p][0]).trim().toUpperCase(); 
+          var picName = String(stokData[p][12]).trim();            
+          if (skuKey) {
+            picMap[skuKey] = picName; 
+          }
+        }
+      }
+    }
+    
+    // --- 2. CARI FILE ADMIN OTOMATIS BERDASARKAN TANGGAL HARI INI ---
+    const monthsID = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+    const now = new Date();
+    const day = now.getDate();
+    const monthName = monthsID[now.getMonth()];
+    const year = now.getFullYear();
+    
+    const targetFileName = `${day} ${monthName} ${year}`; 
+    
+    const files = DriveApp.getFilesByName(targetFileName);
+    if (!files.hasNext()) {
+      throw new Error(`File spreadsheet admin untuk hari ini dengan nama '${targetFileName}' tidak ditemukan di Google Drive!`);
+    }
+    
+    const adminFile = files.next();
+    const adminSs = SpreadsheetApp.openById(adminFile.getId());
+    const gudangAdminSheet = adminSs.getSheetByName("GUDANG");
+    
+    if (!gudangAdminSheet) {
+      throw new Error(`Sheet 'GUDANG' tidak ditemukan di dalam file '${targetFileName}'!`);
+    }
+    
+    // Baca data admin (Mulai baris 5 s.d LastRow) & Buat kamus konversi Resi TikTok -> No Transaksi
+    const lastRowAdmin = gudangAdminSheet.getLastRow();
+    let trxRows = [];
+    let validAdminOrderIds = new Set();
+    let resiToTrxMap = new Map(); // Kamus khusus untuk mencocokkan Resi kurir dengan No Transaksi
+    
+    if (lastRowAdmin >= 5) {
+      let rawAdminData = gudangAdminSheet.getRange(5, 1, lastRowAdmin - 4, 10).getValues();
+      
+      while (rawAdminData.length > 0) {
+        let lastRowCols = rawAdminData[rawAdminData.length - 1];
+        if (lastRowCols.some(cell => String(cell).trim() !== "")) break;
+        rawAdminData.pop();
+      }
+      
+      for (let i = 0; i < rawAdminData.length; i++) {
+        let r = rawAdminData[i];
+        let noTransaksi = String(r[3]).trim(); // Kolom D: No Transaksi
+        if (!noTransaksi) continue;
+        
+        validAdminOrderIds.add(noTransaksi);
+        
+        let resiKurir = String(r[9]).trim(); // Kolom J: Kode Booking / Resi Kurir (TikTok dll)
+        if (resiKurir) {
+          resiToTrxMap.set(resiKurir, noTransaksi);
+        }
+        
+        let rowData = [];
+        for (let j = 3; j <= 9; j++) {
+          rowData.push(r[j]); 
+        }
+        
+        let kodeBarang = String(r[7]).trim(); 
+        let cleanSku = kodeBarang.toUpperCase();
+        let pic = picMap[cleanSku] || ""; 
+        
+        rowData.push(pic);     
+        rowData.push("CLEAR"); 
+        
+        trxRows.push(rowData);
+      }
+    }
+    
+    // --- 3. PROSES DATA INPUT DARI WEB APP (OTOMATIS UBAH RESI TIKTOK -> NO TRANSAKSI) ---
+    var dataToInsert = [];
+    var rawRowsMap = new Map();
+    var scannedInputs = new Set();
+    var tiktokConvertedCount = 0; // Penghitung jumlah resi TikTok yang berhasil diconvert
+    
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i].trim() === "") continue;
+      var cols = rows[i].split("\t");
+      
+      let rawInput = String(cols[0]).trim();
+      if (rawInput !== "") {
+        scannedInputs.add(rawInput);
+        // Jika yang di-scan adalah No Resi TikTok, otomatis ubah jadi No Transaksi aslinya
+        if (resiToTrxMap.has(rawInput)) {
+          cols[0] = resiToTrxMap.get(rawInput);
+          tiktokConvertedCount++; // Tambah counter konversi berhasil
+        }
+      }
+      
+      dataToInsert.push(cols);
+      if (cols.length > 0 && String(cols[0]).trim() !== "") {
+        let orderId = String(cols[0]).trim();
+        rawRowsMap.set(orderId, cols);
+      }
+    }
+    
+    var sheet = ss.getSheetByName("LAPORAN");
+    if (sheet && dataToInsert.length > 0) {
+      let lastRowLaporan = sheet.getLastRow();
+      if (lastRowLaporan >= 3) {
+        sheet.getRange(3, 2, Math.max(lastRowLaporan - 2, 1), 11).clearContent();
+      }
+      // AUTO-EXPAND LAPORAN AWAL
+      checkAndExpandSheet(sheet, 3 + dataToInsert.length - 1);
+      sheet.getRange(3, 2, dataToInsert.length, dataToInsert[0].length).setValues(dataToInsert);
+    }
+    
+    const trxSheet = ss.getSheetByName("TRX") || ss.insertSheet("TRX");
+    const laporanSheet = ss.getSheetByName("LAPORAN");
+    const notaMasukSheet = ss.getSheetByName("NOTA MASUK") || ss.insertSheet("NOTA MASUK");
+    const notaSelesaiSheet = ss.getSheetByName("NOTA SELESAI") || ss.insertSheet("NOTA SELESAI");
+    const nonGudangSheet = ss.getSheetByName("NON GUDANG") || ss.insertSheet("NON GUDANG");
+    
+    // --- 4. MASUKKAN DATA KE TRX ---
+    if (trxRows.length > 0) {
+      let lastRowTrx = trxSheet.getLastRow();
+      let targetRowTrx = (lastRowTrx < 5) ? 5 : lastRowTrx + 1;
+      
+      // AUTO-EXPAND TRX SHEET
+      checkAndExpandSheet(trxSheet, targetRowTrx + trxRows.length - 1);
+      
+      trxSheet.getRange(targetRowTrx, 3, trxRows.length, trxRows[0].length).setValues(trxRows);
+    }
+    
+    // --- 5. TENTUKAN SCANNED ORDER IDS ---
+    const scannedOrderIds = new Set();
+    scannedInputs.forEach(inputVal => {
+      if (validAdminOrderIds.has(inputVal)) {
+        scannedOrderIds.add(inputVal);
+      } else if (resiToTrxMap.has(inputVal)) {
+        scannedOrderIds.add(resiToTrxMap.get(inputVal));
+      } else {
+        scannedOrderIds.add(inputVal);
+      }
+    });
+    
+    let lastRowTrxAll = trxSheet.getLastRow();
+    let trxData = lastRowTrxAll >= 5 ? trxSheet.getRange(5, 3, lastRowTrxAll - 4, 9).getValues() : [];
+    
+    let notaMasukRows = [];
+    let notaSelesaiRows = [];
+    let laporanRows = [];
+    let nonGudangRows = [];
+    
+    // Kumpulkan data Non-Gudang
+    scannedInputs.forEach(inputVal => {
+      let resolvedTrx = validAdminOrderIds.has(inputVal) ? inputVal : (resiToTrxMap.has(inputVal) ? resiToTrxMap.get(inputVal) : null);
+      if (!resolvedTrx) {
+        let originalRow = rawRowsMap.get(inputVal) || rawRowsMap.get(resiToTrxMap.get(inputVal));
+        if (originalRow) {
+          nonGudangRows.push(originalRow);
+        }
+      }
+    });
+    
+    var dDay = String(now.getDate()).padStart(2, '0');
+    var dMon = String(now.getMonth() + 1).padStart(2, '0');
+    var dYear = now.getFullYear();
+    var todayFormatted = dDay + '/' + dMon + '/' + dYear;
+    
+    const processedOrderIdsForNotes = new Set();
+    
+    for (let i = 0; i < trxData.length; i++) {
+      let row = trxData[i];
+      
+      let noTransaksi = String(row[0]).trim(); 
+      let sales = String(row[1]).trim();       
+      let noNota = row[2];                     
+      let tanggal = row[3];                    
+      let kodeBarang = String(row[4]).trim();  
+      let jumlah = row[5];                     
+      let kodeBooking = row[6];                
+      let pic = row[7] || "";                  
+      
+      if (!noTransaksi || !scannedOrderIds.has(noTransaksi)) continue;
+      
+      if (!processedOrderIdsForNotes.has(noTransaksi)) {
+        processedOrderIdsForNotes.add(noTransaksi);
+        
+        notaMasukRows.push([noTransaksi, noNota, tanggal, new Date(), "", "CLEAR"]);
+        notaSelesaiRows.push([noTransaksi, noNota, tanggal, new Date(), "", "CLEAR"]);
+      }
+      
+      laporanRows.push([
+        noTransaksi,   // Col B
+        sales,         // Col C
+        noNota,        // Col D
+        tanggal,       // Col E
+        kodeBarang,    // Col F
+        jumlah,        // Col G
+        kodeBooking,   // Col H
+        pic,           // Col I (PIC terisi otomatis)
+        "CLEAR",       // Col J
+        todayFormatted,// Col K (Tanggal Dikerjakan dd/mm/yyyy)
+        ""             // Col L (Keterangan dikosongkan)
+      ]);
+    }
+    
+    // --- 6. LAPORAN ---
+    if (laporanRows.length > 0) {
+      // AUTO-EXPAND LAPORAN AKHIR
+      checkAndExpandSheet(laporanSheet, 3 + laporanRows.length - 1);
+      laporanSheet.getRange(3, 2, laporanRows.length, laporanRows[0].length).setValues(laporanRows);
+    }
+    
+    // --- 7. NOTA MASUK & NOTA SELESAI ---
+    appendToDatabase(notaMasukSheet, notaMasukRows);
+    appendToDatabase(notaSelesaiSheet, notaSelesaiRows);
+    
+    // --- 8. SIMPAN DATA NON GUDANG KE SHEET KHUSUS ---
+    let lastRowNonGudang = nonGudangSheet.getLastRow();
+    if (lastRowNonGudang >= 1) {
+      nonGudangSheet.clearContents(); 
+    }
+    if (nonGudangRows.length > 0) {
+      // AUTO-EXPAND NON GUDANG
+      checkAndExpandSheet(nonGudangSheet, 1 + nonGudangRows.length - 1);
+      nonGudangSheet.getRange(1, 1, nonGudangRows.length, nonGudangRows[0].length).setValues(nonGudangRows);
+    }
+    
+    // --- 9. KIRIM RESPON ---
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      message: `✅ Sukses! ${processedOrderIdsForNotes.size} transaksi gudang diproses.\n🔄 Resi TikTok diconvert: ${tiktokConvertedCount} resi.\n📦 Non-gudang dipindah: ${nonGudangRows.length} data.`
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
 
-        <!-- Kepala Kucing Gemoy -->
-        <path d="M 30 35 L 20 12 L 42 22 Q 65 15 88 22 L 110 12 L 100 35 Q 115 50 100 62 L 30 62 Q 15 50 30 35 Z" fill="#f59e0b" />
-        <!-- Dalam Telinga -->
-        <polygon points="23,16 33,26 38,20" fill="#fbcfe8" />
-        <polygon points="107,16 97,26 92,20" fill="#fbcfe8" />
+// --- FUNGSI BANTUAN OTOMATIS TAMBAH BARIS (AUTO-EXPAND) ---
+function checkAndExpandSheet(sheet, requiredEndRow) {
+  var maxRows = sheet.getMaxRows();
+  if (requiredEndRow > maxRows) {
+    sheet.insertRowsAfter(maxRows, requiredEndRow - maxRows + 50); // Tambah selisih kurangnya + cadangan 50 baris
+  }
+}
 
-        <!-- Mata Kucing Bersinar & Berkedip -->
-        <g class="mascot-eye" transform-origin="45px 38px">
-          <ellipse cx="45" cy="38" rx="7" ry="9" fill="#0f172a" />
-          <circle cx="43" cy="35" r="3" fill="#ffffff" />
-          <circle cx="47" cy="41" r="1.5" fill="#ffffff" />
-        </g>
-        <g class="mascot-eye" transform-origin="85px 38px">
-          <ellipse cx="85" cy="38" rx="7" ry="9" fill="#0f172a" />
-          <circle cx="83" cy="35" r="3" fill="#ffffff" />
-          <circle cx="87" cy="41" r="1.5" fill="#ffffff" />
-        </g>
+// --- FUNGSI BANTUAN APPEND KE DATABASE (NOTA MASUK / NOTA SELESAI) ---
+function appendToDatabase(sheet, rowsToAdd) {
+  if (rowsToAdd.length === 0) return;
+  
+  let lastRow = sheet.getLastRow();
+  let actualLastDataRow = 4; 
+  let existingIds = new Set();
+  
+  if (lastRow >= 5) {
+    let rangeVals = sheet.getRange(5, 4, lastRow - 4, 1).getValues(); 
+    for (let i = 0; i < rangeVals.length; i++) {
+      let val = String(rangeVals[i][0]).trim();
+      if (val !== "") {
+        existingIds.add(val);
+        actualLastDataRow = 5 + i;
+      }
+    }
+  }
+  
+  let finalRows = [];
+  rowsToAdd.forEach(r => {
+    let orderId = String(r[0]).trim(); 
+    if (!existingIds.has(orderId)) {
+      existingIds.add(orderId);
+      finalRows.push(r);
+    }
+  });
+  
+  if (finalRows.length > 0) {
+    let targetRow = (actualLastDataRow === 4) ? 5 : actualLastDataRow + 1;
+    let endRow = targetRow + finalRows.length - 1;
+    
+    // AUTO-EXPAND UNTUK DATABASE NOTA
+    checkAndExpandSheet(sheet, endRow);
+    
+    sheet.getRange(targetRow, 4, finalRows.length, finalRows[0].length).setValues(finalRows);
+  }
+  
+  let currentLastRow = sheet.getLastRow();
+  if (currentLastRow >= 5) {
+    let totalRows = currentLastRow - 4;
+    let numberingArr = [];
+    for (let n = 1; n <= totalRows; n++) {
+      numberingArr.push([n]);
+    }
+    sheet.getRange(5, 3, totalRows, 1).setValues(numberingArr);
+    sheet.getRange(5, 3, totalRows, 1).setNumberFormat('@');
+  }
+}
 
-        <!-- Hidung & Mulut Lucu -->
-        <polygon points="65,42 62,39 68,39" fill="#f43f5e" />
-        <path d="M 65 42 Q 62 48 58 45" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
-        <path d="M 65 42 Q 68 48 72 45" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+// --- FUNGSI EXPORT .XLSX + RESET LAPORAN ---
+function downloadAndResetLaporanXlsx() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var laporanSheet = ss.getSheetByName("LAPORAN");
+  
+  if (!laporanSheet) {
+    SpreadsheetApp.getUi().alert("Sheet 'LAPORAN' tidak ditemukan!");
+    return;
+  }
+  
+  const monthsID = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+  var now = new Date();
+  var day = now.getDate();
+  var monthName = monthsID[now.getMonth()];
+  var year = now.getFullYear();
+  
+  var targetFileName = `TRANSAKSI GUDANG ${day} ${monthName} ${year}`;
+  
+  var tempSs = SpreadsheetApp.create(targetFileName);
+  var copiedSheet = laporanSheet.copyTo(tempSs);
+  copiedSheet.setName("LAPORAN");
+  
+  var defaultSheet = tempSs.getSheetByName("Sheet1");
+  if (defaultSheet) {
+    tempSs.deleteSheet(defaultSheet);
+  }
+  
+  var tempSsId = tempSs.getId();
+  
+  var htmlTemplate = HtmlService.createTemplate(
+    '<!DOCTYPE html>' +
+    '<html>' +
+    '<head><base target="_top"></head>' +
+    '<body>' +
+    '<p style="font-family: Arial; text-align: center; color: #27ae60; font-weight: bold; margin-top: 25px;">Menyiapkan file Excel & mereset laporan...</p>' +
+    '<script>' +
+    '  window.onload = function() {' +
+    '    var url = "https://docs.google.com/spreadsheets/d/<?= ssId ?>/export?format=xlsx";' +
+    '    window.location.href = url;' +
+    '    setTimeout(function() {' +
+    '      google.script.host.close();' +
+    '    }, 2500);' +
+    '  };' +
+    '</script>' +
+    '</body>' +
+    '</html>'
+  );
+  
+  htmlTemplate.ssId = tempSsId;
+  var html = htmlTemplate.evaluate().setWidth(300).setHeight(120);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Download & Reset Laporan');
+  
+  Utilities.sleep(5000);
+  
+  var lastRow = laporanSheet.getLastRow();
+  if (lastRow >= 3) {
+    laporanSheet.getRange(3, 2, lastRow - 2, 11).clearContent();
+  }
+  
+  try {
+    DriveApp.getFileById(tempSsId).setTrashed(true);
+  } catch (e) {}
+}
 
-        <!-- Pipi Merah Blush -->
-        <ellipse cx="33" cy="45" rx="5" ry="3" fill="#f43f5e" opacity="0.5" />
-        <ellipse cx="97" cy="45" rx="5" ry="3" fill="#f43f5e" opacity="0.5" />
-
-        <!-- Kumis Kucing -->
-        <line x1="25" y1="42" x2="12" y2="40" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
-        <line x1="25" y1="46" x2="12" y2="47" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
-        <line x1="105" y1="42" x2="118" y2="40" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
-        <line x1="105" y1="46" x2="118" y2="47" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
-      </svg>
-    </div>
+// --- MEMBUAT MENU UTAMA DI ATAS SHEET ---
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('⚙️ MENU GUDANG')
+      .addItem('📥 Download & Reset Laporan', 'downloadAndResetLaporanXlsx')
+      .addToUi();
+}
 
     <h2>📦 Web App Otomasi Gudang</h2>
     <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
