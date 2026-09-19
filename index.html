@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Web App Otomasi Gudang</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f172a'/><stop offset='100%25' stop-color='%231e293b'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='url(%23bg)'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='20' fill='%2338bdf8'>NM</text></svg>">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    h2 {
+      margin-top: 0;
+      color: #1a73e8;
+    }
+    p.desc {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #444;
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+    textarea:focus {
+      border-color: #1a73e8;
+      outline: none;
+      box-shadow: 0 0 5px rgba(26, 115, 232, 0.2);
+    }
+    button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #1557b0;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #log {
+      margin-top: 20px;
+      background: #1e1e1e;
+      color: #4af626;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      max-height: 150px;
+      overflow-y: auto;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📦 Web App Otomasi Gudang</h2>
+    <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
+    
+    <div class="form-group">
+      <label for="shopeeData">Paste Laporan Unduhan Shopee & Tiktok Shop (Massal 1.500+ Baris):</label>
+      <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
+    </div>
+    
+    <button id="submitBtn" onclick="processData()">⚡ Tarik & Proses Data Sekarang</button>
+    
+    <div id="log"></div>
+  </div>
+
+  <script>
+    // MASUKKAN URL DEPLOYMENT WEB APP APPS SCRIPT KAMU DI SINI
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrOcgEW_E7SmFMjs8MgJv6SO4lHwkghDNeZXx4gB_7zHJP-U2WN/exec";
+
+    function processData() {
+      const shopeeData = document.getElementById('shopeeData').value.trim();
+      const btn = document.getElementById('submitBtn');
+      const logDiv = document.getElementById('log');
+      
+      if (!shopeeData) {
+        alert('Silakan paste data Shopee terlebih dahulu!');
+        return;
+      }
+      
+      if (WEB_APP_URL === "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+        alert('Harap isi URL Web App Apps Script di dalam file index.html terlebih dahulu!');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerText = 'Sedang Memproses & Sinkronisasi...';
+      logDiv.style.display = 'block';
+      logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive & Memproses data...';
+      
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify({ shopeeData: shopeeData })
+      })
+      .then(response => response.text())
+      .then(result => {
+        try {
+          const res = JSON.parse(result);
+          if (res.status === 'success') {
+            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ ' + res.message;
+            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
+            document.getElementById('shopeeData').value = '';
+          } else {
+            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
+          }
+        } catch(e) {
+          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
+        }
+        btn.disabled = false;
+        btn.innerText = '⚡ Tarik & Proses Data Sekarang';
+      })
+      .catch(error => {
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
+        btn.disabled = false;
+        btn.innerText = '⚡ Tarik & Proses Data Sekarang';
+      });
+    }
+  </script>
+</body>
+</html>
