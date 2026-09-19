@@ -251,7 +251,7 @@
 
     textarea.addEventListener('input', function() {
       let lines = this.value.split('\n').filter(line => line.trim() !== '');
-      rowCounter.innerText = `📊 ${lines.toLocaleString()} baris data`;
+      rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`; // <--- UBAH JADI lines.length
     });
 
     function processData() {
