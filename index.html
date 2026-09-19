@@ -5,36 +5,72 @@
   <title>Web App Otomasi Gudang</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f172a'/><stop offset='100%25' stop-color='%231e293b'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='url(%23bg)'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='20' fill='%2338bdf8'>NM</text></svg>">
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-      margin: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
       padding: 20px;
-      color: #333;
+      color: #f8fafc;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      box-sizing: border-box;
     }
     .container {
       width: 100%;
       max-width: 800px;
-      background: #ffffff;
-      padding: 35px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      background: #1e293b;
+      padding: 45px 35px 35px 35px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
       box-sizing: border-box;
+      border: 1px solid #334155;
+      position: relative;
+      overflow: visible;
+      margin-top: 40px;
     }
+
+    /* --- MASKOT KUCING GEMOY NGINTIP --- */
+    .mascot-container {
+      position: absolute;
+      top: -65px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 10;
+      animation: peekBob 3s ease-in-out infinite alternate;
+    }
+    @keyframes peekBob {
+      0% { transform: translateX(-50%) translateY(0px); }
+      100% { transform: translateX(-50%) translateY(-8px); }
+    }
+    .mascot-eye {
+      animation: blink 4s infinite;
+    }
+    @keyframes blink {
+      0%, 96%, 100% { transform: scaleY(1); }
+      98% { transform: scaleY(0.1); }
+    }
+
     h2 {
-      margin-top: 0;
-      color: #1a73e8;
+      margin-top: 10px;
+      color: #38bdf8;
       font-size: 24px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
     p.desc {
-      color: #64748b;
+      color: #94a3b8;
       font-size: 14px;
       margin-bottom: 25px;
       line-height: 1.5;
@@ -51,43 +87,45 @@
     label {
       font-weight: 600;
       font-size: 14px;
-      color: #334155;
+      color: #cbd5e1;
     }
     .row-counter {
       font-size: 12px;
       font-weight: 600;
-      color: #0284c7;
-      background: #e0f2fe;
-      padding: 3px 8px;
+      color: #38bdf8;
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 3px 10px;
       border-radius: 12px;
     }
     textarea {
       width: 100%;
       height: 240px;
       padding: 14px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
+      border: 2px solid #475569;
+      border-radius: 12px;
       font-family: monospace;
       font-size: 13px;
       box-sizing: border-box;
       resize: vertical;
-      background-color: #fafbfc;
+      background-color: #0f172a;
+      color: #f8fafc;
       transition: all 0.2s;
     }
     textarea:focus {
-      border-color: #1a73e8;
+      border-color: #38bdf8;
       outline: none;
-      background-color: #fff;
-      box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+      background-color: #090d16;
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
     }
     button {
-      background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: white;
       border: none;
       padding: 14px 20px;
       font-size: 15px;
       font-weight: 600;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       width: 100%;
       transition: all 0.2s;
@@ -95,21 +133,20 @@
       justify-content: center;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 12px rgba(26, 115, 232,.25);
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
     }
     button:hover {
-      background: linear-gradient(135deg, #1557b0 0%, #0d3c80 100%);
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
       transform: translateY(-1px);
-      box-shadow: 0 6px 15px rgba(26, 115, 232,.35);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
     }
     button:disabled {
-      background: #cbd5e1;
+      background: #475569;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
     }
     
-    /* Spinner Animasi Lucu */
     .spinner {
       width: 18px;
       height: 18px;
@@ -125,10 +162,10 @@
 
     #log {
       margin-top: 20px;
-      background: #0f172a;
-      color: #38bdf8;
+      background: #090d16;
+      color: #4af626;
       padding: 15px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-family: monospace;
       font-size: 12px;
       white-space: pre-wrap;
@@ -141,6 +178,52 @@
 </head>
 <body>
   <div class="container">
+    
+    <!-- MASKOT KUCING GEMOY NGINTIP & MEMEGANG TEPI KOTAK -->
+    <div class="mascot-container">
+      <svg width="130" height="70" viewBox="0 0 130 70" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tangan/Cakar Kucing Kiri & Kanan memegang tepi atas -->
+        <ellipse cx="38" cy="62" rx="9" ry="5" fill="#f59e0b" />
+        <ellipse cx="92" cy="62" rx="9" ry="5" fill="#f59e0b" />
+        <!-- Bantalan cakar merah muda -->
+        <circle cx="38" cy="62" r="3" fill="#fbcfe8" />
+        <circle cx="92" cy="62" r="3" fill="#fbcfe8" />
+
+        <!-- Kepala Kucing Gemoy -->
+        <path d="M 30 35 L 20 12 L 42 22 Q 65 15 88 22 L 110 12 L 100 35 Q 115 50 100 62 L 30 62 Q 15 50 30 35 Z" fill="#f59e0b" />
+        <!-- Dalam Telinga -->
+        <polygon points="23,16 33,26 38,20" fill="#fbcfe8" />
+        <polygon points="107,16 97,26 92,20" fill="#fbcfe8" />
+
+        <!-- Mata Kucing Bersinar & Berkedip -->
+        <g class="mascot-eye" transform-origin="45px 38px">
+          <ellipse cx="45" cy="38" rx="7" ry="9" fill="#0f172a" />
+          <circle cx="43" cy="35" r="3" fill="#ffffff" />
+          <circle cx="47" cy="41" r="1.5" fill="#ffffff" />
+        </g>
+        <g class="mascot-eye" transform-origin="85px 38px">
+          <ellipse cx="85" cy="38" rx="7" ry="9" fill="#0f172a" />
+          <circle cx="83" cy="35" r="3" fill="#ffffff" />
+          <circle cx="87" cy="41" r="1.5" fill="#ffffff" />
+        </g>
+
+        <!-- Hidung & Mulut Lucu -->
+        <polygon points="65,42 62,39 68,39" fill="#f43f5e" />
+        <path d="M 65 42 Q 62 48 58 45" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+        <path d="M 65 42 Q 68 48 72 45" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+
+        <!-- Pipi Merah Blush -->
+        <ellipse cx="33" cy="45" rx="5" ry="3" fill="#f43f5e" opacity="0.5" />
+        <ellipse cx="97" cy="45" rx="5" ry="3" fill="#f43f5e" opacity="0.5" />
+
+        <!-- Kumis Kucing -->
+        <line x1="25" y1="42" x2="12" y2="40" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
+        <line x1="25" y1="46" x2="12" y2="47" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
+        <line x1="105" y1="42" x2="118" y2="40" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
+        <line x1="105" y1="46" x2="118" y2="47" stroke="#d97706" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </div>
+
     <h2>📦 Web App Otomasi Gudang</h2>
     <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
     
@@ -161,13 +244,11 @@
   </div>
 
   <script>
-    // URL WEB APP APPS SCRIPT KAMU
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrOcgEW_E7SmFMjs8MgJv6SO4lHwkghDNeZXx4gB_7zHJP-U2WN/exec";
 
     const textarea = document.getElementById('shopeeData');
     const rowCounter = document.getElementById('rowCounter');
 
-    // Fitur Penghitung Baris Real-time
     textarea.addEventListener('input', function() {
       let lines = this.value.split('\n').filter(line => line.trim() !== '');
       rowCounter.innerText = `📊 ${lines.toLocaleString()} baris data`;
@@ -190,7 +271,6 @@
         return;
       }
       
-      // Aktifkan Status Loading / Spinner
       btn.disabled = true;
       btnSpinner.style.display = 'block';
       btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
@@ -210,7 +290,7 @@
             logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ ' + res.message;
             logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
             textarea.value = '';
-            rowCounter.innerText = '📊 0 baris data'; // Reset counter
+            rowCounter.innerText = '📊 0 baris data';
           } else {
             logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
           }
@@ -218,7 +298,6 @@
           logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
         }
         
-        // Kembalikan Tombol seperti semula
         btn.disabled = false;
         btnSpinner.style.display = 'none';
         btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
@@ -226,7 +305,6 @@
       .catch(error => {
         logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
         
-        // Kembalikan Tombol seperti semula
         btn.disabled = false;
         btnSpinner.style.display = 'none';
         btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
