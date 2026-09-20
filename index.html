@@ -4,158 +4,15 @@
   <meta charset="utf-8">
   <title>Web App Otomasi Gudang</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f172a'/><stop offset='100%25' stop-color='%231e293b'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='url(%23bg)'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='20' fill='%2338bdf8'>NM</text></svg>">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      padding: 20px;
-      color: #f8fafc;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-sizing: border-box;
-    }
-    .container {
-      width: 100%;
-      max-width: 800px;
-      background: #1e293b;
-      padding: 45px 35px 35px 35px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      box-sizing: border-box;
-      border: 1px solid #334155;
-      position: relative;
-      overflow: visible;
-      margin-top: 40px;
-    }
-
-    h2 {
-      margin-top: 10px;
-      color: #38bdf8;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    p.desc {
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 25px;
-      line-height: 1.5;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    .label-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    label {
-      font-weight: 600;
-      font-size: 14px;
-      color: #cbd5e1;
-    }
-    .row-counter {
-      font-size: 12px;
-      font-weight: 600;
-      color: #38bdf8;
-      background: #0f172a;
-      border: 1px solid #334155;
-      padding: 3px 10px;
-      border-radius: 12px;
-    }
-    textarea {
-      width: 100%;
-      height: 240px;
-      padding: 14px;
-      border: 2px solid #475569;
-      border-radius: 12px;
-      font-family: monospace;
-      font-size: 13px;
-      box-sizing: border-box;
-      resize: vertical;
-      background-color: #0f172a;
-      color: #f8fafc;
-      transition: all 0.2s;
-    }
-    textarea:focus {
-      border-color: #38bdf8;
-      outline: none;
-      background-color: #090d16;
-      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
-    }
-    button {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 12px;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.2s;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
-    }
-    button:hover {
-      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
-    }
-    button:disabled {
-      background: #475569;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 0.8s linear infinite;
-      display: none;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    #log {
-      margin-top: 20px;
-      background: #090d16;
-      color: #4af626;
-      padding: 15px;
-      border-radius: 12px;
-      font-family: monospace;
-      font-size: 12px;
-      white-space: pre-wrap;
-      max-height: 160px;
-      overflow-y: auto;
-      display: none;
-      border: 1px solid #334155;
-    }
-  </style>
+  
+  <!-- Link ke file CSS Eksternal -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <!-- ANIMASI TEKS BERJALAN (MARQUEE ULTIMATE COMBINE EDITION) -->
     <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
       <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
-        <!-- Kontrak Teks Pertama -->
         <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;">
           <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
           <span style="color: #64748b;">•</span>
@@ -169,7 +26,6 @@
           <span style="color: #64748b;">•</span>
           <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
         </div>
-        <!-- Duplikat untuk Loop Tanpa Jeda -->
         <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;" aria-hidden="true">
           <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
           <span style="color: #64748b;">•</span>
@@ -185,13 +41,6 @@
         </div>
       </div>
     </div>
-
-    <style>
-      @keyframes scrollText {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-      }
-    </style>
     
     <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
     <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
@@ -212,107 +61,28 @@
     <div id="log"></div>
   </div>
 
-  <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrOcgEW_E7SmFMjs8MgJv6SO4lHwkghDNeZXx4gB_7zHJP-U2WN/exec";
-
-    const textarea = document.getElementById('shopeeData');
-    const rowCounter = document.getElementById('rowCounter');
-
-    textarea.addEventListener('input', function() {
-      let lines = this.value.split('\n').filter(line => line.trim() !== '');
-      rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
-    });
-
-    function processData() {
-      const shopeeData = textarea.value.trim();
-      const btn = document.getElementById('submitBtn');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const btnText = document.getElementById('btnText');
-      const logDiv = document.getElementById('log');
-      
-      if (!shopeeData) {
-        showCustomAlert('Silakan paste data Shopee & TikTok terlebih dahulu ya! 😊');
-        return;
-      }
-      
-      if (WEB_APP_URL.includes("MASUKKAN_URL")) {
-        alert('Harap isi URL Web App Apps Script di dalam file index.html terlebih dahulu!');
-        return;
-      }
-      
-      btn.disabled = true;
-      btnSpinner.style.display = 'block';
-      btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
-      
-      logDiv.style.display = 'block';
-      logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive & Memproses data...';
-      
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: JSON.stringify({ shopeeData: shopeeData })
-      })
-      .then(response => response.text())
-      .then(result => {
-        try {
-          const res = JSON.parse(result);
-          if (res.status === 'success') {
-            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ ' + res.message;
-            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
-            textarea.value = '';
-            rowCounter.innerText = '📊 0 baris data';
-            
-            // --- MEMUNCULKAN CUSTOM ALERT MODAL ---
-            showCustomAlert(res.message);
-
-          } else {
-            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
-            showCustomAlert('Terjadi Kesalahan: ' + res.message);
-          }
-        } catch(e) {
-          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
-        }
-        
-        btn.disabled = false;
-        btnSpinner.style.display = 'none';
-        btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
-      })
-      .catch(error => {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
-        
-        btn.disabled = false;
-        btnSpinner.style.display = 'none';
-        btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
-      });
-    }
-  </script>
-
-  <!-- CUSTOM ALERT MODAL MODERN -->
+  <!-- CUSTOM ALERT MODAL MODERN DENGAN ANIMASI PROGRESS DOWNLOAD -->
   <div id="customAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 340px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); animation: popUpModal 0.2s ease-out;">
+    <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); animation: popUpModal 0.2s ease-out;">
       <div style="font-size: 36px; margin-bottom: 10px;">💡</div>
-      <p id="customAlertMessage" style="color: #f8fafc; font-size: 14px; margin-bottom: 22px; line-height: 1.5; font-weight: 500; white-space: pre-line;"></p>
-      <button onclick="closeCustomAlert()" style="background: #38bdf8; color: #0f172a; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">OK, Mengerti</button>
+      <p id="customAlertMessage" style="color: #f8fafc; font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; white-space: pre-line;"></p>
+      
+      <div id="modalButtons" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Tombol Utama Download dengan Animasi Progress -->
+        <button id="downloadBtn" onclick="downloadExcelWithProgress()" style="position: relative; overflow: hidden; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px;">
+          <!-- Progress Bar Fill Background -->
+          <div id="downloadProgressBar" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: rgba(255, 255, 255, 0.25); border-radius: 10px; transition: width 0.05s linear; z-index: 1;"></div>
+          <span id="downloadBtnText" style="position: relative; z-index: 2;">📥 Download Laporan Excel</span>
+        </button>
+        <!-- Tombol Tutup Saja -->
+        <button id="closeModalBtn" onclick="closeCustomAlert()" style="background: #334155; color: #cbd5e1; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;">
+          Tutup Saja
+        </button>
+      </div>
     </div>
   </div>
 
-  <style>
-    @keyframes popUpModal {
-      0% { transform: scale(0.9); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-  </style>
-
-  <script>
-    // Fungsi untuk menampilkan custom alert pengganti alert() bawaan browser
-    function showCustomAlert(message) {
-      document.getElementById('customAlertMessageinnerText' in document.getElementById('customAlertMessage') ? 'customAlertMessage' : 'customAlertMessage').innerText = message;
-      document.getElementById('customAlertModal').style.display = 'flex';
-    }
-
-    // Fungsi untuk menutup modal
-    function closeCustomAlert() {
-      document.getElementById('customAlertModal').style.display = 'none';
-    }
-  </script>
+  <!-- Link ke file JavaScript Eksternal -->
+  <script src="script.js"></script>
 </body>
 </html>
