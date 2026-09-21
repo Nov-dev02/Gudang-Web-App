@@ -10,52 +10,51 @@
 </head>
 <body>
   <div class="container">
-    <!-- Indikator Status dengan Animasi Booting -->
-<div id="system-status-box" style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); margin: 10px 0;">
-  <span id="status-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
-  <span id="status-text">Memuat sistem...</span>
-</div>
+    
+    <!-- INDIKATOR STATUS DENGAN ANIMASI BOOTING (TOTAL 5 DETIK) -->
+    <div id="system-status-box" style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); margin-bottom: 15px;">
+      <span id="status-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+      <span id="status-text">Memeriksa koneksi database...</span>
+    </div>
 
-<script>
-  // Daftar tahapan proses sebelum sistem aktif
-  const bootSteps = [
-    { text: "Memeriksa koneksi database...", color: "#facc15" }, // Kuning (proses)
-    { text: "Sinkronisasi master STOK...", color: "#facc15" },  // Kuning (proses)
-    { text: "Memuat data admin gudang...", color: "#facc15" },  // Kuning (proses)
-    { text: "Sistem Aktif", color: "#22c55e", pulse: true }      // Hijau + kedip (siap)
-  ];
+    <!-- SKRIP LOGIKA BOOTING 5 DETIK -->
+    <script>
+      const bootSteps = [
+        { text: "Memeriksa koneksi database...", color: "#facc15" },
+        { text: "Sinkronisasi master STOK...", color: "#facc15" },
+        { text: "Memuat data admin gudang...", color: "#facc15" },
+        { text: "Sistem Aktif", color: "#22c55e", pulse: true }
+      ];
 
-  let currentStep = 0;
-  const textEl = document.getElementById("status-text");
-  const iconEl = document.getElementById("status-icon");
+      let currentStep = 0;
+      const textEl = document.getElementById("status-text");
+      const iconEl = document.getElementById("status-icon");
 
-  function runBootSequence() {
-    if (currentStep < bootSteps.length) {
-      textEl.innerText = bootSteps[currentStep].text;
-      iconEl.style.backgroundColor = bootSteps[currentStep].color;
-      
-      // Kalau sudah di tahap akhir (Sistem Aktif), aktifkan animasi kedip
-      if (bootSteps[currentStep].pulse) {
-        iconEl.style.animation = "blink-pulse 1.4s infinite";
+      function runBootSequence() {
+        if (currentStep < bootSteps.length) {
+          textEl.innerText = bootSteps[currentStep].text;
+          iconEl.style.backgroundColor = bootSteps[currentStep].color;
+          
+          if (bootSteps[currentStep].pulse) {
+            iconEl.style.animation = "blink-pulse 1.4s infinite";
+            
+            // Buka kunci / tampilkan konten utama setelah booting 100% selesai
+            const appContent = document.getElementById("app-content");
+            if (appContent) {
+              appContent.style.display = "block";
+              appContent.style.animation = "fadeInContent 0.8s ease-in-out";
+            }
+          }
+          
+          currentStep++;
+          // Durasi 1250ms x 4 tahap = 5 Detik pas!
+          setTimeout(runBootSequence, 1250); 
+        }
       }
-      
-      currentStep++;
-      // Jeda waktu pergantian tiap tahap (dalam milidetik, misal 800ms)
-      setTimeout(runBootSequence, 800); 
-    }
-  }
 
-  // Jalankan animasi saat halaman selesai dimuat
-  window.onload = runBootSequence;
-</script>
+      window.onload = runBootSequence;
+    </script>
 
-<style>
-@keyframes blink-pulse {
-  0% { transform: scale(0.95); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-  70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-  100% { transform: scale(0.95); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-}
-</style>
     <!-- ANIMASI TEKS BERJALAN (MARQUEE ULTIMATE COMBINE EDITION) -->
     <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
       <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
@@ -88,23 +87,27 @@
       </div>
     </div>
     
-    <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
-    <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
-    
-    <div class="form-group">
-      <div class="label-container">
-        <label for="shopeeData">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
-        <span id="rowCounter" class="row-counter">📊 0 baris data</span>
+    <!-- KONTEN UTAMA: DIKUNCI / DISEMBUNYIKAN TOTAL SELAMA PROSES BOOTING -->
+    <div id="app-content">
+      <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
+      <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
+      
+      <div class="form-group">
+        <div class="label-container">
+          <label for="shopeeData">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
+          <span id="rowCounter" class="row-counter">📊 0 baris data</span>
+        </div>
+        <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
       </div>
-      <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
+      
+      <button id="submitBtn" onclick="processData()">
+        <div class="spinner" id="btnSpinner"></div>
+        <span id="btnText">⚡ Tarik & Proses Data Sekarang</span>
+      </button>
+      
+      <div id="log"></div>
     </div>
-    
-    <button id="submitBtn" onclick="processData()">
-      <div class="spinner" id="btnSpinner"></div>
-      <span id="btnText">⚡ Tarik & Proses Data Sekarang</span>
-    </button>
-    
-    <div id="log"></div>
+
   </div>
 
   <!-- CUSTOM ALERT MODAL MODERN DENGAN ANIMASI PROGRESS DOWNLOAD -->
@@ -114,13 +117,10 @@
       <p id="customAlertMessage" style="color: #f8fafc; font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; white-space: pre-line;"></p>
       
       <div id="modalButtons" style="display: flex; flex-direction: column; gap: 10px;">
-        <!-- Tombol Utama Download dengan Animasi Progress -->
         <button id="downloadBtn" onclick="downloadExcelWithProgress()" style="position: relative; overflow: hidden; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px;">
-          <!-- Progress Bar Fill Background -->
           <div id="downloadProgressBar" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: rgba(255, 255, 255, 0.25); border-radius: 10px; transition: width 0.05s linear; z-index: 1;"></div>
           <span id="downloadBtnText" style="position: relative; z-index: 2;">📥 Download Laporan Excel</span>
         </button>
-        <!-- Tombol Tutup Saja -->
         <button id="closeModalBtn" onclick="closeCustomAlert()" style="background: #334155; color: #cbd5e1; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;">
           Tutup Saja
         </button>
