@@ -10,13 +10,52 @@
 </head>
 <body>
   <div class="container">
-    <!-- Indikator Sistem Aktif -->
-<div style="display: flex; align-items: center; margin: 10px 0;">
-  <div class="system-status-indicator">
-    <span class="pulse-dot"></span>
-    <span class="status-text">Sistem Aktif</span>
-  </div>
+    <!-- Indikator Status dengan Animasi Booting -->
+<div id="system-status-box" style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); margin: 10px 0;">
+  <span id="status-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+  <span id="status-text">Memuat sistem...</span>
 </div>
+
+<script>
+  // Daftar tahapan proses sebelum sistem aktif
+  const bootSteps = [
+    { text: "Memeriksa koneksi database...", color: "#facc15" }, // Kuning (proses)
+    { text: "Sinkronisasi master STOK...", color: "#facc15" },  // Kuning (proses)
+    { text: "Memuat data admin gudang...", color: "#facc15" },  // Kuning (proses)
+    { text: "Sistem Aktif", color: "#22c55e", pulse: true }      // Hijau + kedip (siap)
+  ];
+
+  let currentStep = 0;
+  const textEl = document.getElementById("status-text");
+  const iconEl = document.getElementById("status-icon");
+
+  function runBootSequence() {
+    if (currentStep < bootSteps.length) {
+      textEl.innerText = bootSteps[currentStep].text;
+      iconEl.style.backgroundColor = bootSteps[currentStep].color;
+      
+      // Kalau sudah di tahap akhir (Sistem Aktif), aktifkan animasi kedip
+      if (bootSteps[currentStep].pulse) {
+        iconEl.style.animation = "blink-pulse 1.4s infinite";
+      }
+      
+      currentStep++;
+      // Jeda waktu pergantian tiap tahap (dalam milidetik, misal 800ms)
+      setTimeout(runBootSequence, 800); 
+    }
+  }
+
+  // Jalankan animasi saat halaman selesai dimuat
+  window.onload = runBootSequence;
+</script>
+
+<style>
+@keyframes blink-pulse {
+  0% { transform: scale(0.95); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+</style>
     <!-- ANIMASI TEKS BERJALAN (MARQUEE ULTIMATE COMBINE EDITION) -->
     <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
       <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
