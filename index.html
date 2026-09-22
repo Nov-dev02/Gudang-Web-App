@@ -48,46 +48,24 @@
 
     <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // Inisialisasi Audio Context untuk Efek Suara Startup Windows-style
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Total durasi booting dikembalikan ke ~40 detik
+    const bootSteps = [
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 8000 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 8000 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 4000 }
+    ];
 
-            function playWindowsStartupChime() {
-        if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-        const now = audioCtx.currentTime;
-        
-        // Suara Windows 11 Startup: Ambient chord yang lembut, megah, dan mengalir halus
-        const freqs = [130.81, 261.63, 329.63, 392.00, 523.25, 659.25]; // Kombinasi bass & chord tinggi (C Major lush pad)
-        
-        freqs.forEach((freq, index) => {
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            // Kombinasi sine dan triangle wave untuk menciptakan suara ambient yang hangat & jernih khas Win 11
-            osc.type = index < 2 ? 'sine' : 'triangle';
-            osc.frequency.setValueAtTime(freq, now);
-            
-            // Envelope lembut (Slow attack supaya naik pelan-pelan, lalu fade-out panjang yang adem)
-            gainNode.gain.setValueAtTime(0, now);
-            gainNode.gain.linearRampToValueAtTime(0.045, now + 0.4 + (index * 0.05)); 
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 3.2); // Gema panjang & elegan
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + 3.5);
+    function playWindowsStartupChime() {
+        // Menggunakan file audio asli Windows 11 agar 100% IDENTIK & PERSIS ASLI!
+        const winAudio = new Audio('https://www.101soundboards.com/storage/board_sounds/track/24065052-windows-11-startup-sound-effect.mp3');
+        winAudio.volume = 0.6; // Volume 60% (pas dan empuk di telinga)
+        winAudio.play().catch(err => {
+            console.log("Audio play error:", err);
         });
     }
-
-
-    const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 2000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 2000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 2000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 1500 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 1000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 1000 }
-    ];
 
     function startSystemInitialization() {
       const initBtn = document.getElementById("init-btn");
@@ -95,10 +73,6 @@
         initBtn.style.opacity = "0.5";
         initBtn.style.pointerEvents = "none";
         initBtn.innerText = "INITIALIZING KERNEL...";
-      }
-
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
       }
 
       runBootSequence();
@@ -130,9 +104,9 @@
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // STEP TERAKHIR: PUTAR SUARA CHIME WINDOWS-STYLE & HILANGKAN LAYAR BOOT
+            // STEP TERAKHIR: PUTAR AUDIO ASLI WINDOWS 11 & HILANGKAN LAYAR BOOT
             setTimeout(() => {
-              playWindowsStartupChime(); // <--- Bunyi chime diputar di sini pas masuk home!
+              playWindowsStartupChime(); // <--- Suara asli Windows 11 diputar di sini!
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
@@ -196,7 +170,6 @@
       }
     });
   </script>
-
 
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
