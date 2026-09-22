@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+q<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -48,31 +48,39 @@
 
       <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // Fungsi Text-to-Speech dengan suara AI yang natural dan bersih
+        // Fungsi Text-to-Speech khusus suara cowok (Jarvis style)
     function speakSystemReady() {
         if ('speechSynthesis' in window) {
-            // Batalkan antrean suara sebelumnya jika ada
             window.speechSynthesis.cancel();
 
             const textToSpeak = "Sistem Ready";
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             
-            utterance.lang = 'id-ID'; // Bahasa Indonesia
-            utterance.rate = 0.95;  // Kecepatan natural
-            utterance.pitch = 1.0;  // Nada standar/normal yang bersih
+            utterance.lang = 'id-ID'; 
+            utterance.rate = 0.90;  
+            utterance.pitch = 0.5;  // Nada rendah berwibawa ala Jarvis
             
-            // Pilih suara bahasa Indonesia terbaik yang tersedia di perangkat
             const voices = window.speechSynthesis.getVoices();
-            const idVoice = voices.find(v => v.lang.includes('id') || v.lang.includes('ID'));
-            if (idVoice) {
-                utterance.voice = idVoice;
+            const maleVoice = voices.find(v => 
+                (v.lang.includes('id') || v.lang.includes('ID')) && 
+                (v.name.toLowerCase().includes('male') || 
+                 v.name.toLowerCase().includes('david') || 
+                 v.name.toLowerCase().includes('giri'))
+            );
+            
+            if (maleVoice) {
+                utterance.voice = maleVoice;
+            } else {
+                const idVoice = voices.find(v => 
+                    v.lang.includes('id') || v.lang.includes('ID')
+                );
+                if (idVoice) utterance.voice = idVoice;
             }
 
             window.speechSynthesis.speak(utterance);
-        } else {
-            console.log("Speech Synthesis tidak didukung di browser ini.");
         }
     }
+
 
     // Pastikan daftar suara termuat di browser
     if ('speechSynthesis' in window) {
