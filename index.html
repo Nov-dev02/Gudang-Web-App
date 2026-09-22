@@ -10,107 +10,117 @@
 </head>
 <body>
 
-  <!-- PEMBUNGKUS UTAMA AGAR POSISI STATUS & KOTAK SEJAJAR RAPI -->
-  <div style="width: 100%; max-width: 800px; display: flex; flex-direction: column;">
-
-    <!-- INDIKATOR STATUS BOOTING -->
-    <div id="system-status-box" style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.12); padding: 6px 16px; border-radius: 20px; font-size: 12px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); margin-bottom: 12px; width: fit-content;">
-      <span id="status-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
-      <span id="status-text">Memeriksa koneksi database...</span>
+  <!-- ================= LAYAR BOOTING / SPLASH SCREEN (MENUTUPI LAYAR DI AWAL) ================= -->
+  <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;">
+    <div style="background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); padding: 35px 40px; border-radius: 20px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); max-width: 380px; width: 85%; backdrop-filter: blur(10px);">
+      <div style="font-size: 42px; margin-bottom: 12px;">🚀</div>
+      <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 16px; font-weight: 700; letter-spacing: 0.5px;">SISTEM OTOMASI GUDANG</h3>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 22px;">Inisialisasi server & database cloud...</p>
+      
+      <!-- Indikator Status Berjalan -->
+      <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.08); padding: 8px 16px; border-radius: 20px; font-size: 13px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.12);">
+        <span id="boot-icon" style="width: 10px; height: 10px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px;"></span>
+        <span id="boot-text">Memeriksa koneksi database...</span>
+      </div>
     </div>
+  </div>
 
-    <!-- SKRIP LOGIKA BOOTING 5 DETIK -->
-    <script>
-      const bootSteps = [
-        { text: "Memeriksa koneksi database...", color: "#facc15" },
-        { text: "Sinkronisasi master STOK...", color: "#facc15" },
-        { text: "Memuat data admin gudang...", color: "#facc15" },
-        { text: "Sistem Aktif", color: "#22c55e", pulse: true }
-      ];
+  <!-- SCRIPT LOGIKA BOOTING 5 DETIK -->
+  <script>
+    const bootSteps = [
+      { text: "Memeriksa koneksi database...", color: "#facc15" },
+      { text: "Sinkronisasi master STOK...", color: "#facc15" },
+      { text: "Memuat data admin gudang...", color: "#facc15" },
+      { text: "Sistem Aktif", color: "#22c55e" }
+    ];
 
-      let currentStep = 0;
-      const textEl = document.getElementById("status-text");
-      const iconEl = document.getElementById("status-icon");
+    let currentStep = 0;
+    const bootTextEl = document.getElementById("boot-text");
+    const bootIconEl = document.getElementById("boot-icon");
+    const bootScreenEl = document.getElementById("boot-screen");
 
-      function runBootSequence() {
+    function runBootSequence() {
+      if (currentStep < bootSteps.length) {
+        bootTextEl.innerText = bootSteps[currentStep].text;
+        bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
+        
+        currentStep++;
         if (currentStep < bootSteps.length) {
-          textEl.innerText = bootSteps[currentStep].text;
-          iconEl.style.backgroundColor = bootSteps[currentStep].color;
-          
-          if (bootSteps[currentStep].pulse) {
-            iconEl.style.animation = "blink-pulse 1.4s infinite";
-            
-            // Tampilkan konten utama setelah booting selesai
-            const appContent = document.getElementById("app-content");
-            if (appContent) {
-              appContent.style.display = "block";
-              appContent.style.animation = "fadeInContent 0.8s ease-in-out";
-            }
-          }
-          
-          currentStep++;
-          setTimeout(runBootSequence, 1250); // 1250ms x 4 = 5 Detik
+          setTimeout(runBootSequence, 1250); // 1250ms x 4 = 5 Detik total
+        } else {
+          // Setelah selesai tahap terakhir, hilangkan layar booting dengan efek mulus (fade out)
+          setTimeout(() => {
+            bootScreenEl.style.opacity = "0";
+            bootScreenEl.style.visibility = "hidden";
+          }, 1250);
         }
       }
+    }
 
-      window.onload = runBootSequence;
-    </script>
+    window.onload = runBootSequence;
+  </script>
+  <!-- ========================================================================================= -->
 
-    <div class="container" style="max-width: 100%;">
-      
-      <!-- ANIMASI TEKS BERJALAN (MARQUEE ULTIMATE COMBINE EDITION) -->
-      <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
-        <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
-          <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;">
-            <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
-            <span style="color: #64748b;">•</span>
-            <span>📦 Scan Resi atau No Transaksi dengan Cepat & Akurat</span>
-            <span style="color: #64748b;">•</span>
-            <span>⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif</span>
-            <span style="color: #64748b;">•</span>
-            <span>⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat</span>
-            <span style="color: #64748b;">•</span>
-            <span>🗄️ Database Cloud Teroptimasi & Aman</span>
-            <span style="color: #64748b;">•</span>
-            <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
-          </div>
-          <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;" aria-hidden="true">
-            <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
-            <span style="color: #64748b;">•</span>
-            <span>📦 Scan Resi atau No Transaksi dengan Cepat & Akurat</span>
-            <span style="color: #64748b;">•</span>
-            <span>⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif</span>
-            <span style="color: #64748b;">•</span>
-            <span>⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat</span>
-            <span style="color: #64748b;">•</span>
-            <span>🗄️ Database Cloud Teroptimasi & Aman</span>
-            <span style="color: #64748b;">•</span>
-            <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
-          </div>
+  <!-- KOTAK UTAMA APLIKASI -->
+  <div class="container">
+    
+    <!-- STATUS AKTIF DI DALAM APLIKASI UTAMA -->
+    <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); margin-bottom: 15px;">
+      <span style="width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink-pulse 1.4s infinite;"></span>
+      <span>Sistem Aktif</span>
+    </div>
+    
+    <!-- ANIMASI TEKS BERJALAN (MARQUEE ULTIMATE COMBINE EDITION) -->
+    <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
+      <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
+        <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;">
+          <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
+          <span style="color: #64748b;">•</span>
+          <span>📦 Scan Resi atau No Transaksi dengan Cepat & Akurat</span>
+          <span style="color: #64748b;">•</span>
+          <span>⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif</span>
+          <span style="color: #64748b;">•</span>
+          <span>⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat</span>
+          <span style="color: #64748b;">•</span>
+          <span>🗄️ Database Cloud Teroptimasi & Aman</span>
+          <span style="color: #64748b;">•</span>
+          <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
+        </div>
+        <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;" aria-hidden="true">
+          <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
+          <span style="color: #64748b;">•</span>
+          <span>📦 Scan Resi atau No Transaksi dengan Cepat & Akurat</span>
+          <span style="color: #64748b;">•</span>
+          <span>⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif</span>
+          <span style="color: #64748b;">•</span>
+          <span>⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat</span>
+          <span style="color: #64748b;">•</span>
+          <span>🗄️ Database Cloud Teroptimasi & Aman</span>
+          <span style="color: #64748b;">•</span>
+          <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
         </div>
       </div>
+    </div>
+    
+    <!-- KONTEN UTAMA -->
+    <div id="app-content">
+      <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
+      <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
       
-      <!-- KONTEN UTAMA: DIKUNCI / DISEMBUNYIKAN TOTAL SELAMA PROSES BOOTING -->
-      <div id="app-content">
-        <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
-        <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
-        
-        <div class="form-group">
-          <div class="label-container">
-            <label for="shopeeData">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
-            <span id="rowCounter" class="row-counter">📊 0 baris data</span>
-          </div>
-          <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
+      <div class="form-group">
+        <div class="label-container">
+          <label for="shopeeData">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
+          <span id="rowCounter" class="row-counter">📊 0 baris data</span>
         </div>
-        
-        <button id="submitBtn" onclick="processData()">
-          <div class="spinner" id="btnSpinner"></div>
-          <span id="btnText">⚡ Tarik & Proses Data Sekarang</span>
-        </button>
-        
-        <div id="log"></div>
+        <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
       </div>
-
+      
+      <button id="submitBtn" onclick="processData()">
+        <div class="spinner" id="btnSpinner"></div>
+        <span id="btnText">⚡ Tarik & Proses Data Sekarang</span>
+      </button>
+      
+      <div id="log"></div>
     </div>
 
   </div>
