@@ -46,57 +46,47 @@
     </div>
   </div>
 
-  <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
+    <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // Inisialisasi Audio Context untuk Efek Suara Terminal
+    // Inisialisasi Audio Context untuk Efek Suara Startup Windows-style
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function playTerminalSound() {
+    function playWindowsStartupChime() {
         if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(500 + Math.random() * 500, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.05);
-    }
-
-    function jalankanSuaraBooting() {
-        let step = 0;
-        const interval = setInterval(() => {
-            playTerminalSound();
-            step++;
-            if (step > 18) { 
-                clearInterval(interval); 
-                // Nada tinggi panjang saat selesai booting
-                setTimeout(() => {
-                    if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-                    const osc = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
-                    osc.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.25);
-                }, 100);
-            }
-        }, 120);
+        const now = audioCtx.currentTime;
+        
+        // Akord harmonis (C Major Chord: C4, E4, G4, C5) agar terdengar seperti startup OS profesional
+        const freqs = [261.63, 329.63, 392.00, 523.25]; 
+        
+        freqs.forEach((freq, index) => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            // Kombinasi triangle dan sine wave untuk suara yang empuk & jernih
+            osc.type = index === 3 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            
+            // Envelope volume (Fade-in halus lalu fade-out panjang)
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.08, now + 0.15 + (index * 0.04));
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            // Sedikit jeda antar nada supaya membentuk melodi chord yang indah
+            osc.start(now + (index * 0.05));
+            osc.stop(now + 2.5);
+        });
     }
 
     const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 7000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 9000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 7000 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 2500 }
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 2000 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 2000 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 2000 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 1500 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 1000 },
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 1000 }
     ];
 
     function startSystemInitialization() {
@@ -111,7 +101,6 @@
         audioCtx.resume();
       }
 
-      jalankanSuaraBooting();
       runBootSequence();
     }
 
@@ -141,7 +130,9 @@
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
+            // STEP TERAKHIR: PUTAR SUARA CHIME WINDOWS-STYLE & HILANGKAN LAYAR BOOT
             setTimeout(() => {
+              playWindowsStartupChime(); // <--- Bunyi chime diputar di sini pas masuk home!
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
@@ -185,7 +176,6 @@
 
     // KEYBOARD SHORTCUTS (HOTKEYS)
     window.addEventListener('keydown', (e) => {
-      // Ctrl + Enter -> Eksekusi Proses Data
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
@@ -195,7 +185,6 @@
         }
       }
 
-      // Ctrl + Shift + C -> Bersihkan Textarea
       if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
         e.preventDefault();
         const textarea = document.getElementById('shopeeData');
@@ -207,7 +196,7 @@
       }
     });
   </script>
-  <!-- ========================================================================================= -->
+
 
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
@@ -309,4 +298,4 @@
   <!-- Link ke file JavaScript Eksternal -->
   <script src="script.js"></script>
 </body>
-</html>2
+</html>
