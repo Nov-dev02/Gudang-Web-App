@@ -10,67 +10,85 @@
 </head>
 <body>
 
-  <!-- ================= LAYAR BOOTING / SPLASH SCREEN ================= -->
-  <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;">
+  <!-- ================= LAYAR BOOTING / SPLASH SCREEN (30-50 DETIK) ================= -->
+  <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;">
     <div style="background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); padding: 35px 40px; border-radius: 20px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); max-width: 380px; width: 85%; backdrop-filter: blur(10px);">
-      <div style="font-size: 42px; margin-bottom: 12px;">🚀</div>
+      <div style="font-size: 42px; margin-bottom: 12px; animation: blink-pulse 2s infinite;">🚀</div>
       <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 16px; font-weight: 700; letter-spacing: 0.5px;">SISTEM OTOMASI GUDANG</h3>
       <p style="color: #94a3b8; font-size: 13px; margin-bottom: 22px;">Inisialisasi server & database cloud...</p>
       
       <!-- Indikator Status Berjalan -->
       <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.08); padding: 8px 16px; border-radius: 20px; font-size: 13px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.12);">
         <span id="boot-icon" style="width: 10px; height: 10px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px;"></span>
-        <span id="boot-text">Memeriksa koneksi database...</span>
+        <span id="boot-text">Menghubungkan ke server pusat...</span>
       </div>
     </div>
   </div>
 
-  <!-- SCRIPT LOGIKA BOOTING 5 DETIK -->
+  <!-- SCRIPT LOGIKA BOOTING ±40 DETIK & AUTO-RESET SAAT DIBUKA -->
   <script>
     const bootSteps = [
-      { text: "Memeriksa koneksi database...", color: "#facc15" },
-      { text: "Sinkronisasi master STOK...", color: "#facc15" },
-      { text: "Memuat data admin gudang...", color: "#facc15" },
-      { text: "Sistem Aktif", color: "#22c55e" }
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", duration: 8000 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", duration: 9000 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", duration: 10000 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", duration: 8000 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", duration: 5000 },
+      { text: "Sistem Aktif", color: "#22c55e", duration: 3000 }
     ];
 
-    let currentStep = 0;
-    const bootTextEl = document.getElementById("boot-text");
-    const bootIconEl = document.getElementById("boot-icon");
-    const bootScreenEl = document.getElementById("boot-screen");
-
     function runBootSequence() {
-      if (currentStep < bootSteps.length) {
-        bootTextEl.innerText = bootSteps[currentStep].text;
-        bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
-        
-        currentStep++;
+      const bootTextEl = document.getElementById("boot-text");
+      const bootIconEl = document.getElementById("boot-icon");
+      const bootScreenEl = document.getElementById("boot-screen");
+
+      if (!bootScreenEl) return;
+
+      // Reset tampilan layar booting setiap kali dibuka
+      bootScreenEl.style.opacity = "1";
+      bootScreenEl.style.visibility = "visible";
+
+      let currentStep = 0;
+
+      function executeStep() {
         if (currentStep < bootSteps.length) {
-          setTimeout(runBootSequence, 1250); // 1250ms x 4 = 5 Detik total
-        } else {
-          // Setelah selesai tahap terakhir, hilangkan layar booting dengan efek mulus (fade out)
-          setTimeout(() => {
-            bootScreenEl.style.opacity = "0";
-            bootScreenEl.style.visibility = "hidden";
-          }, 1250);
+          bootTextEl.innerText = bootSteps[currentStep].text;
+          bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
+          
+          let stepDuration = bootSteps[currentStep].duration;
+          currentStep++;
+
+          if (currentStep < bootSteps.length) {
+            setTimeout(executeStep, stepDuration);
+          } else {
+            // Tahap terakhir selesai, fade out layar booting
+            setTimeout(() => {
+              bootScreenEl.style.opacity = "0";
+              bootScreenEl.style.visibility = "hidden";
+            }, stepDuration);
+          }
         }
       }
+
+      executeStep();
     }
 
-    window.onload = runBootSequence;
+    // Jalankan saat halaman dimuat atau dibuka kembali dari cache browser (pinned tab / shortcut)
+    window.addEventListener('pageshow', (event) => {
+      runBootSequence();
+    });
   </script>
   <!-- ========================================================================================= -->
 
-  <!-- KOTAK UTAMA APLIKASI (DIPAKSA BERBARIS KE BAWAH/COLUMN) -->
-  <div class="container" style="display: flex; flex-direction: column; width: 100%; max-width: 800px; box-sizing: border-box;">
+  <!-- KOTAK UTAMA APLIKASI -->
+  <div class="container">
     
-    <!-- STATUS AKTIF: DI DALAM CONTAINER, POSISI PAS DI ATAS SENDIRI -->
+    <!-- STATUS AKTIF -->
     <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); margin-bottom: 20px; width: fit-content;">
       <span style="width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink-pulse 1.4s infinite;"></span>
       <span>Sistem Aktif</span>
     </div>
     
-    <!-- ANIMASI TEKS BERJALAN (MARQUEE ULTIMATE COMBINE EDITION) -->
+    <!-- ANIMASI TEKS BERJALAN (MARQUEE) -->
     <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
       <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
         <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;">
@@ -103,7 +121,7 @@
     </div>
     
     <!-- KONTEN UTAMA -->
-    <div id="app-content" style="width: 100%;">
+    <div id="app-content">
       <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
       <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
       
@@ -125,7 +143,7 @@
 
   </div>
 
-  <!-- CUSTOM ALERT MODAL MODERN DENGAN ANIMASI PROGRESS DOWNLOAD -->
+  <!-- CUSTOM ALERT MODAL -->
   <div id="customAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); animation: popUpModal 0.2s ease-out;">
       <div style="font-size: 36px; margin-bottom: 10px;">💡</div>
