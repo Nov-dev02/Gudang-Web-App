@@ -48,38 +48,9 @@
 
     <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // Inisialisasi Audio Context (Aman dari blokir browser & pasti bunyi setelah 40 detik)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let winAudio = null;
 
-    function playWindowsStartupChime() {
-        if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-        const now = audioCtx.currentTime;
-        
-        // Harmoni akord Windows 11 yang kaya, hangat, dan megah (Lush Pad Chord)
-        const freqs = [130.81, 196.00, 261.63, 329.63, 392.00, 523.25, 659.25];
-        
-        freqs.forEach((freq, index) => {
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            // Kombinasi sine dan triangle untuk suara yang empuk, tebal, dan jernih
-            osc.type = index < 3 ? 'sine' : 'triangle';
-            osc.frequency.setValueAtTime(freq, now);
-            
-            // Envelope dengan slow attack yang elegan dan gema panjang
-            gainNode.gain.setValueAtTime(0, now);
-            gainNode.gain.linearRampToValueAtTime(0.04, now + 0.6 + (index * 0.08));
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 4.5);
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + 4.8);
-        });
-    }
-
-    // Total durasi booting persis 40 detik (8s + 8s + 8s + 8s + 4s + 4s)
+    // Total durasi booting tetap 40 detik
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
       { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
@@ -97,10 +68,16 @@
         initBtn.innerText = "INITIALIZING KERNEL...";
       }
 
-      // Pastikan AudioContext aktif sejak tombol diklik pertama kali
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      // TRICK: Pancing/Unlock file audio asli Windows 11 tepat saat tombol diklik (detik ke-0)
+      // Ini mendaftarkan izin ke browser agar tidak diblokir setelah 40 detik
+      winAudio = new Audio('https://www.101soundboards.com/storage/board_sounds/track/24065052-windows-11-startup-sound-effect.mp3');
+      winAudio.volume = 0; // Set volume 0 (silent) agar tidak terdengar di awal
+      winAudio.play().then(() => {
+          winAudio.pause();      // Langsung dipause
+          winAudio.currentTime = 0; // Reset ke awal
+      }).catch(err => {
+          console.log("Audio unlock error:", err);
+      });
 
       runBootSequence();
     }
@@ -131,9 +108,13 @@
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // STEP TERAKHIR: PUTAR SUARA CHIME & HILANGKAN LAYAR BOOT SETELAH 40 DETIK
+            // STEP TERAKHIR: SETELAH 40 DETIK, PUTAR AUDIO ASLI DENGAN VOLUME NORMAL!
             setTimeout(() => {
-              playWindowsStartupChime(); 
+              if (winAudio) {
+                winAudio.volume = 0.6; // Kembalikan volume ke 60%
+                winAudio.currentTime = 0;
+                winAudio.play().catch(err => console.log("Final play error:", err));
+              }
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
@@ -198,7 +179,6 @@
     });
   </script>
 
-
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
     
@@ -212,7 +192,7 @@
       <div class="status-group">
         <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;">00:00:00 WIB</span>
         <span>•</span>
-        <span style="color: #38bdf8; font-weight: 600;">Operator: Novan Arifki</span>
+        <span style="color: #38bdf8; font-weight: 600;">Operator: Irgi Antasari</span>
       </div>
     </div>
 
