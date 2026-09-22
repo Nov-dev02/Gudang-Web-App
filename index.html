@@ -48,9 +48,40 @@
 
     <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    let winAudio = null;
+    // Fungsi Text-to-Speech ala Robot / AI Terminal
+    function speakSystemReady() {
+        if ('speechSynthesis' in window) {
+            // Batalkan antrean suara sebelumnya jika ada
+            window.speechSynthesis.cancel();
 
-    // Total durasi booting tetap 40 detik
+            const textToSpeak = "Sistem Ready";
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            
+            utterance.lang = 'id-ID'; // Menggunakan pelafalan Bahasa Indonesia
+            utterance.rate = 0.85;  // Sedikit lebih lambat agar terdengar tegas ala robot
+            utterance.pitch = 0.6;  // Nada lebih rendah/berat agar berkesan seperti suara sistem AI
+            
+            // Coba cari suara bahasa Indonesia yang paling robotik/natural jika tersedia
+            const voices = window.speechSynthesis.getVoices();
+            const idVoice = voices.find(v => v.lang.includes('id') || v.lang.includes('ID'));
+            if (idVoice) {
+                utterance.voice = idVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        } else {
+            console.log("Speech Synthesis tidak didukung di browser ini.");
+        }
+    }
+
+    // Pastikan daftar suara termuat di beberapa browser
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    }
+
+    // Total durasi booting tetap pas 40 detik (8s + 8s + 8s + 8s + 4s + 4s)
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
       { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
@@ -67,17 +98,6 @@
         initBtn.style.pointerEvents = "none";
         initBtn.innerText = "INITIALIZING KERNEL...";
       }
-
-      // TRICK: Pancing/Unlock file audio asli Windows 11 tepat saat tombol diklik (detik ke-0)
-      // Ini mendaftarkan izin ke browser agar tidak diblokir setelah 40 detik
-      winAudio = new Audio('https://www.101soundboards.com/storage/board_sounds/track/24065052-windows-11-startup-sound-effect.mp3');
-      winAudio.volume = 0; // Set volume 0 (silent) agar tidak terdengar di awal
-      winAudio.play().then(() => {
-          winAudio.pause();      // Langsung dipause
-          winAudio.currentTime = 0; // Reset ke awal
-      }).catch(err => {
-          console.log("Audio unlock error:", err);
-      });
 
       runBootSequence();
     }
@@ -108,13 +128,9 @@
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // STEP TERAKHIR: SETELAH 40 DETIK, PUTAR AUDIO ASLI DENGAN VOLUME NORMAL!
+            // STEP TERAKHIR: SETELAH 40 DETIK, UCAPKAN "SISTEM READY" & HILANGKAN LAYAR BOOT
             setTimeout(() => {
-              if (winAudio) {
-                winAudio.volume = 0.6; // Kembalikan volume ke 60%
-                winAudio.currentTime = 0;
-                winAudio.play().catch(err => console.log("Final play error:", err));
-              }
+              speakSystemReady(); 
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
@@ -178,6 +194,7 @@
       }
     });
   </script>
+
 
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
