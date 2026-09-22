@@ -4,10 +4,12 @@ const textarea = document.getElementById('shopeeData');
 const rowCounter = document.getElementById('rowCounter');
 let currentDownloadUrl = "";
 
-textarea.addEventListener('input', function() {
-  let lines = this.value.split('\n').filter(line => line.trim() !== '');
+function updateRowCounter() {
+  let lines = textarea.value.split('\n').filter(line => line.trim() !== '');
   rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
-});
+}
+
+textarea.addEventListener('input', updateRowCounter);
 
 function processData() {
   const shopeeData = textarea.value.trim();
