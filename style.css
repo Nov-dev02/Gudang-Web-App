@@ -2,7 +2,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Mengunci agar halaman tidak bisa scroll (fit satu layar penuh) */
+  overflow: hidden; 
 }
 
 body {
@@ -13,8 +13,8 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Posisi pas di tengah secara vertikal */
-  align-items: center;     /* Posisi pas di tengah secara horizontal */
+  justify-content: center; 
+  align-items: center;     
   box-sizing: border-box;
 }
 
@@ -22,7 +22,7 @@ body {
   width: 100%;
   max-width: 800px;
   background: #1e293b;
-  padding: 25px;           /* Padding diringkas sedikit agar lebih compact */
+  padding: 25px;           
   border-radius: 18px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   box-sizing: border-box;
@@ -64,6 +64,33 @@ body {
 
 .status-badge.active {
   color: #22c55e;
+}
+
+/* ✨ CSS STYLING UNTUK FADE-IN / FADE-OUT TEKS ROTATOR */
+.fade-text-container {
+  width: 100%;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 13px 20px;
+  margin-bottom: 25px;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+}
+
+.fade-text-item {
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  white-space: nowrap;
 }
 
 h2 {
@@ -112,14 +139,14 @@ label {
 
 textarea {
   width: 100%;
-  height: 130px;           /* Disesuaikan jadi 130px agar pas dan tombol langsung terlihat */
+  height: 130px;           
   padding: 12px;
   border: 2px solid #475569;
   border-radius: 12px;
   font-family: monospace;
   font-size: 12.5px;
   box-sizing: border-box;
-  resize: none;            /* Menonaktifkan resize manual agar ukurannya tetap proporsional */
+  resize: none;            
   background-color: #0f172a;
   color: #f8fafc;
   transition: all 0.2s;
@@ -155,7 +182,7 @@ button:hover {
   transform: translateY(-1px);
 }
 
-/* DEVOPS TERMINAL LOG STYLE */
+/* DEVOPS TERMINAL LOG STYLE (TETAP MUNCUL SATU-SATU SEPERTI SEMULA) */
 #log {
     margin-top: 12px;
     background: #030712;                          
@@ -207,4 +234,23 @@ button:hover {
 
 @keyframes fadeOutToast {
   to { opacity: 0; visibility: hidden; }
+}
+
+/* ✨ ANIMASI KEDIP INDIKATOR SISTEM AKTIF (DITAMBAHKAN DI SINI) */
+@keyframes blink-pulse {
+  0% { 
+    opacity: 0.3; 
+    transform: scale(0.95); 
+    box-shadow: 0 0 0 rgba(34, 197, 94, 0); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.1); 
+    box-shadow: 0 0 10px #22c55e; 
+  }
+  100% { 
+    opacity: 0.3; 
+    transform: scale(0.95); 
+    box-shadow: 0 0 0 rgba(34, 197, 94, 0); 
+  }
 }
