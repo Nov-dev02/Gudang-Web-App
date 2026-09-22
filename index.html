@@ -51,33 +51,50 @@
     // Inisialisasi Audio Context untuk Efek Suara Startup Windows-style
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function playWindowsStartupChime() {
+        function playWindowsStartupChime() {
         if (audioCtx.state === 'suspended') { audioCtx.resume(); }
         const now = audioCtx.currentTime;
         
-        // Akord harmonis (C Major Chord: C4, E4, G4, C5) agar terdengar seperti startup OS profesional
-        const freqs = [261.63, 329.63, 392.00, 523.25]; 
+        // Efek Suara Sci-Fi / Terminal AI (Sweep ke atas + Beep ganda yang futuristik)
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
         
-        freqs.forEach((freq, index) => {
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+        osc.type = 'sawtooth'; // Karakter suara digital tajam ala mesin futuristik
+        
+        // Frekuensi naik drastis (sweep naik dari rendah ke tinggi)
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(1400, now + 0.25);
+        
+        // Envelope volume
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.08, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 0.35);
+
+        // Tambahan "Beep" konfirmasi pendek di ujungnya supaya makin berasa sistem aktif
+        setTimeout(() => {
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+            const now2 = audioCtx.currentTime;
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
             
-            // Kombinasi triangle dan sine wave untuk suara yang empuk & jernih
-            osc.type = index === 3 ? 'sine' : 'triangle';
-            osc.frequency.setValueAtTime(freq, now);
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(2093.00, now2); // Nada tinggi bersih (C7)
             
-            // Envelope volume (Fade-in halus lalu fade-out panjang)
-            gainNode.gain.setValueAtTime(0, now);
-            gainNode.gain.linearRampToValueAtTime(0.08, now + 0.15 + (index * 0.04));
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+            gain2.gain.setValueAtTime(0.06, now2);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now2 + 0.15);
             
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
             
-            // Sedikit jeda antar nada supaya membentuk melodi chord yang indah
-            osc.start(now + (index * 0.05));
-            osc.stop(now + 2.5);
-        });
+            osc2.start(now2);
+            osc2.stop(now2 + 0.15);
+        }, 300);
     }
 
     const bootSteps = [
