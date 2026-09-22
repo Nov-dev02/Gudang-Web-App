@@ -51,51 +51,34 @@
     // Inisialisasi Audio Context untuk Efek Suara Startup Windows-style
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playWindowsStartupChime() {
+            function playWindowsStartupChime() {
         if (audioCtx.state === 'suspended') { audioCtx.resume(); }
         const now = audioCtx.currentTime;
         
-        // Efek Suara Sci-Fi / Terminal AI (Sweep ke atas + Beep ganda yang futuristik)
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
+        // Suara Windows 11 Startup: Ambient chord yang lembut, megah, dan mengalir halus
+        const freqs = [130.81, 261.63, 329.63, 392.00, 523.25, 659.25]; // Kombinasi bass & chord tinggi (C Major lush pad)
         
-        osc.type = 'sawtooth'; // Karakter suara digital tajam ala mesin futuristik
-        
-        // Frekuensi naik drastis (sweep naik dari rendah ke tinggi)
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(1400, now + 0.25);
-        
-        // Envelope volume
-        gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(0.08, now + 0.05);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-        
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        osc.start(now);
-        osc.stop(now + 0.35);
-
-        // Tambahan "Beep" konfirmasi pendek di ujungnya supaya makin berasa sistem aktif
-        setTimeout(() => {
-            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-            const now2 = audioCtx.currentTime;
-            const osc2 = audioCtx.createOscillator();
-            const gain2 = audioCtx.createGain();
+        freqs.forEach((freq, index) => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
             
-            osc2.type = 'sine';
-            osc2.frequency.setValueAtTime(2093.00, now2); // Nada tinggi bersih (C7)
+            // Kombinasi sine dan triangle wave untuk menciptakan suara ambient yang hangat & jernih khas Win 11
+            osc.type = index < 2 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
             
-            gain2.gain.setValueAtTime(0.06, now2);
-            gain2.gain.exponentialRampToValueAtTime(0.0001, now2 + 0.15);
+            // Envelope lembut (Slow attack supaya naik pelan-pelan, lalu fade-out panjang yang adem)
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.045, now + 0.4 + (index * 0.05)); 
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 3.2); // Gema panjang & elegan
             
-            osc2.connect(gain2);
-            gain2.connect(audioCtx.destination);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
             
-            osc2.start(now2);
-            osc2.stop(now2 + 0.15);
-        }, 300);
+            osc.start(now);
+            osc.stop(now + 3.5);
+        });
     }
+
 
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 2000 },
