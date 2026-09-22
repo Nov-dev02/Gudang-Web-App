@@ -46,9 +46,9 @@
     </div>
   </div>
 
-    <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
+      <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // Fungsi Text-to-Speech ala Robot / AI Terminal
+    // Fungsi Text-to-Speech dengan suara AI yang natural dan bersih
     function speakSystemReady() {
         if ('speechSynthesis' in window) {
             // Batalkan antrean suara sebelumnya jika ada
@@ -57,11 +57,11 @@
             const textToSpeak = "Sistem Ready";
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             
-            utterance.lang = 'id-ID'; // Menggunakan pelafalan Bahasa Indonesia
-            utterance.rate = 0.85;  // Sedikit lebih lambat agar terdengar tegas ala robot
-            utterance.pitch = 0.6;  // Nada lebih rendah/berat agar berkesan seperti suara sistem AI
+            utterance.lang = 'id-ID'; // Bahasa Indonesia
+            utterance.rate = 0.95;  // Kecepatan natural
+            utterance.pitch = 1.0;  // Nada standar/normal yang bersih
             
-            // Coba cari suara bahasa Indonesia yang paling robotik/natural jika tersedia
+            // Pilih suara bahasa Indonesia terbaik yang tersedia di perangkat
             const voices = window.speechSynthesis.getVoices();
             const idVoice = voices.find(v => v.lang.includes('id') || v.lang.includes('ID'));
             if (idVoice) {
@@ -74,7 +74,7 @@
         }
     }
 
-    // Pastikan daftar suara termuat di beberapa browser
+    // Pastikan daftar suara termuat di browser
     if ('speechSynthesis' in window) {
         window.speechSynthesis.onvoiceschanged = () => {
             window.speechSynthesis.getVoices();
@@ -97,6 +97,15 @@
         initBtn.style.opacity = "0.5";
         initBtn.style.pointerEvents = "none";
         initBtn.innerText = "INITIALIZING KERNEL...";
+      }
+
+      // WARM-UP / PANCING ENGINE UCAPAN DI DETIK PERTAMA KALI TOMBOL DIKLIK
+      // Ini menghilangkan jeda/delay di akhir durasi 40 detik
+      if ('speechSynthesis' in window) {
+          window.speechSynthesis.getVoices();
+          const warmUp = new SpeechSynthesisUtterance('');
+          warmUp.volume = 0;
+          window.speechSynthesis.speak(warmUp);
       }
 
       runBootSequence();
@@ -128,7 +137,7 @@
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // STEP TERAKHIR: SETELAH 40 DETIK, UCAPKAN "SISTEM READY" & HILANGKAN LAYAR BOOT
+            // STEP TERAKHIR: SETELAH 40 DETIK, UCAPKAN "SISTEM READY" TANPA DELAY & HILANGKAN LAYAR BOOT
             setTimeout(() => {
               speakSystemReady(); 
               bootScreenEl.style.opacity = "0";
@@ -194,6 +203,7 @@
       }
     });
   </script>
+
 
 
   <!-- KOTAK UTAMA APLIKASI -->
