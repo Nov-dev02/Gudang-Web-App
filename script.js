@@ -11,7 +11,7 @@ function updateRowCounter() {
 
 textarea.addEventListener('input', updateRowCounter);
 
-function processData() {
+async function processData() {
   const shopeeData = textarea.value.trim();
   const btn = document.getElementById('submitBtn');
   const btnSpinner = document.getElementById('btnSpinner');
@@ -34,43 +34,64 @@ function processData() {
   
   logDiv.style.display = 'block';
   logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive & Memproses data...';
+  logDiv.scrollTop = logDiv.scrollHeight;
   
-  fetch(WEB_APP_URL, {
-    method: 'POST',
-    body: JSON.stringify({ shopeeData: shopeeData })
-  })
-  .then(response => response.text())
-  .then(result => {
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify({ shopeeData: shopeeData })
+    });
+    
+    const result = await response.text();
+    
     try {
       const res = JSON.parse(result);
       if (res.status === 'success') {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ ' + res.message;
+        await new Promise(resolve => setTimeout(resolve, 300));
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ ';
+        
+        // PECAH TEKS PESAN PER BARIS AGAR MUNCULNYA BERTAHAP ALGERIAN/TERMINAL STYLE
+        const messageLines = res.message.split('\n');
+        for (let i = 0; i < messageLines.length; i++) {
+          await new Promise(resolve => setTimeout(resolve, 180)); // Jeda 180ms tiap baris
+          logDiv.innerText += messageLines[i] + (i < messageLines.length - 1 ? '\n' : '');
+          logDiv.scrollTop = logDiv.scrollHeight; // Auto scroll ke baris terbaru
+        }
+        
+        // Jeda sebentar sebelum baris penutup
+        await new Promise(resolve => setTimeout(resolve, 300));
         logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
+        logDiv.scrollTop = logDiv.scrollHeight;
+        
         textarea.value = '';
         rowCounter.innerText = '📊 0 baris data';
         
         currentDownloadUrl = res.downloadUrl || "";
-        showCustomAlert(res.message, currentDownloadUrl);
+        
+        // Jeda agak panjang (800ms) sebelum popup modal muncul supaya kamu sempat baca log-nya dulu
+        setTimeout(() => {
+          showCustomAlert(res.message, currentDownloadUrl);
+        }, 800);
 
       } else {
         logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
-        showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
+        logDiv.scrollTop = logDiv.scrollHeight;
+        setTimeout(() => {
+          showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
+        }, 500);
       }
     } catch(e) {
       logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
+      logDiv.scrollTop = logDiv.scrollHeight;
     }
-    
-    btn.disabled = false;
-    btnSpinner.style.display = 'none';
-    btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
-  })
-  .catch(error => {
+  } catch (error) {
     logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
-    
-    btn.disabled = false;
-    btnSpinner.style.display = 'none';
-    btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
-  });
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
+  
+  btn.disabled = false;
+  btnSpinner.style.display = 'none';
+  btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
 }
 
 function showCustomAlert(message, downloadUrl) {
@@ -111,7 +132,6 @@ function downloadExcelWithProgress() {
 
   let progress = 0;
   
-  // Jalankan animasi progress bar halus dari 0% ke 100% (total waktu ~1.5 detik)
   const interval = setInterval(() => {
     progress += 2;
     if (progress <= 100) {
@@ -121,10 +141,8 @@ function downloadExcelWithProgress() {
       clearInterval(interval);
       downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
       
-      // Buka link download (Chrome akan otomatis nanganin download di pojok kanan atas)
       window.open(currentDownloadUrl, '_blank');
 
-      // Tutup modal secara otomatis setelah sebentar
       setTimeout(() => {
         closeModalBtn.style.opacity = '1';
         closeModalBtn.style.pointerEvents = 'auto';
