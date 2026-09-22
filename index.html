@@ -48,7 +48,38 @@
 
     <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // Total durasi booting dikembalikan ke ~40 detik
+    // Inisialisasi Audio Context (Aman dari blokir browser & pasti bunyi setelah 40 detik)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playWindowsStartupChime() {
+        if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+        const now = audioCtx.currentTime;
+        
+        // Harmoni akord Windows 11 yang kaya, hangat, dan megah (Lush Pad Chord)
+        const freqs = [130.81, 196.00, 261.63, 329.63, 392.00, 523.25, 659.25];
+        
+        freqs.forEach((freq, index) => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            // Kombinasi sine dan triangle untuk suara yang empuk, tebal, dan jernih
+            osc.type = index < 3 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            
+            // Envelope dengan slow attack yang elegan dan gema panjang
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.04, now + 0.6 + (index * 0.08));
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 4.5);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 4.8);
+        });
+    }
+
+    // Total durasi booting persis 40 detik (8s + 8s + 8s + 8s + 4s + 4s)
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
       { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
@@ -58,21 +89,17 @@
       { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 4000 }
     ];
 
-    function playWindowsStartupChime() {
-        // Menggunakan file audio asli Windows 11 agar 100% IDENTIK & PERSIS ASLI!
-        const winAudio = new Audio('https://www.101soundboards.com/storage/board_sounds/track/24065052-windows-11-startup-sound-effect.mp3');
-        winAudio.volume = 0.6; // Volume 60% (pas dan empuk di telinga)
-        winAudio.play().catch(err => {
-            console.log("Audio play error:", err);
-        });
-    }
-
     function startSystemInitialization() {
       const initBtn = document.getElementById("init-btn");
       if (initBtn) {
         initBtn.style.opacity = "0.5";
         initBtn.style.pointerEvents = "none";
         initBtn.innerText = "INITIALIZING KERNEL...";
+      }
+
+      // Pastikan AudioContext aktif sejak tombol diklik pertama kali
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
 
       runBootSequence();
@@ -104,9 +131,9 @@
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // STEP TERAKHIR: PUTAR AUDIO ASLI WINDOWS 11 & HILANGKAN LAYAR BOOT
+            // STEP TERAKHIR: PUTAR SUARA CHIME & HILANGKAN LAYAR BOOT SETELAH 40 DETIK
             setTimeout(() => {
-              playWindowsStartupChime(); // <--- Suara asli Windows 11 diputar di sini!
+              playWindowsStartupChime(); 
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
@@ -170,6 +197,7 @@
       }
     });
   </script>
+
 
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
