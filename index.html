@@ -13,11 +13,11 @@
   <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toast-container"></div>
 
-  <!-- ================= LAYAR BOOTING / SPLASH SCREEN ENTERPRISE ================= -->
+  <!-- ================= LAYAR BOOTING / SPLASH SCREEN INTERAKTIF ================= -->
   <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #070b14; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;">
     <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(56, 189, 248, 0.15); max-width: 420px; width: 85%; backdrop-filter: blur(12px); position: relative; overflow: hidden;">
       
-      <!-- Efek Garis Scan Cyber/Enterprise -->
+      <!-- Efek Garis Scan Cyber -->
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); animation: scanline 3s linear infinite; opacity: 0.6;"></div>
 
       <!-- Ikon Server Melayang & Glowing -->
@@ -28,28 +28,92 @@
       
       <!-- Progress Bar Dinamis -->
       <div style="width: 100%; background: rgba(255, 255, 255, 0.08); height: 6px; border-radius: 4px; overflow: hidden; margin-bottom: 18px; border: 1px solid rgba(255, 255, 255, 0.1);">
-        <div id="boot-progress-fill" style="width: 5%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; box-shadow: 0 0 10px #38bdf8;"></div>
+        <div id="boot-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; box-shadow: 0 0 10px #38bdf8;"></div>
       </div>
 
-      <!-- Indikator Status & Teks Berjalan -->
-      <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; box-sizing: border-box; justify-content: center;">
-        <span id="boot-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px; animation: blink-pulse 1.2s infinite; box-shadow: 0 0 8px #facc15;"></span>
-        <span id="boot-text" style="font-family: monospace; font-weight: 500;">Menghubungkan ke server pusat...</span>
+      <!-- Indikator Status & Tombol Inisialisasi Manual (Bypass Audio Block) -->
+      <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+        <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; box-sizing: border-box; justify-content: center;">
+          <span id="boot-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 8px #facc15;"></span>
+          <span id="boot-text" style="font-family: monospace; font-weight: 500;">Menunggu inisialisasi manual...</span>
+        </div>
+        
+        <button id="init-btn" onclick="startSystemInitialization()" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; border: 1px solid #38bdf8; padding: 12px 20px; font-size: 13.5px; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); font-family: monospace; letter-spacing: 0.5px; transition: all 0.2s;">
+          ⚡ [ CLICK TO INITIALIZE SYSTEM ]
+        </button>
       </div>
 
     </div>
   </div>
 
-  <!-- SCRIPT LOGIKA BOOTING, PROGRESS BAR, JAM REAL-TIME & HOTKEYS -->
+  <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
+    // Inisialisasi Audio Context untuk Efek Suara Terminal
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playTerminalSound() {
+        if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(500 + Math.random() * 500, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function jalankanSuaraBooting() {
+        let step = 0;
+        const interval = setInterval(() => {
+            playTerminalSound();
+            step++;
+            if (step > 18) { 
+                clearInterval(interval); 
+                // Nada tinggi panjang saat selesai booting
+                setTimeout(() => {
+                    if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                }, 100);
+            }
+        }, 120);
+    }
+
     const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 9000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 10000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 8000 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 5000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 3000 }
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 7000 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 9000 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 7000 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 2500 }
     ];
+
+    function startSystemInitialization() {
+      const initBtn = document.getElementById("init-btn");
+      if (initBtn) {
+        initBtn.style.opacity = "0.5";
+        initBtn.style.pointerEvents = "none";
+        initBtn.innerText = "INITIALIZING KERNEL...";
+      }
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      jalankanSuaraBooting();
+      runBootSequence();
+    }
 
     function runBootSequence() {
       const bootTextEl = document.getElementById("boot-text");
@@ -58,9 +122,6 @@
       const bootProgressFill = document.getElementById("boot-progress-fill");
 
       if (!bootScreenEl) return;
-
-      bootScreenEl.style.opacity = "1";
-      bootScreenEl.style.visibility = "visible";
 
       let currentStep = 0;
 
@@ -91,11 +152,6 @@
 
       executeStep();
     }
-
-    // Auto-reset & jalankan ulang saat halaman dibuka / dipin kembali
-    window.addEventListener('pageshow', () => {
-      runBootSequence();
-    });
 
     // JAM DIGITAL REAL-TIME WIB
     function updateClock() {
@@ -253,4 +309,4 @@
   <!-- Link ke file JavaScript Eksternal -->
   <script src="script.js"></script>
 </body>
-</html>
+</html>2
