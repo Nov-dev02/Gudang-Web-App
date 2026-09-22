@@ -12,7 +12,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Diubah dari center agar bagian atas tidak terpotong */
   align-items: center;
   box-sizing: border-box;
 }
@@ -28,6 +28,8 @@ body {
   border: 1px solid #334155;
   position: relative;
   overflow: visible;
+  margin-top: 10px; /* Berikan jarak aman dari atas layar */
+  margin-bottom: 30px;
 }
 
 /* ENTERPRISE STATUS BAR */
@@ -162,7 +164,7 @@ button:hover {
     padding: 14px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 12px;
-    color: #22c55e;                               /* Ganti jadi hijau terang */
+    color: #22c55e;                               /* Hijau terang ala terminal */
     text-shadow: 0 0 6px rgba(34, 197, 94, 0.4);  /* Efek nyala tipis */
     max-height: 180px;
     overflow-y: auto;
