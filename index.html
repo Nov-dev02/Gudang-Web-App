@@ -94,12 +94,12 @@
     }
 
     const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 8000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 8000 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 4000 }
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 1500 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 1500 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 1500 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 1500 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 1000 },
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 1000 }
     ];
 
     function startSystemInitialization() {
@@ -151,6 +151,9 @@
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
+              
+              // Mulai animasi teks tepat setelah layar booting tertutup
+              initTextFadeRotator(); 
             }, stepDuration);
           }
         }
@@ -186,10 +189,10 @@
       "📦 Scan Resi atau No Transaksi dengan Cepat & Akurat",
       "⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif",
       "⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat",
-      "🗄️ Database Cloud Teroptimasi & Aman",
-      "🔥 Operasional Gudang Siap Berjalan Maksimal!"
+      "🔥 Operasional Gudang Siap Berjalan Maksimal!",
+      "🗄️ Database Cloud Teroptimasi & Aman"
     ];
-
+ 
     let fadeIndex = 0;
     function initTextFadeRotator() {
       const textEl = document.getElementById('rotating-text');
@@ -218,7 +221,6 @@
     window.onload = () => {
       updateClock();
       setWeeklyOperator();
-      initTextFadeRotator();
     };
 
     function showToast(message, icon = "🚀") {
