@@ -10,40 +10,55 @@
 </head>
 <body>
 
-  <!-- ================= LAYAR BOOTING / SPLASH SCREEN (30-50 DETIK) ================= -->
-  <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;">
-    <div style="background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); padding: 35px 40px; border-radius: 20px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); max-width: 380px; width: 85%; backdrop-filter: blur(10px);">
-      <div style="font-size: 42px; margin-bottom: 12px; animation: blink-pulse 2s infinite;">🚀</div>
-      <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 16px; font-weight: 700; letter-spacing: 0.5px;">SISTEM OTOMASI GUDANG</h3>
-      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 22px;">Inisialisasi server & database cloud...</p>
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- ================= LAYAR BOOTING / SPLASH SCREEN ENTERPRISE ================= -->
+  <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #070b14; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;">
+    <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(56, 189, 248, 0.15); max-width: 420px; width: 85%; backdrop-filter: blur(12px); position: relative; overflow: hidden;">
       
-      <!-- Indikator Status Berjalan (Dengan Animasi Kedip) -->
-      <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.08); padding: 8px 16px; border-radius: 20px; font-size: 13px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.12);">
-        <span id="boot-icon" style="width: 10px; height: 10px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px; animation: blink-pulse 1.2s infinite;"></span>
-        <span id="boot-text">Menghubungkan ke server pusat...</span>
+      <!-- Efek Garis Scan Cyber/Enterprise -->
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); animation: scanline 3s linear infinite; opacity: 0.6;"></div>
+
+      <!-- Ikon Server Melayang & Glowing -->
+      <div style="font-size: 52px; margin-bottom: 14px; animation: floatServer 3s ease-in-out infinite;">💻</div>
+      
+      <h3 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 17px; font-weight: 700; letter-spacing: 1px;">GUDANG NUHSANTARA</h3>
+      <p style="color: #94a3b8; font-size: 12px; margin-bottom: 24px; font-family: monospace;">SECURE CLOUD KERNEL INITIALIZATION</p>
+      
+      <!-- Progress Bar Dinamis -->
+      <div style="width: 100%; background: rgba(255, 255, 255, 0.08); height: 6px; border-radius: 4px; overflow: hidden; margin-bottom: 18px; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div id="boot-progress-fill" style="width: 5%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; box-shadow: 0 0 10px #38bdf8;"></div>
       </div>
+
+      <!-- Indikator Status & Teks Berjalan -->
+      <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; box-sizing: border-box; justify-content: center;">
+        <span id="boot-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px; animation: blink-pulse 1.2s infinite; box-shadow: 0 0 8px #facc15;"></span>
+        <span id="boot-text" style="font-family: monospace; font-weight: 500;">Menghubungkan ke server pusat...</span>
+      </div>
+
     </div>
   </div>
 
-  <!-- SCRIPT LOGIKA BOOTING ±40 DETIK & AUTO-RESET SAAT DIBUKA -->
+  <!-- SCRIPT LOGIKA BOOTING, PROGRESS BAR, JAM REAL-TIME & HOTKEYS -->
   <script>
     const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", duration: 8000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", duration: 9000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", duration: 10000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", duration: 8000 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", duration: 5000 },
-      { text: "Sistem Aktif", color: "#22c55e", duration: 3000 }
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 9000 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 10000 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 8000 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 5000 },
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 3000 }
     ];
 
     function runBootSequence() {
       const bootTextEl = document.getElementById("boot-text");
       const bootIconEl = document.getElementById("boot-icon");
       const bootScreenEl = document.getElementById("boot-screen");
+      const bootProgressFill = document.getElementById("boot-progress-fill");
 
       if (!bootScreenEl) return;
 
-      // Reset tampilan layar booting setiap kali dibuka
       bootScreenEl.style.opacity = "1";
       bootScreenEl.style.visibility = "visible";
 
@@ -53,17 +68,22 @@
         if (currentStep < bootSteps.length) {
           bootTextEl.innerText = bootSteps[currentStep].text;
           bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
+          bootIconEl.style.boxShadow = `0 0 10px ${bootSteps[currentStep].color}`;
           
+          if (bootProgressFill) {
+            bootProgressFill.style.width = bootSteps[currentStep].progress;
+          }
+
           let stepDuration = bootSteps[currentStep].duration;
           currentStep++;
 
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // Tahap terakhir selesai, fade out layar booting
             setTimeout(() => {
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
+              showToast("Sistem siap beroperasi secara maksimal!", "🟢");
             }, stepDuration);
           }
         }
@@ -72,9 +92,63 @@
       executeStep();
     }
 
-    // Jalankan saat halaman dimuat atau dibuka kembali dari cache browser (pinned tab / shortcut)
-    window.addEventListener('pageshow', (event) => {
+    // Auto-reset & jalankan ulang saat halaman dibuka / dipin kembali
+    window.addEventListener('pageshow', () => {
       runBootSequence();
+    });
+
+    // JAM DIGITAL REAL-TIME WIB
+    function updateClock() {
+      const clockEl = document.getElementById("live-clock");
+      if (clockEl) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+      }
+    }
+    setInterval(updateClock, 1000);
+    window.onload = updateClock;
+
+    // FUNGSI TOAST NOTIFICATION
+    function showToast(message, icon = "🚀") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+
+      const toast = document.createElement("div");
+      toast.className = "toast-item";
+      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+      
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    // KEYBOARD SHORTCUTS (HOTKEYS)
+    window.addEventListener('keydown', (e) => {
+      // Ctrl + Enter -> Eksekusi Proses Data
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          showToast("Shortcut terdeteksi: Menjalankan proses...", "⚡");
+          submitBtn.click();
+        }
+      }
+
+      // Ctrl + Shift + C -> Bersihkan Textarea
+      if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+        e.preventDefault();
+        const textarea = document.getElementById('shopeeData');
+        if (textarea) {
+          textarea.value = '';
+          showToast("Area data berhasil dibersihkan.", "🧹");
+          if (typeof updateRowCounter === 'function') updateRowCounter();
+        }
+      }
     });
   </script>
   <!-- ========================================================================================= -->
@@ -82,7 +156,21 @@
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
     
-    <!-- STATUS AKTIF -->
+    <!-- ENTERPRISE STATUS BAR (GUDANG NUHSANTARA + NOVAN ARIFKI) -->
+    <div class="enterprise-status-bar">
+      <div class="status-group">
+        <span class="status-badge active">🟢 GUDANG NUHSANTARA</span>
+        <span>•</span>
+        <span>Database Sync: Online</span>
+      </div>
+      <div class="status-group">
+        <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;">00:00:00 WIB</span>
+        <span>•</span>
+        <span style="color: #38bdf8; font-weight: 600;">Operator: Novan Arifki</span>
+      </div>
+    </div>
+
+    <!-- STATUS AKTIF UTAMA -->
     <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); margin-bottom: 20px; width: fit-content;">
       <span style="width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink-pulse 1.4s infinite;"></span>
       <span>Sistem Aktif</span>
@@ -135,10 +223,11 @@
       
       <button id="submitBtn" onclick="processData()">
         <div class="spinner" id="btnSpinner"></div>
-        <span id="btnText">⚡ Tarik & Proses Data Sekarang</span>
+        <span id="btnText">⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)</span>
       </button>
       
-      <div id="log"></div>
+      <!-- DEVOPS TERMINAL LOG CONTAINER -->
+      <div id="log"><span>[SYSTEM] Menunggu masukan data transaksi gudang...</span></div>
     </div>
 
   </div>
