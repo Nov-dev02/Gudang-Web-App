@@ -31,7 +31,7 @@
         <div id="boot-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; box-shadow: 0 0 10px #38bdf8;"></div>
       </div>
 
-      <!-- Indikator Status & Tombol Inisialisasi Manual (Bypass Audio Block) -->
+      <!-- Indikator Status & Tombol Inisialisasi Manual -->
       <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
         <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; box-sizing: border-box; justify-content: center;">
           <span id="boot-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 8px #facc15;"></span>
@@ -46,9 +46,8 @@
     </div>
   </div>
 
-        <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
+  <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME, FADE ROTATOR & HOTKEYS -->
   <script>
-    // Fungsi helper untuk menentukan operator yang aktif minggu ini
     function getActiveOperator() {
       const operatorList = ["NOVAN", "IRGI", "DWI", "ERIKA"];
       const now = new Date();
@@ -58,18 +57,16 @@
       return operatorList[weekNumber % operatorList.length];
     }
 
-    // Fungsi Text-to-Speech dengan nama operator yang dinamis sesuai jadwal mingguan
     function speakSystemReady() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
-
             const currentOperator = getActiveOperator();
             const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             
             utterance.lang = 'id-ID'; 
             utterance.rate = 0.90;  
-            utterance.pitch = 0.5;  // Nada rendah berwibawa ala Jarvis
+            utterance.pitch = 0.5;  
             
             const voices = window.speechSynthesis.getVoices();
             const maleVoice = voices.find(v => 
@@ -82,9 +79,7 @@
             if (maleVoice) {
                 utterance.voice = maleVoice;
             } else {
-                const idVoice = voices.find(v => 
-                    v.lang.includes('id') || v.lang.includes('ID')
-                );
+                const idVoice = voices.find(v => v.lang.includes('id') || v.lang.includes('ID'));
                 if (idVoice) utterance.voice = idVoice;
             }
 
@@ -92,14 +87,12 @@
         }
     }
 
-    // Pastikan daftar suara termuat di browser
     if ('speechSynthesis' in window) {
         window.speechSynthesis.onvoiceschanged = () => {
             window.speechSynthesis.getVoices();
         };
     }
 
-    // Total durasi booting tetap pas 40 detik (8s + 8s + 8s + 8s + 4s + 4s)
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 8000 },
       { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 8000 },
@@ -117,7 +110,6 @@
         initBtn.innerText = "INITIALIZING KERNEL...";
       }
 
-      // WARM-UP / PANCING ENGINE UCAPAN DI DETIK PERTAMA KALI TOMBOL DIKLIK
       if ('speechSynthesis' in window) {
           window.speechSynthesis.getVoices();
           const warmUp = new SpeechSynthesisUtterance('');
@@ -167,7 +159,6 @@
       executeStep();
     }
 
-    // ROTASI OPERATOR MINGGUAN OTOMATIS
     function setWeeklyOperator() {
       const currentOperator = getActiveOperator();
       const operatorEl = document.getElementById('operator-display');
@@ -176,7 +167,6 @@
       }
     }
 
-    // JAM DIGITAL REAL-TIME WIB & ROTASI OPERATOR
     function updateClock() {
       const clockEl = document.getElementById("live-clock");
       if (clockEl) {
@@ -189,13 +179,48 @@
     }
     
     setInterval(updateClock, 1000);
+
+    // LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS BERGANTIAN & TEKS TERAKHIR STAY PERMANEN
+    const fadeTexts = [
+      "🚀 SISTEM MANAJEMEN GUDANG ONLINE",
+      "📦 Scan Resi atau No Transaksi dengan Cepat & Akurat",
+      "⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif",
+      "⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat",
+      "🗄️ Database Cloud Teroptimasi & Aman",
+      "🔥 Operasional Gudang Siap Berjalan Maksimal!"
+    ];
+
+    let fadeIndex = 0;
+    function initTextFadeRotator() {
+      const textEl = document.getElementById('rotating-text');
+      if (!textEl) return;
+
+      const fadeInterval = setInterval(() => {
+        // Fade out
+        textEl.style.opacity = '0';
+        
+        setTimeout(() => {
+          fadeIndex++;
+          if (fadeIndex < fadeTexts.length) {
+            textEl.innerText = fadeTexts[fadeIndex];
+            // Fade in
+            textEl.style.opacity = '1';
+            
+            // Jika sudah mencapai teks terakhir, hentikan interval agar tetap tampil permanen
+            if (fadeIndex === fadeTexts.length - 1) {
+              clearInterval(fadeInterval);
+            }
+          }
+        }, 500); // Waktu jeda transisi pudar (0.5 detik)
+      }, 3500); // Durasi setiap teks tampil sebelum berganti
+    }
     
     window.onload = () => {
       updateClock();
       setWeeklyOperator();
+      initTextFadeRotator();
     };
 
-    // FUNGSI TOAST NOTIFICATION
     function showToast(message, icon = "🚀") {
       const container = document.getElementById("toast-container");
       if (!container) return;
@@ -203,7 +228,6 @@
       const toast = document.createElement("div");
       toast.className = "toast-item";
       toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-      
       container.appendChild(toast);
 
       setTimeout(() => {
@@ -211,7 +235,6 @@
       }, 3000);
     }
 
-    // KEYBOARD SHORTCUTS (HOTKEYS)
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault();
@@ -257,36 +280,9 @@
       <span>Sistem Aktif</span>
     </div>
     
-    <!-- ANIMASI TEKS BERJALAN (MARQUEE) -->
-    <div style="width: 100%; overflow: hidden; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 0; margin-bottom: 25px; box-sizing: border-box; backdrop-filter: blur(8px);">
-      <div style="display: flex; width: max-content; animation: scrollText 50s linear infinite;">
-        <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;">
-          <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
-          <span style="color: #64748b;">•</span>
-          <span>📦 Scan Resi atau No Transaksi dengan Cepat & Akurat</span>
-          <span style="color: #64748b;">•</span>
-          <span>⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif</span>
-          <span style="color: #64748b;">•</span>
-          <span>⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat</span>
-          <span style="color: #64748b;">•</span>
-          <span>🗄️ Database Cloud Teroptimasi & Aman</span>
-          <span style="color: #64748b;">•</span>
-          <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
-        </div>
-        <div style="display: flex; gap: 40px; padding-left: 40px; white-space: nowrap; color: #38bdf8; font-size: 13px; font-weight: 500; align-items: center;" aria-hidden="true">
-          <span>🚀 SISTEM MANAJEMEN GUDANG ONLINE</span>
-          <span style="color: #64748b;">•</span>
-          <span>📦 Scan Resi atau No Transaksi dengan Cepat & Akurat</span>
-          <span style="color: #64748b;">•</span>
-          <span>⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif</span>
-          <span style="color: #64748b;">•</span>
-          <span>⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat</span>
-          <span style="color: #64748b;">•</span>
-          <span>🗄️ Database Cloud Teroptimasi & Aman</span>
-          <span style="color: #64748b;">•</span>
-          <span>🔥 Operasional Gudang Siap Berjalan Maksimal!</span>
-        </div>
-      </div>
+    <!-- KOTAK ANIMASI FADE-IN / FADE-OUT TEKS -->
+    <div class="fade-text-container">
+      <div id="rotating-text" class="fade-text-item">🚀 SISTEM MANAJEMEN GUDANG ONLINE</div>
     </div>
     
     <!-- KONTEN UTAMA -->
