@@ -3,6 +3,7 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
@@ -10,11 +11,12 @@ body {
   color: #f8fafc;
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* <-- TAMBAHKAN INI SUPAYA BERBARIS KE BAWAH */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
 }
+
 .container {
   width: 100%;
   max-width: 800px;
@@ -26,11 +28,7 @@ body {
   border: 1px solid #334155;
   position: relative;
   overflow: visible;
-  /* Hapus margin-top yang besar jika ada, cukup diatur jaraknya dari status box */
 }
-
-/* Sisa kode CSS lainnya tetap sama persis seperti sebelumnya */
-
 
 h2 {
   margin-top: 10px;
@@ -40,26 +38,31 @@ h2 {
   align-items: center;
   gap: 10px;
 }
+
 p.desc {
   color: #94a3b8;
   font-size: 14px;
   margin-bottom: 25px;
   line-height: 1.5;
 }
+
 .form-group {
   margin-bottom: 20px;
 }
+
 .label-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
+
 label {
   font-weight: 600;
   font-size: 14px;
   color: #cbd5e1;
 }
+
 .row-counter {
   font-size: 12px;
   font-weight: 600;
@@ -69,6 +72,7 @@ label {
   padding: 3px 10px;
   border-radius: 12px;
 }
+
 textarea {
   width: 100%;
   height: 240px;
@@ -83,12 +87,14 @@ textarea {
   color: #f8fafc;
   transition: all 0.2s;
 }
+
 textarea:focus {
   border-color: #38bdf8;
   outline: none;
   background-color: #090d16;
   box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
 }
+
 button {
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   color: white;
@@ -106,73 +112,25 @@ button {
   gap: 8px;
   box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
 }
+
 button:hover {
-  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
-}
-button:disabled {
-  background: #475569;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 0.8s linear infinite;
-  display: none;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-#log {
-  margin-top: 20px;
-  background: #090d16;
-  color: #4af626;
-  padding: 15px;
-  border-radius: 12px;
-  font-family: monospace;
-  font-size: 12px;
-  white-space: pre-wrap;
-  max-height: 160px;
-  overflow-y: auto;
-  display: none;
-  border: 1px solid #334155;
-}
-
+/* Animasi Tambahan */
 @keyframes scrollText {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
-/* === TAMBAHAN STYLE UNTUK PENGUNCIAN & ANIMASI BOOTING === */
-
-/* Konten utama disembunyikan total sebelum booting selesai */
-#app-content {
-  display: none;
-}
-
-/* Efek transisi muncul halus (Fade-in & Slide-down) */
-@keyframes fadeInContent {
-  from { 
-    opacity: 0; 
-    transform: translateY(10px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
-}
-
-/* Animasi Titik Hijau Berdenyut (Pulse) */
 @keyframes blink-pulse {
-  0% { transform: scale(0.95); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-  70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-  100% { transform: scale(0.95); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes popUpModal {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
