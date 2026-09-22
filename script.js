@@ -169,3 +169,43 @@ function downloadExcelWithProgress() {
 function closeCustomAlert() {
   document.getElementById('customAlertModal').style.display = 'none';
 }
+
+// ==========================================
+// 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS ROTATOR
+// ==========================================
+const fadeTexts = [
+  "📦 SISTEM MANAJEMEN GUDANG ONLINE",
+  "📑 Scan Resi atau No Transaksi dengan Cepat & Akurat",
+  "⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif",
+  "⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat",
+  "🔥 Operasional Gudang Siap Berjalan Maksimal!",
+  "💻 Database Cloud Teroptimasi & Aman"
+];
+
+let fadeIndex = 0;
+
+function initTextFadeRotator() {
+  const textEl = document.getElementById('rotating-text');
+  if (!textEl) return;
+
+  // Set teks awal pertama kali
+  textEl.innerText = fadeTexts[fadeIndex];
+
+  setInterval(() => {
+    // 1. Efek Fade Out (redupkan teks)
+    textEl.style.opacity = 0;
+
+    setTimeout(() => {
+      // 2. Ganti teks ke index berikutnya secara berulang (looping)
+      fadeIndex = (fadeIndex + 1) % fadeTexts.length;
+      textEl.innerText = fadeTexts[fadeIndex];
+
+      // 3. Efek Fade In (munculkan kembali teksnya)
+      textEl.style.opacity = 1;
+    }, 500); // Waktu jeda menyamakan durasi transition di CSS (0.5 detik)
+
+  }, 3500); // Durasi teks tampil di layar sebelum berganti berikutnya (3.5 detik)
+}
+
+// Jalankan fungsi saat halaman selesai dimuat
+document.addEventListener("DOMContentLoaded", initTextFadeRotator);
