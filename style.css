@@ -7,14 +7,15 @@ html, body {
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  padding: 20px;
+  padding: 40px 20px; /* Tambah padding atas body jadi 40px */
   color: #f8fafc;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Diubah dari center agar bagian atas tidak terpotong */
+  justify-content: flex-start;
   align-items: center;
   box-sizing: border-box;
+  overflow-y: auto; /* Memastikan halaman bisa di-scroll dengan mulus */
 }
 
 .container {
@@ -28,8 +29,8 @@ body {
   border: 1px solid #334155;
   position: relative;
   overflow: visible;
-  margin-top: 10px; /* Berikan jarak aman dari atas layar */
-  margin-bottom: 30px;
+  margin-top: 20px;   /* Berikan jarak aman dari atas browser */
+  margin-bottom: 40px;
 }
 
 /* ENTERPRISE STATUS BAR */
