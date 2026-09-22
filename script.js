@@ -32,11 +32,22 @@ async function processData() {
   btnSpinner.style.display = 'block';
   btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
   
+  // TAHAP 1: Log awal koneksi
   logDiv.style.display = 'block';
-  logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive & Memproses data...';
+  logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive...';
+  logDiv.scrollTop = logDiv.scrollHeight;
+  
+  await new Promise(resolve => setTimeout(resolve, 400));
+  
+  logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔍 Memvalidasi format data Shopee & TikTok Shop...';
   logDiv.scrollTop = logDiv.scrollHeight;
   
   try {
+    // Memulai request ke server backend
+    await new Promise(resolve => setTimeout(resolve, 500));
+    logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database...';
+    logDiv.scrollTop = logDiv.scrollHeight;
+
     const response = await fetch(WEB_APP_URL, {
       method: 'POST',
       body: JSON.stringify({ shopeeData: shopeeData })
@@ -48,18 +59,21 @@ async function processData() {
       const res = JSON.parse(result);
       if (res.status === 'success') {
         await new Promise(resolve => setTimeout(resolve, 300));
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ ';
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
+        logDiv.scrollTop = logDiv.scrollHeight;
         
-        // PECAH TEKS PESAN PER BARIS AGAR MUNCULNYA BERTAHAP ALGERIAN/TERMINAL STYLE
+        // TAHAP 2: Pecah pesan dari server dan cetak SATU PER SATU secara bertahap
         const messageLines = res.message.split('\n');
         for (let i = 0; i < messageLines.length; i++) {
-          await new Promise(resolve => setTimeout(resolve, 180)); // Jeda 180ms tiap baris
-          logDiv.innerText += messageLines[i] + (i < messageLines.length - 1 ? '\n' : '');
-          logDiv.scrollTop = logDiv.scrollHeight; // Auto scroll ke baris terbaru
+          if (messageLines[i].trim() !== '') {
+            await new Promise(resolve => setTimeout(resolve, 250)); // Jeda 250ms per baris agar terlihat prosesnya
+            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️ ' + messageLines[i];
+            logDiv.scrollTop = logDiv.scrollHeight;
+          }
         }
         
-        // Jeda sebentar sebelum baris penutup
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // TAHAP 3: Baris penutup log
+        await new Promise(resolve => setTimeout(resolve, 400));
         logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
         logDiv.scrollTop = logDiv.scrollHeight;
         
@@ -68,17 +82,17 @@ async function processData() {
         
         currentDownloadUrl = res.downloadUrl || "";
         
-        // Jeda agak panjang (800ms) sebelum popup modal muncul supaya kamu sempat baca log-nya dulu
+        // Jeda 1.2 detik setelah log selesai ditulis agar kamu sempat membaca terminal sebelum modal muncul
         setTimeout(() => {
           showCustomAlert(res.message, currentDownloadUrl);
-        }, 800);
+        }, 1200);
 
       } else {
         logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
         logDiv.scrollTop = logDiv.scrollHeight;
         setTimeout(() => {
           showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
-        }, 500);
+        }, 800);
       }
     } catch(e) {
       logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
