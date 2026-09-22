@@ -10,6 +10,7 @@ body {
   color: #f8fafc;
   min-height: 100vh;
   display: flex;
+  flex-direction: column; /* <-- TAMBAHKAN INI SUPAYA BERBARIS KE BAWAH */
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
@@ -25,8 +26,11 @@ body {
   border: 1px solid #334155;
   position: relative;
   overflow: visible;
-  margin-top: 40px;
+  /* Hapus margin-top yang besar jika ada, cukup diatur jaraknya dari status box */
 }
+
+/* Sisa kode CSS lainnya tetap sama persis seperti sebelumnya */
+
 
 h2 {
   margin-top: 10px;
