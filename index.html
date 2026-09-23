@@ -190,7 +190,7 @@
       "⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif",
       "⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat",
       "🔥 Operasional Gudang Siap Berjalan Maksimal!",
-      "🗄️ Database Cloud Teroptimasi & Aman"
+      "🗄️ Database Cloud Teroptimasi & Aman",
     ];
  
     let fadeIndex = 0;
@@ -222,6 +222,31 @@
       updateClock();
       setWeeklyOperator();
     };
+        // ==========================================
+    // 📊 FUNGSI PENGHITUNG BARIS DATA REAL-TIME
+    // ==========================================
+    function updateRowCounter() {
+      const textarea = document.getElementById('shopeeData');
+      const rowCounter = document.getElementById('rowCounter');
+      if (!textarea || !rowCounter) return;
+
+      let lines = textarea.value.split('\n').filter(line => line.trim() !== '');
+      rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
+    }
+
+    // Daftarkan event listener saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+      const textarea = document.getElementById('shopeeData');
+      if (textarea) {
+        textarea.addEventListener('input', updateRowCounter);
+        textarea.addEventListener('keyup', updateRowCounter);
+        textarea.addEventListener('paste', () => {
+          // Beri jeda agar teks hasil paste di HP sukses dimuat sistem
+          setTimeout(updateRowCounter, 100);
+        });
+      }
+    });
+
 
     function showToast(message, icon = "🚀") {
       const container = document.getElementById("toast-container");
