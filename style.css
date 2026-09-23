@@ -89,7 +89,7 @@ body {
   font-size: 13px;
   font-weight: 500;
   opacity: 1;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.8s ease-in-out; /* <-- Ubah dari 0.5s jadi 0.8s di sini */
   white-space: nowrap;
 }
 
