@@ -253,3 +253,41 @@ function initTextFadeRotator() {
 
   }, 5000); 
 }
+// ==========================================
+// 🌐 MONITORING STATUS JARINGAN (DATABASE SYNC)
+// ==========================================
+function updateNetworkStatus() {
+  const netStatusEl = document.getElementById('net-status-text');
+  
+  if (navigator.onLine) {
+    if (netStatusEl) {
+      netStatusEl.innerText = "Online";
+      netStatusEl.style.color = "#22c55e"; // Hijau
+    }
+    // Opsional: munculkan notifikasi kecil (toast) jika diperlukan
+  } else {
+    if (netStatusEl) {
+      netStatusEl.innerText = "Offline (Terputus)";
+      netStatusEl.style.color = "#ef4444"; // Merah
+    }
+    alert("⚠️ PERHATIAN: Koneksi internet terputus! Sinkronisasi database tertunda.");
+  }
+}
+
+// Daftarkan event listener untuk deteksi online/offline secara real-time
+window.addEventListener('online', updateNetworkStatus);
+window.addEventListener('offline', updateNetworkStatus);
+
+// Jalankan pengecekan pertama kali saat halaman dimuat
+window.addEventListener('DOMContentLoaded', () => {
+  const netStatusEl = document.getElementById('net-status-text');
+  if (netStatusEl) {
+    if (navigator.onLine) {
+      netStatusEl.innerText = "Online";
+      netStatusEl.style.color = "#22c55e";
+    } else {
+      netStatusEl.innerText = "Offline (Terputus)";
+      netStatusEl.style.color = "#ef4444";
+    }
+  }
+});
