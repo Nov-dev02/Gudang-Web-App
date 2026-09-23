@@ -47,6 +47,24 @@ async function processData() {
     showCustomAlert('Silakan paste data Shopee & TikTok terlebih dahulu ya! 😊', '');
     return;
   }
+
+  // ==========================================
+  // 🔍 VALIDASI KEYWORD
+  // ==========================================
+  const lowerData = shopeeData.toLowerCase();
+  const hasValidIndicator = lowerData.includes('shopee') || 
+                            lowerData.includes('tiktok') || 
+                            lowerData.includes('pesanan') || 
+                            lowerData.includes('order') || 
+                            lowerData.includes('no.') ||
+                            shopeeData.split('\n').length > 1; 
+
+  if (!hasValidIndicator) {
+    showToast("⚠️ Peringatan: Format data terlihat tidak valid. Pastikan Anda mempaste laporan resmi Shopee/TikTok.", "warning");
+  }
+  // ==========================================
+
+  const btn = document.getElementById('submitBtn');
   
   if (WEB_APP_URL.includes("MASUKKAN_URL")) {
     alert('Harap isi URL Web App Apps Script di dalam file script.js terlebih dahulu!');
@@ -413,4 +431,16 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initLastSync);
 } else {
   initLastSync();
+}
+// ==========================================
+// 📖 KONTROL MODAL PANDUAN FORMAT
+// ==========================================
+function openGuideModal() {
+  const modal = document.getElementById('guideModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeGuideModal() {
+  const modal = document.getElementById('guideModal');
+  if (modal) modal.style.display = 'none';
 }
