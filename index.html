@@ -46,7 +46,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME, FADE ROTATOR & HOTKEYS -->
+  <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
     function getActiveOperator() {
       const operatorList = ["NOVAN", "IRGI", "DWI", "ERIKA"];
@@ -153,7 +153,9 @@
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
               
               // Mulai animasi teks tepat setelah layar booting tertutup
-              initTextFadeRotator(); 
+              if (typeof initTextFadeRotator === 'function') {
+                initTextFadeRotator(); 
+              }
             }, stepDuration);
           }
         }
@@ -182,71 +184,6 @@
     }
     
     setInterval(updateClock, 1000);
-
-    // LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS BERGANTIAN & TEKS TERAKHIR STAY PERMANEN
-    const fadeTexts = [
-      "🚀 SISTEM MANAJEMEN GUDANG ONLINE",
-      "📦 Scan Resi atau No Transaksi dengan Cepat & Akurat",
-      "⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif",
-      "⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat",
-      "🔥 Operasional Gudang Siap Berjalan Maksimal!",
-      "🗄️ Database Cloud Teroptimasi & Aman",
-    ];
- 
-    let fadeIndex = 0;
-    function initTextFadeRotator() {
-      const textEl = document.getElementById('rotating-text');
-      if (!textEl) return;
-
-      const fadeInterval = setInterval(() => {
-        // Fade out
-        textEl.style.opacity = '0';
-        
-        setTimeout(() => {
-          fadeIndex++;
-          if (fadeIndex < fadeTexts.length) {
-            textEl.innerText = fadeTexts[fadeIndex];
-            // Fade in
-            textEl.style.opacity = '1';
-            
-            // Jika sudah mencapai teks terakhir, hentikan interval agar tetap tampil permanen
-            if (fadeIndex === fadeTexts.length - 1) {
-              clearInterval(fadeInterval);
-            }
-          }
-        }, 500); // Waktu jeda transisi pudar (0.5 detik)
-      }, 3500); // Durasi setiap teks tampil sebelum berganti
-    }
-    
-    window.onload = () => {
-      updateClock();
-      setWeeklyOperator();
-    };
-        // ==========================================
-    // 📊 FUNGSI PENGHITUNG BARIS DATA REAL-TIME
-    // ==========================================
-    function updateRowCounter() {
-      const textarea = document.getElementById('shopeeData');
-      const rowCounter = document.getElementById('rowCounter');
-      if (!textarea || !rowCounter) return;
-
-      let lines = textarea.value.split('\n').filter(line => line.trim() !== '');
-      rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
-    }
-
-    // Daftarkan event listener saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', () => {
-      const textarea = document.getElementById('shopeeData');
-      if (textarea) {
-        textarea.addEventListener('input', updateRowCounter);
-        textarea.addEventListener('keyup', updateRowCounter);
-        textarea.addEventListener('paste', () => {
-          // Beri jeda agar teks hasil paste di HP sukses dimuat sistem
-          setTimeout(updateRowCounter, 100);
-        });
-      }
-    });
-
 
     function showToast(message, icon = "🚀") {
       const container = document.getElementById("toast-container");
@@ -282,6 +219,11 @@
         }
       }
     });
+
+    window.onload = () => {
+      updateClock();
+      setWeeklyOperator();
+    };
   </script>
 
   <!-- KOTAK UTAMA APLIKASI -->
