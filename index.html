@@ -262,12 +262,12 @@
       <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
       <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
       
-      <div class="form-group">
-        <div class="label-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-          <label for="shopeeData">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
+     <div class="form-group">
+        <div class="label-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+          <label for="shopeeData" style="margin: 0;">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
           <div style="display: flex; gap: 8px; align-items: center;">
-            <button onclick="openGuideModal()" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 2px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 500;">💡 Panduan Format</button>
-            <span id="rowCounter" class="row-counter">📊 0 baris data</span>
+            <button onclick="openGuideModal()" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 5px 10px; border-radius: 6px; font-size: 11.5px; cursor: pointer; font-weight: 500; white-space: nowrap;">💡 Panduan Format</button>
+            <span id="rowCounter" class="row-counter" style="white-space: nowrap; display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 5px 10px; border-radius: 6px; font-size: 11.5px; color: #cbd5e1;">📊 0 baris data</span>
           </div>
         </div>
         <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
