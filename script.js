@@ -1,4 +1,4 @@
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrOcgEW_E7SmFMjs8MgJv6SO4lHwkghDNeZXx4gB_7zHJP-U2WN/exec";
+wconst WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrOcgEW_E7SmFMjs8MgJv6SO4lHwkghDNeZXx4gB_7zHJP-U2WN/exec";
 
 let currentDownloadUrl = "";
 
@@ -217,7 +217,7 @@ function closeCustomAlert() {
 }
 
 // ==========================================
-// 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS ROTATOR
+// 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS ROTATOR (SMOOTH)
 // ==========================================
 const fadeTexts = [
   "📦 SISTEM MANAJEMEN GUDANG ONLINE",
@@ -237,13 +237,16 @@ function initTextFadeRotator() {
   textEl.innerText = fadeTexts[fadeIndex];
 
   setInterval(() => {
+    // Tahap 1: Efek pudar perlahan (Fade Out)
     textEl.style.opacity = 0;
 
+    // Tahap 2: Tunggu 800ms (sinkron dengan CSS), lalu ganti teks dan munculkan kembali
     setTimeout(() => {
       fadeIndex = (fadeIndex + 1) % fadeTexts.length;
       textEl.innerText = fadeTexts[fadeIndex];
       textEl.style.opacity = 1;
-    }, 500);
+    }, 800); // Disesuaikan dengan durasi transisi CSS
 
-  }, 3500);
+  }, 5000); // Teks tampil anteng dan dibaca lebih santai selama 5 detik sebelum berganti
 }
+
