@@ -93,13 +93,13 @@
         };
     }
 
-    const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 1500 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 1500 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 1500 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 1500 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 1000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 1000 }
+        const bootSteps = [
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 }, // 5 detik (Awal agak lama)
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 }, // 4 detik
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 }, // 5 detik
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 }, // 5 detik
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 }, // 4 detik
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 } // 6 detik (Akhir menahan agak lama)
     ];
 
     function startSystemInitialization() {
