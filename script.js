@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Jalankan rotator teks
+  // Jalankan rotator teks secara aman
   initTextFadeRotator();
 });
 
@@ -225,7 +225,7 @@ const fadeTexts = [
   "⚡ Fitur Auto-Expand Baris & Konversi TikTok Aktif",
   "⚡ Pemrosesan & Sinkronisasi Transaksi Super Cepat",
   "🔥 Operasional Gudang Siap Berjalan Maksimal!",
-  "💻 Database Cloud Teroptimasi & Aman"
+  "💻 Database Cloud Teroptimasi & Aman",
 ];
 
 let fadeIndex = 0;
