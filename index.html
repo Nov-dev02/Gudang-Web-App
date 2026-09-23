@@ -229,19 +229,19 @@
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
     
-  <!-- ENTERPRISE STATUS BAR -->
-    <div class="enterprise-status-bar">
-      <div class="status-group">
-        <span class="status-badge active">🟢 GUDANG NUHSANTARA <span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; font-weight: 600;">v1.0.0</span></span>
-        <span>•</span>
-        <span>Database Sync: <span id="net-status-text" style="color: #22c55e; font-weight: 600;">Online</span></span>
-        <span>•</span>
-        <span style="color: #94a3b8;">Sinkron Terakhir: <span id="last-sync-text" style="color: #e2e8f0; font-weight: 500;">Belum ada</span></span>
+ <!-- ENTERPRISE STATUS BAR -->
+    <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px;">
+      <div class="status-group" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span class="status-badge active" style="white-space: nowrap;">🟢 GUDANG NUHSANTARA <span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 10.5px; margin-left: 4px; font-weight: 600;">v1.0.0</span></span>
+        <span style="color: #64748b;">•</span>
+        <span style="white-space: nowrap;">Sync: <span id="net-status-text" style="color: #22c55e; font-weight: 600;">Online</span></span>
+        <span style="color: #64748b;">•</span>
+        <span style="color: #94a3b8; white-space: nowrap;">Sinkron Terakhir: <span id="last-sync-text" style="color: #e2e8f0; font-weight: 500;">Belum ada</span></span>
       </div>
-      <!-- Bagian jam & operator di sebelah kanan (tetap seperti biasa) -->
-      <div class="status-group">
+      <!-- Bagian jam & operator di sebelah kanan -->
+      <div class="status-group" style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
         <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;">00:00:00 WIB</span>
-        <span>•</span>
+        <span style="color: #64748b;">•</span>
         <span id="operator-display" style="color: #38bdf8; font-weight: 600;">Operator: IRGI</span>
       </div>
     </div>
