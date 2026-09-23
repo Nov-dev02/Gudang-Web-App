@@ -12,21 +12,24 @@ function updateRowCounter() {
   rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
 }
 
-// Daftarkan event listener setelah DOM siap agar elemen terdeteksi sempurna
-document.addEventListener('DOMContentLoaded', () => {
+// Inisialisasi event listener dengan aman (menangani kondisi DOM yang sudah siap)
+function initAppListeners() {
   const textarea = document.getElementById('shopeeData');
   if (textarea) {
     textarea.addEventListener('input', updateRowCounter);
     textarea.addEventListener('keyup', updateRowCounter);
     textarea.addEventListener('paste', () => {
-      // Beri jeda sepersekian detik agar teks hasil paste di HP selesai dimuat
       setTimeout(updateRowCounter, 100);
     });
   }
-  
-  // Jalankan rotator teks secara aman
-  initTextFadeRotator();
-});
+}
+
+// Cek status DOM agar event listener langsung terpasang tanpa menunggu DOMContentLoaded yang sudah lewat
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAppListeners);
+} else {
+  initAppListeners();
+}
 
 async function processData() {
   const textarea = document.getElementById('shopeeData');
@@ -229,18 +232,19 @@ const fadeTexts = [
 ];
 
 let fadeIndex = 0;
+let rotatorInterval = null;
 
 function initTextFadeRotator() {
   const textEl = document.getElementById('rotating-text');
   if (!textEl) return;
 
+  if (rotatorInterval) clearInterval(rotatorInterval);
+
   textEl.innerText = fadeTexts[fadeIndex];
 
-  setInterval(() => {
-    // Tahap 1: Efek pudar perlahan (Fade Out)
+  rotatorInterval = setInterval(() => {
     textEl.style.opacity = 0;
 
-    // Tahap 2: Tunggu 800ms (sinkron dengan CSS), lalu ganti teks dan munculkan kembali
     setTimeout(() => {
       fadeIndex = (fadeIndex + 1) % fadeTexts.length;
       textEl.innerText = fadeTexts[fadeIndex];
