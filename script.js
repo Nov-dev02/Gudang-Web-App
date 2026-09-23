@@ -93,7 +93,15 @@ async function processData() {
           logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
           logDiv.scrollTop = logDiv.scrollHeight;
         }
+        const now = new Date();
+        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+        const formattedSyncTime = `${now.toLocaleDateString('id-ID', dateOptions)} - ${now.toLocaleTimeString('id-ID', timeOptions)} WIB`;
         
+        // Simpan ke localStorage agar aman saat halaman di-refresh
+        localStorage.setItem('gudang_last_sync', formattedSyncTime);
+        updateLastSyncDisplay(formattedSyncTime);
+        // -------------------------------------------------------------
         // TAHAP 2: Pecah pesan dari server dan cetak SATU PER SATU secara bertahap
         const messageLines = res.message.split('\n');
         for (let i = 0; i < messageLines.length; i++) {
@@ -374,3 +382,35 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+// ==========================================
+// ⏱️ MANAJEMEN WAKTU SINKRONISASI TERAKHIR (LAST SYNC)
+// ==========================================
+
+// Fungsi untuk memperbarui tampilan teks Last Sync
+function updateLastSyncDisplay(timeString) {
+  const lastSyncEl = document.getElementById('last-sync-text');
+  if (lastSyncEl) {
+    if (timeString) {
+      lastSyncEl.innerText = timeString;
+      lastSyncEl.style.color = "#38bdf8"; // Biru cerah penanda ada data
+    } else {
+      lastSyncEl.innerText = "Belum ada";
+      lastSyncEl.style.color = "#e2e8f0";
+    }
+  }
+}
+
+// Inisialisasi pengecekan memori lokal dengan aman
+function initLastSync() {
+  const savedLastSync = localStorage.getItem('gudang_last_sync');
+  if (savedLastSync) {
+    updateLastSyncDisplay(savedLastSync);
+  }
+}
+
+// Cek status DOM agar langsung berjalan tanpa takut event DOMContentLoaded terlewat
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initLastSync);
+} else {
+  initLastSync();
+}
