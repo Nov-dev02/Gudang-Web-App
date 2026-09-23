@@ -2,14 +2,50 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrO
 
 let currentDownloadUrl = "";
 
-// Fungsi untuk menghitung jumlah baris data dengan aman
+// Fungsi untuk menghitung jumlah baris & mendeteksi jenis transaksi secara otomatis berdasarkan pola
 function updateRowCounter() {
   const textarea = document.getElementById('shopeeData');
   const rowCounter = document.getElementById('rowCounter');
   if (!textarea || !rowCounter) return;
 
-  let lines = textarea.value.split('\n').filter(line => line.trim() !== '');
-  rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
+  let text = textarea.value;
+  let lines = text.split('\n').filter(line => line.trim() !== '');
+  let totalLines = lines.length;
+
+  if (totalLines === 0) {
+    rowCounter.innerText = `📊 0 baris data`;
+    return;
+  }
+
+  let shopeeCount = 0;
+  let tiktokCount = 0;
+
+  lines.forEach(rawLine => {
+    let line = rawLine.trim();
+    let upperLine = line.toUpperCase();
+
+    // Pola Shopee: 14 karakter, diawali 6 digit angka (tanggal) + 8 karakter alfanumerik (Contoh: 260922N6CJPBGB)
+    const shopeePattern = /^\d{6}[A-Z0-9]{8}$/i;
+
+    // Pola TikTok Resi: Diawali prefiks kurir seperti JY, TG, GTL, atau mengandung kata tiktok
+    const isTiktok = upperLine.startsWith('JY') || 
+                     upperLine.startsWith('TG') || 
+                     upperLine.startsWith('GTL') || 
+                     upperLine.includes('TIKTOK');
+
+    if (shopeePattern.test(line)) {
+      shopeeCount++;
+    } else if (isTiktok) {
+      tiktokCount++;
+    }
+  });
+
+  // Jika ada data yang terdeteksi polanya, tampilkan rincian di badge
+  if (shopeeCount > 0 || tiktokCount > 0) {
+    rowCounter.innerHTML = `📊 ${totalLines.toLocaleString()} baris <span style="font-size: 10px; opacity: 0.85; margin-left: 4px; font-weight: normal;">(Shopee: ${shopeeCount} | TikTok: ${tiktokCount})</span>`;
+  } else {
+    rowCounter.innerText = `📊 ${totalLines.toLocaleString()} baris data`;
+  }
 }
 
 // Inisialisasi event listener dengan aman (menangani kondisi DOM yang sudah siap)
