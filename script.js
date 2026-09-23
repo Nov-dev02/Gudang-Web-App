@@ -1,18 +1,40 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrOcgEW_E7SmFMjs8MgJv6SO4lHwkghDNeZXx4gB_7zHJP-U2WN/exec";
 
-const textarea = document.getElementById('shopeeData');
-const rowCounter = document.getElementById('rowCounter');
 let currentDownloadUrl = "";
 
+// Fungsi untuk menghitung jumlah baris data dengan aman
 function updateRowCounter() {
+  const textarea = document.getElementById('shopeeData');
+  const rowCounter = document.getElementById('rowCounter');
+  if (!textarea || !rowCounter) return;
+
   let lines = textarea.value.split('\n').filter(line => line.trim() !== '');
   rowCounter.innerText = `📊 ${lines.length.toLocaleString()} baris data`;
 }
 
-textarea.addEventListener('input', updateRowCounter);
+// Daftarkan event listener setelah DOM siap agar elemen terdeteksi sempurna
+document.addEventListener('DOMContentLoaded', () => {
+  const textarea = document.getElementById('shopeeData');
+  if (textarea) {
+    textarea.addEventListener('input', updateRowCounter);
+    textarea.addEventListener('keyup', updateRowCounter);
+    textarea.addEventListener('paste', () => {
+      // Beri jeda sepersekian detik agar teks hasil paste di HP selesai dimuat
+      setTimeout(updateRowCounter, 100);
+    });
+  }
+  
+  // Jalankan rotator teks
+  initTextFadeRotator();
+});
 
 async function processData() {
+  const textarea = document.getElementById('shopeeData');
+  const rowCounter = document.getElementById('rowCounter');
+  
+  if (!textarea) return;
   const shopeeData = textarea.value.trim();
+  
   const btn = document.getElementById('submitBtn');
   const btnSpinner = document.getElementById('btnSpinner');
   const btnText = document.getElementById('btnText');
@@ -28,25 +50,30 @@ async function processData() {
     return;
   }
   
-  btn.disabled = true;
-  btnSpinner.style.display = 'block';
-  btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
+  if (btn) btn.disabled = true;
+  if (btnSpinner) btnSpinner.style.display = 'block';
+  if (btnText) btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
   
   // TAHAP 1: Log awal koneksi
-  logDiv.style.display = 'block';
-  logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive...';
-  logDiv.scrollTop = logDiv.scrollHeight;
+  if (logDiv) {
+    logDiv.style.display = 'block';
+    logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive...';
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
   
   await new Promise(resolve => setTimeout(resolve, 400));
   
-  logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔍 Memvalidasi format data Shopee & TikTok Shop...';
-  logDiv.scrollTop = logDiv.scrollHeight;
+  if (logDiv) {
+    logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔍 Memvalidasi format data Shopee & TikTok Shop...';
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
   
   try {
-    // Memulai request ke server backend
     await new Promise(resolve => setTimeout(resolve, 500));
-    logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database...';
-    logDiv.scrollTop = logDiv.scrollHeight;
+    if (logDiv) {
+      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database...';
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
 
     const response = await fetch(WEB_APP_URL, {
       method: 'POST',
@@ -59,73 +86,88 @@ async function processData() {
       const res = JSON.parse(result);
       if (res.status === 'success') {
         await new Promise(resolve => setTimeout(resolve, 300));
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
-        logDiv.scrollTop = logDiv.scrollHeight;
+        if (logDiv) {
+          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
+          logDiv.scrollTop = logDiv.scrollHeight;
+        }
         
         // TAHAP 2: Pecah pesan dari server dan cetak SATU PER SATU secara bertahap
         const messageLines = res.message.split('\n');
         for (let i = 0; i < messageLines.length; i++) {
           if (messageLines[i].trim() !== '') {
-            await new Promise(resolve => setTimeout(resolve, 250)); // Jeda 250ms per baris agar terlihat prosesnya
-            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️ ' + messageLines[i];
-            logDiv.scrollTop = logDiv.scrollHeight;
+            await new Promise(resolve => setTimeout(resolve, 250));
+            if (logDiv) {
+              logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️ ' + messageLines[i];
+              logDiv.scrollTop = logDiv.scrollHeight;
+            }
           }
         }
         
         // TAHAP 3: Baris penutup log
         await new Promise(resolve => setTimeout(resolve, 400));
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
-        logDiv.scrollTop = logDiv.scrollHeight;
+        if (logDiv) {
+          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
+          logDiv.scrollTop = logDiv.scrollHeight;
+        }
         
         textarea.value = '';
-        rowCounter.innerText = '📊 0 baris data';
+        if (rowCounter) rowCounter.innerText = '📊 0 baris data';
         
         currentDownloadUrl = res.downloadUrl || "";
         
-        // Jeda 1.2 detik setelah log selesai ditulis agar kamu sempat membaca terminal sebelum modal muncul
         setTimeout(() => {
           showCustomAlert(res.message, currentDownloadUrl);
         }, 1200);
 
       } else {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
-        logDiv.scrollTop = logDiv.scrollHeight;
+        if (logDiv) {
+          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
+          logDiv.scrollTop = logDiv.scrollHeight;
+        }
         setTimeout(() => {
           showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
         }, 800);
       }
     } catch(e) {
-      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
-      logDiv.scrollTop = logDiv.scrollHeight;
+      if (logDiv) {
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
     }
   } catch (error) {
-    logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
-    logDiv.scrollTop = logDiv.scrollHeight;
+    if (logDiv) {
+      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
   }
   
-  btn.disabled = false;
-  btnSpinner.style.display = 'none';
-  btnText.innerText = '⚡ Tarik & Proses Data Sekarang';
+  if (btn) btn.disabled = false;
+  if (btnSpinner) btnSpinner.style.display = 'none';
+  if (btnText) btnText.innerText = '⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)';
 }
 
 function showCustomAlert(message, downloadUrl) {
-  document.getElementById('customAlertMessage').innerText = message;
+  const msgEl = document.getElementById('customAlertMessage');
+  if (msgEl) msgEl.innerText = message;
+  
   const downloadBtn = document.getElementById('downloadBtn');
   const progressBar = document.getElementById('downloadProgressBar');
   const downloadBtnText = document.getElementById('downloadBtnText');
   
-  // Reset state tombol download
-  progressBar.style.width = '0%';
-  downloadBtnText.innerText = '📥 Download Laporan Excel';
-  downloadBtn.disabled = false;
+  if (progressBar) progressBar.style.width = '0%';
+  if (downloadBtnText) downloadBtnText.innerText = '📥 Download Laporan Excel';
+  if (downloadBtn) downloadBtn.disabled = false;
   
-  if (downloadUrl) {
-    downloadBtn.style.display = 'flex';
-  } else {
-    downloadBtn.style.display = 'none';
+  if (downloadBtn) {
+    if (downloadUrl) {
+      downloadBtn.style.display = 'flex';
+    } else {
+      downloadBtn.style.display = 'none';
+    }
   }
   
-  document.getElementById('customAlertModal').style.display = 'flex';
+  const modal = document.getElementById('customAlertModal');
+  if (modal) modal.style.display = 'flex';
 }
 
 function downloadExcelWithProgress() {
@@ -139,27 +181,30 @@ function downloadExcelWithProgress() {
   const progressBar = document.getElementById('downloadProgressBar');
   const downloadBtnText = document.getElementById('downloadBtnText');
 
-  // Matikan interaksi sementara proses berjalan
-  downloadBtn.disabled = true;
-  closeModalBtn.style.opacity = '0.5';
-  closeModalBtn.style.pointerEvents = 'none';
+  if (downloadBtn) downloadBtn.disabled = true;
+  if (closeModalBtn) {
+    closeModalBtn.style.opacity = '0.5';
+    closeModalBtn.style.pointerEvents = 'none';
+  }
 
   let progress = 0;
   
   const interval = setInterval(() => {
     progress += 2;
     if (progress <= 100) {
-      progressBar.style.width = progress + '%';
-      downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
+      if (progressBar) progressBar.style.width = progress + '%';
+      if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
     } else {
       clearInterval(interval);
-      downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
       
       window.open(currentDownloadUrl, '_blank');
 
       setTimeout(() => {
-        closeModalBtn.style.opacity = '1';
-        closeModalBtn.style.pointerEvents = 'auto';
+        if (closeModalBtn) {
+          closeModalBtn.style.opacity = '1';
+          closeModalBtn.style.pointerEvents = 'auto';
+        }
         closeCustomAlert();
       }, 600);
     }
@@ -167,7 +212,8 @@ function downloadExcelWithProgress() {
 }
 
 function closeCustomAlert() {
-  document.getElementById('customAlertModal').style.display = 'none';
+  const modal = document.getElementById('customAlertModal');
+  if (modal) modal.style.display = 'none';
 }
 
 // ==========================================
@@ -188,24 +234,16 @@ function initTextFadeRotator() {
   const textEl = document.getElementById('rotating-text');
   if (!textEl) return;
 
-  // Set teks awal pertama kali
   textEl.innerText = fadeTexts[fadeIndex];
 
   setInterval(() => {
-    // 1. Efek Fade Out (redupkan teks)
     textEl.style.opacity = 0;
 
     setTimeout(() => {
-      // 2. Ganti teks ke index berikutnya secara berulang (looping)
       fadeIndex = (fadeIndex + 1) % fadeTexts.length;
       textEl.innerText = fadeTexts[fadeIndex];
-
-      // 3. Efek Fade In (munculkan kembali teksnya)
       textEl.style.opacity = 1;
-    }, 500); // Waktu jeda menyamakan durasi transition di CSS (0.5 detik)
+    }, 500);
 
-  }, 3500); // Durasi teks tampil di layar sebelum berganti berikutnya (3.5 detik)
+  }, 3500);
 }
-
-// Jalankan fungsi saat halaman selesai dimuat
-document.addEventListener("DOMContentLoaded", initTextFadeRotator);
