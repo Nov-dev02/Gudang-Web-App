@@ -254,8 +254,91 @@ function initTextFadeRotator() {
   }, 5000); 
 }
 // ==========================================
-// 🌐 MONITORING STATUS JARINGAN (DATABASE SYNC)
+// 🌐 MONITORING STATUS JARINGAN & TOAST NOTIFIKASI ESTETIK
 // ==========================================
+
+// Fungsi untuk menampilkan Toast Notifikasi Modern (Menggantikan alert bawaan browser)
+function showToast(message, type = "warning") {
+  let toastContainer = document.getElementById('custom-toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'custom-toast-container';
+    toastContainer.style.cssText = `
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    `;
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement('div');
+  
+  let bgColor = '#1e293b';
+  let borderColor = '#334155';
+  let icon = '⚠️';
+  
+  if (type === 'error') {
+    bgColor = '#7f1d1d';
+    borderColor = '#991b1b';
+    icon = '❌';
+  } else if (type === 'success') {
+    bgColor = '#065f46';
+    borderColor = '#047857';
+    icon = '✅';
+  } else if (type === 'warning') {
+    bgColor = '#78350f';
+    borderColor = '#92400e';
+    icon = '⚠️';
+  }
+
+  toast.style.cssText = `
+    background: ${bgColor};
+    border: 1px solid ${borderColor};
+    color: #f8fafc;
+    padding: 14px 18px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 420px;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  `;
+  
+  toast.innerHTML = `
+    <span style="font-size: 18px; flex-shrink: 0;">${icon}</span>
+    <div style="flex: 1; line-height: 1.4; word-break: break-word;">${message}</div>
+  `;
+  
+  toastContainer.appendChild(toast);
+
+  // Efek muncul halus
+  setTimeout(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0) scale(1)';
+  }, 20);
+
+  // Hilangkan otomatis setelah 4.5 detik
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-15px) scale(0.98)';
+    setTimeout(() => {
+      toast.remove();
+    }, 350);
+  }, 4500);
+}
+
 function updateNetworkStatus() {
   const netStatusEl = document.getElementById('net-status-text');
   
@@ -264,13 +347,13 @@ function updateNetworkStatus() {
       netStatusEl.innerText = "Online";
       netStatusEl.style.color = "#22c55e"; // Hijau
     }
-    // Opsional: munculkan notifikasi kecil (toast) jika diperlukan
+    showToast("Koneksi internet kembali terhubung! Database siap disinkronkan.", "success");
   } else {
     if (netStatusEl) {
       netStatusEl.innerText = "Offline (Terputus)";
       netStatusEl.style.color = "#ef4444"; // Merah
     }
-    alert("⚠️ PERHATIAN: Koneksi internet terputus! Sinkronisasi database tertunda.");
+    showToast("PERHATIAN: Koneksi internet terputus! Sinkronisasi database tertunda.", "warning");
   }
 }
 
