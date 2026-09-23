@@ -63,8 +63,6 @@ async function processData() {
     showToast("⚠️ Peringatan: Format data terlihat tidak valid. Pastikan Anda mempaste laporan resmi Shopee/TikTok.", "warning");
   }
   // ==========================================
-
-  const btn = document.getElementById('submitBtn');
   
   if (WEB_APP_URL.includes("MASUKKAN_URL")) {
     alert('Harap isi URL Web App Apps Script di dalam file script.js terlebih dahulu!');
@@ -119,7 +117,7 @@ async function processData() {
         // Simpan ke localStorage agar aman saat halaman di-refresh
         localStorage.setItem('gudang_last_sync', formattedSyncTime);
         updateLastSyncDisplay(formattedSyncTime);
-        // -------------------------------------------------------------
+        
         // TAHAP 2: Pecah pesan dari server dan cetak SATU PER SATU secara bertahap
         const messageLines = res.message.split('\n');
         for (let i = 0; i < messageLines.length; i++) {
@@ -279,11 +277,10 @@ function initTextFadeRotator() {
 
   }, 5000); 
 }
+
 // ==========================================
 // 🌐 MONITORING STATUS JARINGAN & TOAST NOTIFIKASI ESTETIK
 // ==========================================
-
-// Fungsi untuk menampilkan Toast Notifikasi Modern (Menggantikan alert bawaan browser)
 function showToast(message, type = "warning") {
   let toastContainer = document.getElementById('custom-toast-container');
   if (!toastContainer) {
@@ -349,13 +346,11 @@ function showToast(message, type = "warning") {
   
   toastContainer.appendChild(toast);
 
-  // Efek muncul halus
   setTimeout(() => {
     toast.style.opacity = '1';
     toast.style.transform = 'translateY(0) scale(1)';
   }, 20);
 
-  // Hilangkan otomatis setelah 4.5 detik
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(-15px) scale(0.98)';
@@ -371,23 +366,21 @@ function updateNetworkStatus() {
   if (navigator.onLine) {
     if (netStatusEl) {
       netStatusEl.innerText = "Online";
-      netStatusEl.style.color = "#22c55e"; // Hijau
+      netStatusEl.style.color = "#22c55e";
     }
     showToast("Koneksi internet kembali terhubung! Database siap disinkronkan.", "success");
   } else {
     if (netStatusEl) {
       netStatusEl.innerText = "Offline (Terputus)";
-      netStatusEl.style.color = "#ef4444"; // Merah
+      netStatusEl.style.color = "#ef4444";
     }
     showToast("PERHATIAN: Koneksi internet terputus! Sinkronisasi database tertunda.", "warning");
   }
 }
 
-// Daftarkan event listener untuk deteksi online/offline secara real-time
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
 
-// Jalankan pengecekan pertama kali saat halaman dimuat
 window.addEventListener('DOMContentLoaded', () => {
   const netStatusEl = document.getElementById('net-status-text');
   if (netStatusEl) {
@@ -400,17 +393,16 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
 // ==========================================
 // ⏱️ MANAJEMEN WAKTU SINKRONISASI TERAKHIR (LAST SYNC)
 // ==========================================
-
-// Fungsi untuk memperbarui tampilan teks Last Sync
 function updateLastSyncDisplay(timeString) {
   const lastSyncEl = document.getElementById('last-sync-text');
   if (lastSyncEl) {
     if (timeString) {
       lastSyncEl.innerText = timeString;
-      lastSyncEl.style.color = "#38bdf8"; // Biru cerah penanda ada data
+      lastSyncEl.style.color = "#38bdf8";
     } else {
       lastSyncEl.innerText = "Belum ada";
       lastSyncEl.style.color = "#e2e8f0";
@@ -418,7 +410,6 @@ function updateLastSyncDisplay(timeString) {
   }
 }
 
-// Inisialisasi pengecekan memori lokal dengan aman
 function initLastSync() {
   const savedLastSync = localStorage.getItem('gudang_last_sync');
   if (savedLastSync) {
@@ -426,12 +417,12 @@ function initLastSync() {
   }
 }
 
-// Cek status DOM agar langsung berjalan tanpa takut event DOMContentLoaded terlewat
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initLastSync);
 } else {
   initLastSync();
 }
+
 // ==========================================
 // 📖 KONTROL MODAL PANDUAN FORMAT
 // ==========================================
