@@ -261,6 +261,269 @@
     };
   </script>
 
+  <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Web App Otomasi Gudang</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f172a'/><stop offset='100%25' stop-color='%231e293b'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='url(%23bg)'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='20' fill='%2338bdf8'>NM</text></svg>">
+  
+  <!-- Link ke file CSS Eksternal -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- ================= LAYAR BOOTING / SPLASH SCREEN INTERAKTIF ================= -->
+  <div id="boot-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #070b14; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;">
+    <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(56, 189, 248, 0.15); max-width: 420px; width: 85%; backdrop-filter: blur(12px); position: relative; overflow: hidden;">
+      
+      <!-- Efek Garis Scan Cyber -->
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); animation: scanline 3s linear infinite; opacity: 0.6;"></div>
+
+      <!-- Ikon Server Melayang & Glowing -->
+      <div style="font-size: 52px; margin-bottom: 14px; animation: floatServer 3s ease-in-out infinite;">💻</div>
+      
+      <h3 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 17px; font-weight: 700; letter-spacing: 1px;">GUDANG NUHSANTARA</h3>
+      <p style="color: #94a3b8; font-size: 12px; margin-bottom: 24px; font-family: monospace;">SECURE CLOUD KERNEL INITIALIZATION</p>
+      
+      <!-- Progress Bar Dinamis -->
+      <div style="width: 100%; background: rgba(255, 255, 255, 0.08); height: 6px; border-radius: 4px; overflow: hidden; margin-bottom: 18px; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div id="boot-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; box-shadow: 0 0 10px #38bdf8;"></div>
+      </div>
+
+      <!-- Indikator Status & Tombol Inisialisasi Manual -->
+      <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+        <div style="display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; box-sizing: border-box; justify-content: center;">
+          <span id="boot-icon" style="width: 9px; height: 9px; background-color: #facc15; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 8px #facc15; animation: blink-pulse 1.4s infinite;"></span>
+          <span id="boot-text" style="font-family: monospace; font-weight: 500;">Menunggu inisialisasi manual...</span>
+        </div>
+        
+        <button id="init-btn" onclick="startSystemInitialization()" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; border: 1px solid #38bdf8; padding: 12px 20px; font-size: 13.5px; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); font-family: monospace; letter-spacing: 0.5px; transition: all 0.2s;">
+          ⚡ [ CLICK TO INITIALIZE SYSTEM ]
+        </button>
+      </div>
+
+    </div>
+  </div>
+<script>
+  <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
+  // 1. Rumus utama penentu operator berdasarkan minggu berjalan
+    // 1. Rumus utama penentu operator berdasarkan minggu berjalan
+    function getActiveOperator() {
+      const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
+      const now = new Date();
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const daysPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+      const weekNumber = Math.floor(daysPassed / 7);
+      return operatorList[weekNumber % operatorList.length];
+    }
+
+    // 🌟 2. Rumus operator untuk MINGGU DEPAN
+    function getNextOperator() {
+      const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
+      const now = new Date();
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const daysPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+      const weekNumber = Math.floor(daysPassed / 7);
+      return operatorList[(weekNumber + 1) % operatorList.length];
+    }
+
+    // 3. Fungsi untuk menampilkan nama operator aktif & minggu depan ke layar
+    function setWeeklyOperator() {
+      const currentOperator = getActiveOperator();
+      const nextOperator = getNextOperator();
+      
+      // Tampilkan nama operator aktif di elemen UI
+      const operatorNameEl = document.getElementById('operatorName');
+      if (operatorNameEl) {
+        operatorNameEl.textContent = currentOperator;
+      }
+      
+      // Update inisial kotak avatar otomatis (misal: ER, NO, IR, DW)
+      const avatarBox = document.getElementById('operatorAvatarBox');
+      if (avatarBox) {
+        avatarBox.textContent = currentOperator.substring(0, 2);
+      }
+
+      // Tampilkan operator minggu depan di pojok kanan atas
+      const nextOperatorEl = document.getElementById('nextOperatorName');
+      if (nextOperatorEl) {
+        nextOperatorEl.textContent = nextOperator;
+      }
+    }
+
+    // 3. Fungsi suara sapaan otomatis memanggil rumus yang sama
+    function speakSystemReady() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            
+            // Otomatis mengambil nama operator yang SAMA PERSIS dengan di layar
+            const currentOperator = getActiveOperator(); 
+            const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'id-ID'; 
+            utterance.rate = 0.90;  
+            utterance.pitch = 0.5;  
+            
+            const voices = window.speechSynthesis.getVoices();
+            const maleVoice = voices.find(v => 
+                (v.lang.includes('id') || v.lang.includes('ID')) && 
+                (v.name.toLowerCase().includes('male') || 
+                 v.name.toLowerCase().includes('david') || 
+                 v.name.toLowerCase().includes('giri'))
+            );
+            
+            if (maleVoice) {
+                utterance.voice = maleVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    }
+
+        const bootSteps = [
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 }, // 5 detik (Awal agak lama)
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 }, // 4 detik
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 }, // 5 detik
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 }, // 5 detik
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 }, // 4 detik
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 } // 6 detik (Akhir menahan agak lama)
+    ];
+
+    function startSystemInitialization() {
+      const initBtn = document.getElementById("init-btn");
+      if (initBtn) {
+        initBtn.style.opacity = "0.5";
+        initBtn.style.pointerEvents = "none";
+        initBtn.innerText = "INITIALIZING KERNEL...";
+      }
+
+      if ('speechSynthesis' in window) {
+          window.speechSynthesis.getVoices();
+          const warmUp = new SpeechSynthesisUtterance('');
+          warmUp.volume = 0;
+          window.speechSynthesis.speak(warmUp);
+      }
+
+      runBootSequence();
+    }
+
+    function runBootSequence() {
+      const bootTextEl = document.getElementById("boot-text");
+      const bootIconEl = document.getElementById("boot-icon");
+      const bootScreenEl = document.getElementById("boot-screen");
+      const bootProgressFill = document.getElementById("boot-progress-fill");
+
+      if (!bootScreenEl) return;
+
+      let currentStep = 0;
+
+      function executeStep() {
+        if (currentStep < bootSteps.length) {
+          bootTextEl.innerText = bootSteps[currentStep].text;
+          bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
+          bootIconEl.style.boxShadow = `0 0 10px ${bootSteps[currentStep].color}`;
+          
+          if (bootProgressFill) {
+            bootProgressFill.style.width = bootSteps[currentStep].progress;
+          }
+
+          let stepDuration = bootSteps[currentStep].duration;
+          currentStep++;
+
+          if (currentStep < bootSteps.length) {
+            setTimeout(executeStep, stepDuration);
+          } else {
+            setTimeout(() => {
+              speakSystemReady(); 
+              bootScreenEl.style.opacity = "0";
+              bootScreenEl.style.visibility = "hidden";
+              showToast("Sistem siap beroperasi secara maksimal!", "🟢");
+              
+              // Mulai animasi teks tepat setelah layar booting tertutup
+              if (typeof initTextFadeRotator === 'function') {
+                initTextFadeRotator(); 
+              }
+            }, stepDuration);
+          }
+        }
+      }
+
+      executeStep();
+    }
+
+    function setWeeklyOperator() {
+      const currentOperator = getActiveOperator();
+      const operatorEl = document.getElementById('operator-display');
+      if (operatorEl) {
+        operatorEl.textContent = "Operator: " + currentOperator;
+      }
+    }
+
+    function updateClock() {
+      const clockEl = document.getElementById("live-clock");
+      if (clockEl) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+      }
+    }
+    
+    setInterval(updateClock, 1000);
+
+    function showToast(message, icon = "🚀") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+
+      const toast = document.createElement("div");
+      toast.className = "toast-item";
+      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          showToast("Shortcut terdeteksi: Menjalankan proses...", "⚡");
+          submitBtn.click();
+        }
+      }
+
+      if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+        e.preventDefault();
+        const textarea = document.getElementById('shopeeData');
+        if (textarea) {
+          textarea.value = '';
+          showToast("Area data berhasil dibersihkan.", "🧹");
+          if (typeof updateRowCounter === 'function') updateRowCounter();
+        }
+      }
+    });
+
+    window.onload = () => {
+      updateClock();
+      setWeeklyOperator();
+    };
+  </script>
+
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
     
@@ -343,6 +606,61 @@
     </div>
 
   </div>
+
+  <!-- CUSTOM ALERT MODAL -->
+  <div id="customAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); animation: popUpModal 0.2s ease-out;">
+      <div style="font-size: 36px; margin-bottom: 10px;">💡</div>
+      <p id="customAlertMessage" style="color: #f8fafc; font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; white-space: pre-line;"></p>
+      
+      <div id="modalButtons" style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="downloadBtn" onclick="downloadExcelWithProgress()" style="position: relative; overflow: hidden; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px;">
+          <div id="downloadProgressBar" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: rgba(255, 255, 255, 0.25); border-radius: 10px; transition: width 0.05s linear; z-index: 1;"></div>
+          <span id="downloadBtnText" style="position: relative; z-index: 2;">📥 Download Laporan Excel</span>
+        </button>
+        <button id="closeModalBtn" onclick="closeCustomAlert()" style="background: #334155; color: #cbd5e1; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;">
+          Tutup Saja
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Link ke file JavaScript Eksternal -->
+  <script src="script.js"></script>
+  <!-- GUIDE MODAL / PANDUAN FORMAT -->
+  <div id="guideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
+      <h3 style="color: #38bdf8; margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">📖 Panduan Format Data</h3>
+      <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin-bottom: 16px;">
+        Pastikan data yang di-paste adalah laporan unduhan asli dari <b>Shopee</b> atau <b>TikTok Shop</b>.<br><br>
+        • Salin seluruh baris dari google sheet transaksi juni sheet All.<br>
+        • Pastikan tidak ada teks catatan acak di dalam kotak input.<br>
+        • Gunakan shortcut <code style="background:#0f172a; padding:2px 6px; border-radius:4px; color:#38bdf8;">Ctrl + Shift + C</code> untuk menghapus teks dengan cepat.
+      </p>
+      <button onclick="closeGuideModal()" style="background: #334155; color: #cbd5e1; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;">Mengerti / Tutup</button>
+    </div>
+  </div>
+    <!-- Modal Login / Verifikasi Operator Shift Gudang -->
+<div id="loginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.3s ease;">
+  <div style="background: #1e293b; border: 1px solid rgba(56, 189, 248, 0.3); padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden;">
+    
+    <!-- Animasi Alert Sukses di dalam Modal (Turun mulus dari atas) -->
+    <div id="loginAlertBox" style="position: absolute; top: -50px; left: 0; width: 100%; background: #22c55e; color: #fff; padding: 10px; font-size: 13px; font-weight: 600; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+      ✨ Verifikasi Berhasil, Selamat Bertugas!
+    </div>
+
+    <div style="font-size: 28px; margin-bottom: 10px;">🔒</div>
+    <h3 style="color: #f8fafc; margin-bottom: 8px; font-size: 18px;">Verifikasi Operator Shift</h3>
+    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 20px;">Masukkan Nama atau ID Karyawan sesuai jadwal rotasi minggu ini.</p>
+    
+    <input type="text" id="inputOperatorKey" placeholder="Contoh: IRGI atau GND-001" style="width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; font-size: 14px; margin-bottom: 15px; text-align: center; outline: none;" />
+    
+    <button onclick="verifyOperatorLogin()" style="width: 100%; background: #38bdf8; color: #0f172a; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;">Masuk & Mulai Shift 🚀</button>
+    <p id="loginErrorMsg" style="color: #f87171; font-size: 11px; margin-top: 10px; display: none;"></p>
+  </div>
+</div>
+</body>
+</html>
 
   <!-- CUSTOM ALERT MODAL -->
   <div id="customAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
