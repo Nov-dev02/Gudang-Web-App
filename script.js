@@ -651,7 +651,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) modal.style.display = 'flex';
   }
 });
-// Agar langsung terisi otomatis saat halaman dibuka
-    document.addEventListener("DOMContentLoaded", function() {
+// Langsung eksekusi karena posisi skrip ada di bawah
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setWeeklyOperator);
+    } else {
       setWeeklyOperator();
-    });
+    }
