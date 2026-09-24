@@ -9,7 +9,7 @@ const operatorsProfile = {
   "IRGI": { 
     id: "GDN-001", 
     name: "IRGI", 
-    photo: "" // Kosong = otomatis pakai inisial huruf "IR"
+    photo: "img/IRGI.jpg" // Kosong = otomatis pakai inisial huruf "IR"
   },
   "NOVAN": { 
     id: "GDN-002", 
