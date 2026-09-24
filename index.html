@@ -45,229 +45,219 @@
 
     </div>
   </div>
-<script>
+
   <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
+<script>
   // 1. Rumus utama penentu operator berdasarkan minggu berjalan
-    // 1. Rumus utama penentu operator berdasarkan minggu berjalan
-    function getActiveOperator() {
-      const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
-      const now = new Date();
-      const startOfYear = new Date(now.getFullYear(), 0, 1);
-      const daysPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-      const weekNumber = Math.floor(daysPassed / 7);
-      return operatorList[weekNumber % operatorList.length];
+  function getActiveOperator() {
+    const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const daysPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+    const weekNumber = Math.floor(daysPassed / 7);
+    return operatorList[weekNumber % operatorList.length];
+  }
+
+  // 2. Rumus operator untuk MINGGU DEPAN
+  function getNextOperator() {
+    const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const daysPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+    const weekNumber = Math.floor(daysPassed / 7);
+    return operatorList[(weekNumber + 1) % operatorList.length];
+  }
+
+  // 3. Fungsi untuk menampilkan nama operator aktif & minggu depan ke layar
+  function setWeeklyOperator() {
+    const currentOperator = getActiveOperator();
+    const nextOperator = getNextOperator();
+    
+    // Tampilkan nama operator aktif di elemen UI
+    const operatorNameEl = document.getElementById('operatorName');
+    if (operatorNameEl) {
+      operatorNameEl.textContent = currentOperator;
+    }
+    
+    // Update inisial kotak avatar otomatis
+    const avatarBox = document.getElementById('operatorAvatarBox');
+    if (avatarBox) {
+      avatarBox.textContent = currentOperator.substring(0, 2);
     }
 
-    // 🌟 2. Rumus operator untuk MINGGU DEPAN
-    function getNextOperator() {
-      const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
-      const now = new Date();
-      const startOfYear = new Date(now.getFullYear(), 0, 1);
-      const daysPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-      const weekNumber = Math.floor(daysPassed / 7);
-      return operatorList[(weekNumber + 1) % operatorList.length];
+    // Tampilkan operator minggu depan di pojok kanan atas
+    const nextOperatorEl = document.getElementById('nextOperatorName');
+    if (nextOperatorEl) {
+      nextOperatorEl.textContent = nextOperator;
     }
+  }
 
-    // 3. Fungsi untuk menampilkan nama operator aktif & minggu depan ke layar
-    function setWeeklyOperator() {
-      const currentOperator = getActiveOperator();
-      const nextOperator = getNextOperator();
-      
-      // Tampilkan nama operator aktif di elemen UI
-      const operatorNameEl = document.getElementById('operatorName');
-      if (operatorNameEl) {
-        operatorNameEl.textContent = currentOperator;
+  // 4. Fungsi suara sapaan otomatis
+  function speakSystemReady() {
+      if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          
+          const currentOperator = getActiveOperator(); 
+          const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
+          
+          const utterance = new SpeechSynthesisUtterance(textToSpeak);
+          utterance.lang = 'id-ID'; 
+          utterance.rate = 0.90;  
+          utterance.pitch = 0.5;  
+          
+          const voices = window.speechSynthesis.getVoices();
+          const maleVoice = voices.find(v => 
+              (v.lang.includes('id') || v.lang.includes('ID')) && 
+              (v.name.toLowerCase().includes('male') || 
+               v.name.toLowerCase().includes('david') || 
+               v.name.toLowerCase().includes('giri'))
+          );
+          
+          if (maleVoice) {
+              utterance.voice = maleVoice;
+          }
+
+          window.speechSynthesis.speak(utterance);
       }
-      
-      // Update inisial kotak avatar otomatis (misal: ER, NO, IR, DW)
-      const avatarBox = document.getElementById('operatorAvatarBox');
-      if (avatarBox) {
-        avatarBox.textContent = currentOperator.substring(0, 2);
-      }
+  }
 
-      // Tampilkan operator minggu depan di pojok kanan atas
-      const nextOperatorEl = document.getElementById('nextOperatorName');
-      if (nextOperatorEl) {
-        nextOperatorEl.textContent = nextOperator;
-      }
-    }
+  if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+      };
+  }
 
-    // 3. Fungsi suara sapaan otomatis memanggil rumus yang sama
-    function speakSystemReady() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            
-            // Otomatis mengambil nama operator yang SAMA PERSIS dengan di layar
-            const currentOperator = getActiveOperator(); 
-            const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
-            
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'id-ID'; 
-            utterance.rate = 0.90;  
-            utterance.pitch = 0.5;  
-            
-            const voices = window.speechSynthesis.getVoices();
-            const maleVoice = voices.find(v => 
-                (v.lang.includes('id') || v.lang.includes('ID')) && 
-                (v.name.toLowerCase().includes('male') || 
-                 v.name.toLowerCase().includes('david') || 
-                 v.name.toLowerCase().includes('giri'))
-            );
-            
-            if (maleVoice) {
-                utterance.voice = maleVoice;
-            }
+  const bootSteps = [
+    { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 },
+    { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 },
+    { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 },
+    { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 },
+    { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
+    { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 }
+  ];
 
-            window.speechSynthesis.speak(utterance);
-        }
+  function startSystemInitialization() {
+    const initBtn = document.getElementById("init-btn");
+    if (initBtn) {
+      initBtn.style.opacity = "0.5";
+      initBtn.style.pointerEvents = "none";
+      initBtn.innerText = "INITIALIZING KERNEL...";
     }
 
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = () => {
-            window.speechSynthesis.getVoices();
-        };
+        window.speechSynthesis.getVoices();
+        const warmUp = new SpeechSynthesisUtterance('');
+        warmUp.volume = 0;
+        window.speechSynthesis.speak(warmUp);
     }
 
-        const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 }, // 5 detik (Awal agak lama)
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 }, // 4 detik
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 }, // 5 detik
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 }, // 5 detik
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 }, // 4 detik
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 } // 6 detik (Akhir menahan agak lama)
-    ];
+    runBootSequence();
+  }
 
-    function startSystemInitialization() {
-      const initBtn = document.getElementById("init-btn");
-      if (initBtn) {
-        initBtn.style.opacity = "0.5";
-        initBtn.style.pointerEvents = "none";
-        initBtn.innerText = "INITIALIZING KERNEL...";
-      }
+  function runBootSequence() {
+    const bootTextEl = document.getElementById("boot-text");
+    const bootIconEl = document.getElementById("boot-icon");
+    const bootScreenEl = document.getElementById("boot-screen");
+    const bootProgressFill = document.getElementById("boot-progress-fill");
 
-      if ('speechSynthesis' in window) {
-          window.speechSynthesis.getVoices();
-          const warmUp = new SpeechSynthesisUtterance('');
-          warmUp.volume = 0;
-          window.speechSynthesis.speak(warmUp);
-      }
+    if (!bootScreenEl) return;
 
-      runBootSequence();
-    }
+    let currentStep = 0;
 
-    function runBootSequence() {
-      const bootTextEl = document.getElementById("boot-text");
-      const bootIconEl = document.getElementById("boot-icon");
-      const bootScreenEl = document.getElementById("boot-screen");
-      const bootProgressFill = document.getElementById("boot-progress-fill");
+    function executeStep() {
+      if (currentStep < bootSteps.length) {
+        bootTextEl.innerText = bootSteps[currentStep].text;
+        bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
+        bootIconEl.style.boxShadow = `0 0 10px ${bootSteps[currentStep].color}`;
+        
+        if (bootProgressFill) {
+          bootProgressFill.style.width = bootSteps[currentStep].progress;
+        }
 
-      if (!bootScreenEl) return;
+        let stepDuration = bootSteps[currentStep].duration;
+        currentStep++;
 
-      let currentStep = 0;
-
-      function executeStep() {
         if (currentStep < bootSteps.length) {
-          bootTextEl.innerText = bootSteps[currentStep].text;
-          bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
-          bootIconEl.style.boxShadow = `0 0 10px ${bootSteps[currentStep].color}`;
-          
-          if (bootProgressFill) {
-            bootProgressFill.style.width = bootSteps[currentStep].progress;
-          }
-
-          let stepDuration = bootSteps[currentStep].duration;
-          currentStep++;
-
-          if (currentStep < bootSteps.length) {
-            setTimeout(executeStep, stepDuration);
-          } else {
-            setTimeout(() => {
-              speakSystemReady(); 
-              bootScreenEl.style.opacity = "0";
-              bootScreenEl.style.visibility = "hidden";
-              showToast("Sistem siap beroperasi secara maksimal!", "🟢");
-              
-              // 🌟 Kode ini untuk mengaktifkan kembali tombol Initialize setelah selesai
-              const initBtn = document.getElementById("init-btn");
-              if (initBtn) {
-                initBtn.style.opacity = "1";
-                initBtn.style.pointerEvents = "auto";
-                initBtn.innerText = "⚡ [ CLICK TO INITIALIZE SYSTEM ]";
-              }
-              
-              // Mulai animasi teks tepat setelah layar booting tertutup
-              if (typeof initTextFadeRotator === 'function') {
-                initTextFadeRotator(); 
-              }
-            }, stepDuration);
-          }
+          setTimeout(executeStep, stepDuration);
+        } else {
+          setTimeout(() => {
+            speakSystemReady(); 
+            bootScreenEl.style.opacity = "0";
+            bootScreenEl.style.visibility = "hidden";
+            showToast("Sistem siap beroperasi secara maksimal!", "🟢");
+            
+            // Aktifkan kembali tombol initialize jika dibutuhkan lagi
+            const initBtn = document.getElementById("init-btn");
+            if (initBtn) {
+              initBtn.style.opacity = "1";
+              initBtn.style.pointerEvents = "auto";
+              initBtn.innerText = "⚡ [ CLICK TO INITIALIZE SYSTEM ]";
+            }
+            
+            if (typeof initTextFadeRotator === 'function') {
+              initTextFadeRotator(); 
+            }
+          }, stepDuration);
         }
       }
-
-      executeStep();
     }
 
-    function setWeeklyOperator() {
-      const currentOperator = getActiveOperator();
-      const operatorEl = document.getElementById('operator-display');
-      if (operatorEl) {
-        operatorEl.textContent = "Operator: " + currentOperator;
+    executeStep();
+  }
+
+  function updateClock() {
+    const clockEl = document.getElementById("live-clock");
+    if (clockEl) {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+    }
+  }
+  
+  setInterval(updateClock, 1000);
+
+  function showToast(message, icon = "🚀") {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+
+    const toast = document.createElement("div");
+    toast.className = "toast-item";
+    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        showToast("Shortcut terdeteksi: Menjalankan proses...", "⚡");
+        submitBtn.click();
       }
     }
 
-    function updateClock() {
-      const clockEl = document.getElementById("live-clock");
-      if (clockEl) {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+    if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+      e.preventDefault();
+      const textarea = document.getElementById('shopeeData');
+      if (textarea) {
+        textarea.value = '';
+        showToast("Area data berhasil dibersihkan.", "🧹");
+        if (typeof updateRowCounter === 'function') updateRowCounter();
       }
     }
-    
-    setInterval(updateClock, 1000);
+  });
 
-    function showToast(message, icon = "🚀") {
-      const container = document.getElementById("toast-container");
-      if (!container) return;
-
-      const toast = document.createElement("div");
-      toast.className = "toast-item";
-      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-          showToast("Shortcut terdeteksi: Menjalankan proses...", "⚡");
-          submitBtn.click();
-        }
-      }
-
-      if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
-        e.preventDefault();
-        const textarea = document.getElementById('shopeeData');
-        if (textarea) {
-          textarea.value = '';
-          showToast("Area data berhasil dibersihkan.", "🧹");
-          if (typeof updateRowCounter === 'function') updateRowCounter();
-        }
-      }
-    });
-
-    window.onload = () => {
-      updateClock();
-      setWeeklyOperator();
-    };
-  </script>
+  window.onload = () => {
+    updateClock();
+    setWeeklyOperator();
+  };
+</script>
 
   <!DOCTYPE html>
 <html>
