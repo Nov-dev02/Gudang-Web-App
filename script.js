@@ -471,3 +471,26 @@ function closeGuideModal() {
   const modal = document.getElementById('guideModal');
   if (modal) modal.style.display = 'none';
 }
+// Fungsi otomatis mengambil data dari Clipboard komputer
+async function pasteFromClipboard() {
+  try {
+    // Membaca teks dari clipboard sistem
+    const text = await navigator.clipboard.readText();
+    const textarea = document.getElementById('shopeeData');
+    
+    if (textarea) {
+      textarea.value = text;
+      textarea.focus(); // Fokuskan kursor ke textarea
+      
+      // Jalankan fungsi hitung baris & deteksi otomatis yang sudah dibuat sebelumnya
+      if (typeof updateRowCounter === 'function') {
+        updateRowCounter();
+      }
+      
+      console.log("[SYSTEM] Berhasil menempelkan data dari clipboard.");
+    }
+  } catch (err) {
+    alert("Gagal membaca clipboard secara otomatis. Pastikan browser diizinkan mengakses clipboard atau gunakan shortcut manual (Ctrl + V).");
+    console.error("Clipboard error: ", err);
+  }
+}
