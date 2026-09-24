@@ -175,6 +175,9 @@ async function processData() {
         
         textarea.value = '';
         if (rowCounter) rowCounter.innerText = '📊 0 baris data';
+
+        playSuccessSound();
+    addCumulativeTotal(messageLines.length);
         
         currentDownloadUrl = res.downloadUrl || "";
         
@@ -494,3 +497,55 @@ async function pasteFromClipboard() {
     console.error("Clipboard error: ", err);
   }
 }
+// ==========================================
+// FITUR TAMBAHAN: AUDIO SUKSES & TOTAL AKUMULATOR
+// ==========================================
+
+// 1. Fungsi Suara Sukses (Web Audio API - Tanpa file MP3 eksternal)
+function playSuccessSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'sine';
+    // Nada dering chime naik (C5 ke G5)
+    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.1); // G5
+
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.3);
+  } catch (e) {
+    console.log("Audio not supported or restricted by browser policy.", e);
+  }
+}
+
+// 2. Fungsi Akumulator Total Keseluruhan (Nambah terus tanpa reset harian)
+function getCumulativeTotal() {
+  return parseInt(localStorage.getItem('gudang_total_alltime') || '0', 10);
+}
+
+function addCumulativeTotal(amount) {
+  let currentTotal = getCumulativeTotal();
+  let newTotal = currentTotal + amount;
+  localStorage.setItem('gudang_total_alltime', newTotal);
+  renderCumulativeCounter();
+}
+
+function renderCumulativeCounter() {
+  const badge = document.getElementById('dailyCounterBadge');
+  if (badge) {
+    badge.innerText = `📦 Total: ${getCumulativeTotal().toLocaleString()} paket`;
+  }
+}
+
+// Jalankan pengecekan counter saat halaman pertama kali dibuka
+document.addEventListener('DOMContentLoaded', () => {
+  renderCumulativeCounter();
+});
