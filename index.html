@@ -187,6 +187,14 @@
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
               
+              // 🌟 Kode ini untuk mengaktifkan kembali tombol Initialize setelah selesai
+              const initBtn = document.getElementById("init-btn");
+              if (initBtn) {
+                initBtn.style.opacity = "1";
+                initBtn.style.pointerEvents = "auto";
+                initBtn.innerText = "⚡ [ CLICK TO INITIALIZE SYSTEM ]";
+              }
+              
               // Mulai animasi teks tepat setelah layar booting tertutup
               if (typeof initTextFadeRotator === 'function') {
                 initTextFadeRotator(); 
