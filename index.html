@@ -392,6 +392,39 @@
       setWeeklyOperator();
     };
   </script>
+  <script>
+  // Tangkap elemen form login, input nama/ID, dan container login-nya
+  // (Sesuaikan id 'loginForm', 'operatorInput', dan 'loginModal' dengan kodingan aslimu)
+  const loginForm = document.getElementById('loginForm');
+  const operatorInput = document.getElementById('operatorInput');
+  const loginModal = document.getElementById('loginModal');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Mencegah halaman reload bawaan form
+      
+      const inputanUser = operatorInput.value.trim().toUpperCase(); // Ambil teks dan jadikan uppercase (misal: "IRGI")
+
+      // Cek apakah nama/ID tersebut ada di dalam daftar operatorsProfile
+      if (operatorsProfile[inputanUser]) {
+        // 1. Eksekusi fungsi profil yang sudah kita tes tadi supaya fotonya muncul
+        setOperatorProfile(inputanUser);
+
+        // 2. Tutup / sembunyikan halaman login agar masuk ke web utama
+        if (loginModal) {
+          loginModal.style.display = 'none';
+        }
+
+        // 3. Simpan sesi login di browser (opsional, biar tidak hilang saat refresh)
+        localStorage.setItem('activeOperator', inputanUser);
+        
+        console.log("Login Berhasil sebagai: " + inputanUser);
+      } else {
+        alert("Nama atau ID operator tidak ditemukan! Silakan cek kembali.");
+      }
+    });
+  }
+</script>
 
 </body>
 </html>
