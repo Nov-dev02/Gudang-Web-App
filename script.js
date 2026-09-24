@@ -651,9 +651,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) modal.style.display = 'flex';
   }
 });
-// Langsung eksekusi karena posisi skrip ada di bawah
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setWeeklyOperator);
-    } else {
-      setWeeklyOperator();
-    }
+
