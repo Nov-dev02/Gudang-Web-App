@@ -335,5 +335,24 @@
       <button onclick="closeGuideModal()" style="background: #334155; color: #cbd5e1; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;">Mengerti / Tutup</button>
     </div>
   </div>
+    <!-- Modal Login / Verifikasi Operator Shift Gudang -->
+<div id="loginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.3s ease;">
+  <div style="background: #1e293b; border: 1px solid rgba(56, 189, 248, 0.3); padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden;">
+    
+    <!-- Animasi Alert Sukses di dalam Modal (Turun mulus dari atas) -->
+    <div id="loginAlertBox" style="position: absolute; top: -50px; left: 0; width: 100%; background: #22c55e; color: #fff; padding: 10px; font-size: 13px; font-weight: 600; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+      ✨ Verifikasi Berhasil, Selamat Bertugas!
+    </div>
+
+    <div style="font-size: 28px; margin-bottom: 10px;">🔒</div>
+    <h3 style="color: #f8fafc; margin-bottom: 8px; font-size: 18px;">Verifikasi Operator Shift</h3>
+    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 20px;">Masukkan Nama atau ID Karyawan sesuai jadwal rotasi minggu ini.</p>
+    
+    <input type="text" id="inputOperatorKey" placeholder="Contoh: IRGI atau GND-001" style="width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; font-size: 14px; margin-bottom: 15px; text-align: center; outline: none;" />
+    
+    <button onclick="verifyOperatorLogin()" style="width: 100%; background: #38bdf8; color: #0f172a; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;">Masuk & Mulai Shift 🚀</button>
+    <p id="loginErrorMsg" style="color: #f87171; font-size: 11px; margin-top: 10px; display: none;"></p>
+  </div>
+</div>
 </body>
 </html>
