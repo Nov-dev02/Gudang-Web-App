@@ -93,13 +93,13 @@
         };
     }
 
-    const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 }
+        const bootSteps = [
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 }, // 5 detik (Awal agak lama)
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 }, // 4 detik
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 }, // 5 detik
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 }, // 5 detik
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 }, // 4 detik
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 } // 6 detik (Akhir menahan agak lama)
     ];
 
     function startSystemInitialization() {
@@ -152,6 +152,7 @@
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
               
+              // Mulai animasi teks tepat setelah layar booting tertutup
               if (typeof initTextFadeRotator === 'function') {
                 initTextFadeRotator(); 
               }
@@ -228,7 +229,7 @@
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
     
-    <!-- ENTERPRISE STATUS BAR -->
+ <!-- ENTERPRISE STATUS BAR -->
     <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px;">
       <div class="status-group" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span class="status-badge active" style="white-space: nowrap;">🟢 GUDANG NUHSANTARA <span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 10.5px; margin-left: 4px; font-weight: 600;">v1.1.0</span></span>
@@ -237,24 +238,22 @@
         <span style="color: #64748b;">•</span>
         <span style="color: #94a3b8; white-space: nowrap;">Sinkron Terakhir: <span id="last-sync-text" style="color: #e2e8f0; font-weight: 500;">Belum ada</span></span>
       </div>
-      
-      <!-- Bagian jam & operator di sebelah kanan -->
-      <div class="status-group" style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-        <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;"></span>
-        <span style="color: #64748b;">•</span>
-        
-        <!-- Profil Operator (Inisial + Nama + ID) -->
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); padding: 2px 8px; border-radius: 6px;">
-          <div id="operatorAvatarBox" style="width: 20px; height: 20px; border-radius: 4px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-weight: bold; font-size: 9px;">
-            --
-          </div>
-          <div style="display: flex; flex-direction: column; line-height: 1.1;">
-            <span id="operatorName" style="color: #38bdf8; font-weight: 600; font-size: 11px;">-</span>
-            <span id="operatorId" style="color: #94a3b8; font-size: 9px; font-family: monospace;">ID: -</span>
-          </div>
-        </div>
+     <!-- Bagian jam & operator di sebelah kanan -->
+<div class="status-group" style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+    <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;"></span>
+    <span style="color: #64748b;">•</span>
+    
+    <!-- Profil Operator (Inisial + Nama + ID) -->
+    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); padding: 2px 8px; border-radius: 6px;">
+      <div id="operatorAvatarBox" style="width: 20px; height: 20px; border-radius: 4px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-weight: bold; font-size: 9px;">
+        --
+      </div>
+      <div style="display: flex; flex-direction: column; line-height: 1.1;">
+        <span id="operatorName" style="color: #38bdf8; font-weight: 600; font-size: 11px;">-</span>
+        <span id="operatorId" style="color: #94a3b8; font-size: 9px; font-family: monospace;">ID: -</span>
       </div>
     </div>
+</div>
 
     <!-- STATUS AKTIF UTAMA -->
     <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); margin-bottom: 20px; width: fit-content;">
@@ -272,28 +271,25 @@
       <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
       <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
       
-      <!-- FORM GROUP DENGAN KUNCI POSISI FLEX CONTAINER AGAR TOMBOL AMAN -->
-      <div class="form-group">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 10px; flex-wrap: wrap;">
-          <label for="shopeeData" style="margin: 0; white-space: nowrap;">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
+     <div class="form-group">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 10px; flex-wrap: wrap;">
+        <label for="shopeeData" style="margin: 0; white-space: nowrap;">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+          <!-- Tombol Paste -->
+          <button onclick="pasteFromClipboard()" style="display: inline-block; width: auto; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 500; white-space: nowrap;">📋 Paste</button>
           
-          <!-- KONTAINER PEMBUNGKUS TOMBOL TERKUNCI SUPAYA TIDAK BERGESER -->
-          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex-shrink: 0;">
-            <!-- Tombol Paste -->
-            <button onclick="pasteFromClipboard()" style="display: inline-block; width: auto; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 500; white-space: nowrap;">📋 Paste</button>
-            
-            <!-- Tombol Panduan -->
-            <button onclick="openGuideModal()" style="display: inline-block; width: auto; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 500; white-space: nowrap;">💡 Panduan</button>
-            
-            <!-- Penghitung Baris -->
-            <span id="rowCounter" style="display: inline-block; width: auto; white-space: nowrap; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #cbd5e1;">📊 0 baris</span>
+          <!-- Tombol Panduan -->
+          <button onclick="openGuideModal()" style="display: inline-block; width: auto; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 500; white-space: nowrap;">💡 Panduan</button>
+          
+          <!-- Penghitung Baris -->
+          <span id="rowCounter" style="display: inline-block; width: auto; white-space: nowrap; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #cbd5e1;">📊 0 baris</span>
 
-            <!-- Badge Total Keseluruhan -->
-            <span id="dailyCounterBadge" style="display: inline-block; width: auto; white-space: nowrap; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 500;">📦 Total: 0</span>
-          </div>
+          <!-- Badge Total Keseluruhan -->
+          <span id="dailyCounterBadge" style="display: inline-block; width: auto; white-space: nowrap; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 500;">📦 Total: 0</span>
         </div>
-        <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
       </div>
+      <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
+    </div>
       
       <button id="submitBtn" onclick="processData()">
         <div class="spinner" id="btnSpinner"></div>
@@ -324,6 +320,8 @@
     </div>
   </div>
 
+  <!-- Link ke file JavaScript Eksternal -->
+  <script src="script.js"></script>
   <!-- GUIDE MODAL / PANDUAN FORMAT -->
   <div id="guideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
@@ -337,7 +335,24 @@
       <button onclick="closeGuideModal()" style="background: #334155; color: #cbd5e1; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%;">Mengerti / Tutup</button>
     </div>
   </div>
+    <!-- Modal Login / Verifikasi Operator Shift Gudang -->
+<div id="loginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.3s ease;">
+  <div style="background: #1e293b; border: 1px solid rgba(56, 189, 248, 0.3); padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden;">
+    
+    <!-- Animasi Alert Sukses di dalam Modal (Turun mulus dari atas) -->
+    <div id="loginAlertBox" style="position: absolute; top: -50px; left: 0; width: 100%; background: #22c55e; color: #fff; padding: 10px; font-size: 13px; font-weight: 600; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+      ✨ Verifikasi Berhasil, Selamat Bertugas!
+    </div>
 
-  <!-- Modal Login / Verifikasi Operator Shift Gudang -->
-  <div id="loginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.3s ease;">
-    <div style="background: #1e293b; border: 1px solid rgba(56, 189, 248, 0.3); padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; p
+    <div style="font-size: 28px; margin-bottom: 10px;">🔒</div>
+    <h3 style="color: #f8fafc; margin-bottom: 8px; font-size: 18px;">Verifikasi Operator Shift</h3>
+    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 20px;">Masukkan Nama atau ID Karyawan sesuai jadwal rotasi minggu ini.</p>
+    
+    <input type="text" id="inputOperatorKey" placeholder="Contoh: IRGI atau GND-001" style="width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; font-size: 14px; margin-bottom: 15px; text-align: center; outline: none;" />
+    
+    <button onclick="verifyOperatorLogin()" style="width: 100%; background: #38bdf8; color: #0f172a; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;">Masuk & Mulai Shift 🚀</button>
+    <p id="loginErrorMsg" style="color: #f87171; font-size: 11px; margin-top: 10px; display: none;"></p>
+  </div>
+</div>
+</body>
+</html>
