@@ -2,6 +2,77 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFezXPUk7JWy-3xVrO
 
 let currentDownloadUrl = "";
 
+// ==========================================
+// 🛡️ DATABASE & VERIFIKASI OPERATOR SHIFT
+// ==========================================
+const operatorsProfile = {
+  "IRGI": { id: "GND-001", name: "IRGI" },
+  "BUDI": { id: "GND-002", name: "BUDI" },
+  "SITI": { id: "GND-003", name: "SITI" }
+  // Silakan tambahkan operator lain sesuai jadwal rotasi mingguan di sini
+};
+
+// Fungsi Mengatur Tampilan Header (Inisial Avatar & ID)
+function setOperatorProfile(namaOperator) {
+  const profile = operatorsProfile[namaOperator] || { id: "GND-999", name: namaOperator };
+  
+  const elName = document.getElementById('operatorName');
+  const elId = document.getElementById('operatorId');
+  const elAvatarBox = document.getElementById('operatorAvatarBox');
+
+  if (elName) elName.innerText = profile.name;
+  if (elId) elId.innerText = `ID: ${profile.id}`;
+  
+  if (elAvatarBox) {
+    const initials = profile.name.slice(0, 2).toUpperCase();
+    elAvatarBox.innerText = initials;
+  }
+}
+
+// Fungsi Verifikasi Login dengan Animasi Sukses
+function verifyOperatorLogin() {
+  const inputEl = document.getElementById('inputOperatorKey');
+  if (!inputEl) return;
+  
+  const inputVal = inputEl.value.trim().toUpperCase();
+  const errorMsg = document.getElementById('loginErrorMsg');
+  const alertBox = document.getElementById('loginAlertBox');
+  const modal = document.getElementById('loginModal');
+  
+  let matchedName = null;
+  for (let key in operatorsProfile) {
+    if (key === inputVal || operatorsProfile[key].id === inputVal) {
+      matchedName = key;
+      break;
+    }
+  }
+
+  if (matchedName) {
+    // Simpan status login ke localStorage
+    localStorage.setItem('gudang_active_operator', matchedName);
+    
+    // Tampilkan animasi alert sukses turun ke bawah
+    if (alertBox) alertBox.style.top = '0px';
+    
+    // Terapkan profil operator ke header
+    setOperatorProfile(matchedName);
+    
+    // Jeda sejenak untuk memperlihatkan animasi sukses, lalu tutup modal & izinkan akses sistem booting/utama
+    setTimeout(() => {
+      if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+      }
+    }, 1000);
+
+  } else {
+    // Jika tidak valid / tidak sesuai jadwal
+    if (errorMsg) {
+      errorMsg.innerText = "❌ Nama atau ID tidak terdaftar dalam jadwal shift minggu ini!";
+      errorMsg.style.display = 'block';
+    }
+  }
+}
 // Fungsi untuk menghitung jumlah baris & mendeteksi jenis transaksi secara otomatis berdasarkan pola
 function updateRowCounter() {
   const textarea = document.getElementById('shopeeData');
@@ -104,8 +175,7 @@ async function processData() {
     alert('Harap isi URL Web App Apps Script di dalam file script.js terlebih dahulu!');
     return;
   }
-  
-  if (btn) btn.disabled = true;
+if (btn) btn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = 'block';
   if (btnText) btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
   
@@ -177,7 +247,7 @@ async function processData() {
         if (rowCounter) rowCounter.innerText = '📊 0 baris data';
 
         playSuccessSound();
-    addCumulativeTotal(messageLines.length);
+        addCumulativeTotal(messageLines.length);
         
         currentDownloadUrl = res.downloadUrl || "";
         
@@ -215,7 +285,6 @@ async function processData() {
 function showCustomAlert(message, downloadUrl) {
   const msgEl = document.getElementById('customAlertMessage');
   if (msgEl) msgEl.innerText = message;
-  
   const downloadBtn = document.getElementById('downloadBtn');
   const progressBar = document.getElementById('downloadProgressBar');
   const downloadBtnText = document.getElementById('downloadBtnText');
@@ -281,7 +350,6 @@ function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
 }
-
 // ==========================================
 // 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS ROTATOR (SMOOTH)
 // ==========================================
@@ -432,7 +500,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
-
 // ==========================================
 // ⏱️ MANAJEMEN WAKTU SINKRONISASI TERAKHIR (LAST SYNC)
 // ==========================================
@@ -474,18 +541,17 @@ function closeGuideModal() {
   const modal = document.getElementById('guideModal');
   if (modal) modal.style.display = 'none';
 }
+
 // Fungsi otomatis mengambil data dari Clipboard komputer
 async function pasteFromClipboard() {
   try {
-    // Membaca teks dari clipboard sistem
     const text = await navigator.clipboard.readText();
     const textarea = document.getElementById('shopeeData');
     
     if (textarea) {
       textarea.value = text;
-      textarea.focus(); // Fokuskan kursor ke textarea
+      textarea.focus();
       
-      // Jalankan fungsi hitung baris & deteksi otomatis yang sudah dibuat sebelumnya
       if (typeof updateRowCounter === 'function') {
         updateRowCounter();
       }
@@ -500,8 +566,6 @@ async function pasteFromClipboard() {
 // ==========================================
 // FITUR TAMBAHAN: AUDIO SUKSES & TOTAL AKUMULATOR
 // ==========================================
-
-// 1. Fungsi Suara Sukses (Web Audio API - Tanpa file MP3 eksternal)
 function playSuccessSound() {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -509,7 +573,6 @@ function playSuccessSound() {
     const gainNode = audioCtx.createGain();
 
     oscillator.type = 'sine';
-    // Nada dering chime naik (C5 ke G5)
     oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
     oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.1); // G5
 
@@ -526,7 +589,6 @@ function playSuccessSound() {
   }
 }
 
-// 2. Fungsi Akumulator Total Keseluruhan (Nambah terus tanpa reset harian)
 function getCumulativeTotal() {
   return parseInt(localStorage.getItem('gudang_total_alltime') || '0', 10);
 }
@@ -545,7 +607,22 @@ function renderCumulativeCounter() {
   }
 }
 
-// Jalankan pengecekan counter saat halaman pertama kali dibuka
+// ==========================================
+// 🚀 PENGECEKAN STATUS LOGIN & INISIALISASI UTAMA
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderCumulativeCounter();
+  
+  // Cek apakah operator sudah pernah login di browser ini
+  const savedOperator = localStorage.getItem('gudang_active_operator');
+  const modal = document.getElementById('loginModal');
+
+  if (savedOperator && operatorsProfile[savedOperator]) {
+    // Jika sudah login, sembunyikan modal dan set profil
+    if (modal) modal.style.display = 'none';
+    setOperatorProfile(savedOperator);
+  } else {
+    // Jika belum login, pastikan modal verifikasi terbuka menutupi layar
+    if (modal) modal.style.display = 'flex';
+  }
 });
