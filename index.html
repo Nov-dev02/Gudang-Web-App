@@ -47,7 +47,7 @@
   </div>
 
   <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
-  <script>
+  // 1. Rumus utama penentu operator berdasarkan minggu berjalan
     function getActiveOperator() {
       const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
       const now = new Date();
@@ -57,13 +57,33 @@
       return operatorList[weekNumber % operatorList.length];
     }
 
+    // 2. Fungsi untuk menampilkan nama operator ke layar
+    function setWeeklyOperator() {
+      const currentOperator = getActiveOperator();
+      
+      // Tampilkan nama operator di elemen UI
+      const operatorNameEl = document.getElementById('operatorName');
+      if (operatorNameEl) {
+        operatorNameEl.textContent = currentOperator;
+      }
+      
+      // Update inisial kotak avatar otomatis (misal: ER, NO, IR, DW)
+      const avatarBox = document.getElementById('operatorAvatarBox');
+      if (avatarBox) {
+        avatarBox.textContent = currentOperator.substring(0, 2);
+      }
+    }
+
+    // 3. Fungsi suara sapaan otomatis memanggil rumus yang sama
     function speakSystemReady() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
-            const currentOperator = getActiveOperator();
-            const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
             
+            // Otomatis mengambil nama operator yang SAMA PERSIS dengan di layar
+            const currentOperator = getActiveOperator(); 
+            const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = 'id-ID'; 
             utterance.rate = 0.90;  
             utterance.pitch = 0.5;  
@@ -78,9 +98,6 @@
             
             if (maleVoice) {
                 utterance.voice = maleVoice;
-            } else {
-                const idVoice = voices.find(v => v.lang.includes('id') || v.lang.includes('ID'));
-                if (idVoice) utterance.voice = idVoice;
             }
 
             window.speechSynthesis.speak(utterance);
