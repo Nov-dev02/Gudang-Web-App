@@ -6,15 +6,31 @@ let currentDownloadUrl = "";
 // 🛡️ DATABASE & VERIFIKASI OPERATOR SHIFT
 // ==========================================
 const operatorsProfile = {
-  "IRGI": { id: "GND-001", name: "IRGI" },
-  "BUDI": { id: "GND-002", name: "BUDI" },
-  "SITI": { id: "GND-003", name: "SITI" }
-  // Silakan tambahkan operator lain sesuai jadwal rotasi mingguan di sini
+  "IRGI": { 
+    id: "GDN-001", 
+    name: "IRGI", 
+    photo: "" // Kosong = otomatis pakai inisial huruf "IR"
+  },
+  "NOVAN": { 
+    id: "GDN-002", 
+    name: "NOVAN", 
+    photo: "" // Kosong = otomatis pakai inisial huruf "NO"
+  },
+  "DWI": { 
+    id: "GDN-003", 
+    name: "DWI", 
+    photo: "" // Kosong = otomatis pakai inisial huruf "DW"
+  },
+  "ERIKA": { 
+    id: "GDN-004", 
+    name: "ERIKA", 
+    photo: "" // Kosong = otomatis pakai inisial huruf "ER"
+  }
 };
 
-// Fungsi Mengatur Tampilan Header (Inisial Avatar & ID)
+// Fungsi Mengatur Tampilan Header (Inisial Avatar / Foto Profil & ID)
 function setOperatorProfile(namaOperator) {
-  const profile = operatorsProfile[namaOperator] || { id: "GND-999", name: namaOperator };
+  const profile = operatorsProfile[namaOperator] || { id: "GDN-999", name: namaOperator, photo: "" };
   
   const elName = document.getElementById('operatorName');
   const elId = document.getElementById('operatorId');
@@ -24,8 +40,17 @@ function setOperatorProfile(namaOperator) {
   if (elId) elId.innerText = `ID: ${profile.id}`;
   
   if (elAvatarBox) {
-    const initials = profile.name.slice(0, 2).toUpperCase();
-    elAvatarBox.innerText = initials;
+    // Cek apakah properti photo terisi atau tidak
+    if (profile.photo && profile.photo.trim() !== "") {
+      // Jika ada foto, render menggunakan tag <img>
+      elAvatarBox.innerHTML = `<img src="${profile.photo}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 3px;">`;
+      elAvatarBox.style.background = 'transparent';
+    } else {
+      // Jika kosong, fallback otomatis tampilkan inisial teks
+      const initials = profile.name.slice(0, 2).toUpperCase();
+      elAvatarBox.innerText = initials;
+      elAvatarBox.style.background = 'rgba(56, 189, 248, 0.2)';
+    }
   }
 }
 
