@@ -211,18 +211,23 @@
     }
 
     // 3. Fungsi untuk menampilkan nama operator aktif & minggu depan ke layar
-        function setWeeklyOperator() {
-      // Cek dulu apakah operator sudah login via localStorage
+            function setWeeklyOperator() {
+      // 1. Selalu jalankan kalkulator untuk MINGGU DEPAN supaya tidak kosong (-)
+      const nextOperator = getNextOperator();
+      const nextOperatorEl = document.getElementById('nextOperatorName');
+      if (nextOperatorEl) {
+        nextOperatorEl.textContent = nextOperator;
+      }
+
+      // 2. Cek apakah operator sudah login via localStorage
       const savedSession = localStorage.getItem('gudang_active_operator');
       if (savedSession) {
-        // Kalau sudah login, jangan ditimpa! Biar script.js utama yang pegang kendali.
+        // Kalau sudah login, hentikan proses di sini agar profil aktif tidak tertimpa
         return;
       }
 
-      // Kalau belum login, jalankan fungsi default mingguan seperti biasa
+      // 3. Jika belum login, gunakan default mingguan untuk operator aktif
       const currentOperator = getActiveOperator();
-      const nextOperator = getNextOperator();
-      
       const operatorNameEl = document.getElementById('operatorName');
       if (operatorNameEl) {
         operatorNameEl.textContent = currentOperator;
@@ -232,12 +237,7 @@
       if (avatarBox) {
         avatarBox.textContent = currentOperator.substring(0, 2);
       }
-
-      const nextOperatorEl = document.getElementById('nextOperatorName');
-      if (nextOperatorEl) {
-        nextOperatorEl.textContent = nextOperator;
-      }
-        }
+            }
     
 
     // 4. Fungsi suara sapaan otomatis
