@@ -74,7 +74,12 @@ function verifyOperatorLogin() {
 
   if (matchedName) {
     // Simpan status login ke localStorage
-    localStorage.setItem('gudang_active_operator', matchedName);
+    // Simpan nama operator beserta waktu login (dalam format timestamp)
+const sessionData = {
+  name: matchedName,
+  loginTime: new Date().getTime()
+};
+localStorage.setItem('gudang_active_operator', JSON.stringify(sessionData));
     
     // Tampilkan animasi alert sukses turun ke bawah
     if (alertBox) alertBox.style.top = '0px';
@@ -649,6 +654,35 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     // Jika belum login, pastikan modal verifikasi terbuka menutupi layar
     if (modal) modal.style.display = 'flex';
+  }
+});
+// Pengecekan otomatis saat halaman dimuat
+document.addEventListener("DOMContentLoaded", function() {
+  const savedSession = localStorage.getItem('gudang_active_operator');
+  const modal = document.getElementById('loginModal');
+  
+  if (savedSession) {
+    try {
+      const session = JSON.parse(savedSession);
+      const currentTime = new Date().getTime();
+      const oneWeekMiliseconds = 7 * 24 * 60 * 60 * 1000; // Hitungan 7 hari (dalam milidetik)
+      
+      // Cek apakah belum lewat dari 7 hari DAN nama operatornya terdaftar
+      if ((currentTime - session.loginTime) < oneWeekMiliseconds && operatorsProfile[session.name]) {
+        // Belum seminggu: Langsung pasang profil & sembunyikan kotak login
+        setOperatorProfile(session.name);
+        if (modal) {
+          modal.style.display = 'none';
+        }
+      } else {
+        // SUDAH LEBIH DARI 7 HARI (Masuk minggu baru): Hapus sesi otomatis!
+        localStorage.removeItem('gudang_active_operator');
+        // Kotak login akan otomatis muncul karena modal tidak disembunyikan
+      }
+    } catch (e) {
+      // Jaga-jaga jika format data rusak, bersihkan localStorage
+      localStorage.removeItem('gudang_active_operator');
+    }
   }
 });
 
