@@ -211,7 +211,15 @@
     }
 
     // 3. Fungsi untuk menampilkan nama operator aktif & minggu depan ke layar
-    function setWeeklyOperator() {
+        function setWeeklyOperator() {
+      // Cek dulu apakah operator sudah login via localStorage
+      const savedSession = localStorage.getItem('gudang_active_operator');
+      if (savedSession) {
+        // Kalau sudah login, jangan ditimpa! Biar script.js utama yang pegang kendali.
+        return;
+      }
+
+      // Kalau belum login, jalankan fungsi default mingguan seperti biasa
       const currentOperator = getActiveOperator();
       const nextOperator = getNextOperator();
       
@@ -229,7 +237,8 @@
       if (nextOperatorEl) {
         nextOperatorEl.textContent = nextOperator;
       }
-    }
+        }
+    
 
     // 4. Fungsi suara sapaan otomatis
     function speakSystemReady() {
