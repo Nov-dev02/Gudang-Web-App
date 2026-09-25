@@ -634,53 +634,52 @@ function renderCumulativeCounter() {
     badge.innerText = `📦 Total: ${getCumulativeTotal().toLocaleString()} paket`;
   }
 }
-
 // ==========================================
 // 🚀 PENGECEKAN STATUS LOGIN & INISIALISASI UTAMA
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderCumulativeCounter();
   
-  // Cek apakah operator sudah pernah login di browser ini
-  const savedOperator = localStorage.getItem('gudang_active_operator');
-  const modal = document.getElementById('loginModal');
-
-  if (savedOperator && operatorsProfile[savedOperator]) {
-    // Jika sudah login, sembunyikan modal dan set profil
-    if (modal) modal.style.display = 'none';
-    setOperatorProfile(savedOperator);
-  } else {
-    // Jika belum login, pastikan modal verifikasi terbuka menutupi layar
-    if (modal) modal.style.display = 'flex';
-  }
-});
-// Pengecekan otomatis saat halaman dimuat
-document.addEventListener("DOMContentLoaded", function() {
   const savedSession = localStorage.getItem('gudang_active_operator');
   const modal = document.getElementById('loginModal');
   
   if (savedSession) {
     try {
-      const session = JSON.parse(savedSession);
-      const currentTime = new Date().getTime();
-      const oneWeekMiliseconds = 7 * 24 * 60 * 60 * 1000; // Hitungan 7 hari (dalam milidetik)
+      let operatorName = "";
+      let loginTime = 0;
       
-      // Cek apakah belum lewat dari 7 hari DAN nama operatornya terdaftar
-      if ((currentTime - session.loginTime) < oneWeekMiliseconds && operatorsProfile[session.name]) {
-        // Belum seminggu: Langsung pasang profil & sembunyikan kotak login
-        setOperatorProfile(session.name);
+      // Cek apakah data berupa format JSON baru atau teks biasa lama
+      if (savedSession.startsWith('{')) {
+        const session = JSON.parse(savedSession);
+        operatorName = session.name ? session.name.toUpperCase() : "";
+        loginTime = session.loginTime || 0;
+      } else {
+        // Fallback untuk format data lama (plain string)
+        operatorName = savedSession.toUpperCase();
+        loginTime = new Date().getTime();
+      }
+      
+      const currentTime = new Date().getTime();
+      const oneWeekMilliseconds = 7 * 24 * 60 * 60 * 1000; // Batas 7 hari
+      
+      // Validasi masa aktif (belum 7 hari) dan pastikan nama operator terdaftar
+      if ((currentTime - loginTime) < oneWeekMilliseconds && operatorsProfile[operatorName]) {
+        setOperatorProfile(operatorName);
         if (modal) {
           modal.style.display = 'none';
         }
       } else {
-        // SUDAH LEBIH DARI 7 HARI (Masuk minggu baru): Hapus sesi otomatis!
+        // Sesi kedaluwarsa atau data tidak valid
         localStorage.removeItem('gudang_active_operator');
-        // Kotak login akan otomatis muncul karena modal tidak disembunyikan
+        if (modal) modal.style.display = 'flex';
       }
     } catch (e) {
-      // Jaga-jaga jika format data rusak, bersihkan localStorage
+      // Jika terjadi error parsing, bersihkan storage demi keamanan
       localStorage.removeItem('gudang_active_operator');
+      if (modal) modal.style.display = 'flex';
     }
+  } else {
+    // Belum pernah login sama sekali
+    if (modal) modal.style.display = 'flex';
   }
 });
-
