@@ -29,29 +29,27 @@ const operatorsProfile = {
 };
 
 // Fungsi Mengatur Tampilan Header (Inisial Avatar / Foto Profil & ID)
-function setOperatorProfile(namaOperator) {
-  const profile = operatorsProfile[namaOperator] || { id: "GDN-999", name: namaOperator, photo: "" };
-  
-  const elName = document.getElementById('operatorName');
-  const elId = document.getElementById('operatorId');
-  const elAvatarBox = document.getElementById('operatorAvatarBox');
-
-  if (elName) elName.innerText = profile.name;
-  if (elId) elId.innerText = `ID: ${profile.id}`;
-  
-  if (elAvatarBox) {
-    // Cek apakah properti photo terisi atau tidak
-    if (profile.photo && profile.photo.trim() !== "") {
-      // Jika ada foto, render menggunakan tag <img>
-      elAvatarBox.innerHTML = `<img src="${profile.photo}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 3px;">`;
-      elAvatarBox.style.background = 'transparent';
-    } else {
-      // Jika kosong, fallback otomatis tampilkan inisial teks
-      const initials = profile.name.slice(0, 2).toUpperCase();
-      elAvatarBox.innerText = initials;
-      elAvatarBox.style.background = 'rgba(56, 189, 248, 0.2)';
+ function setOperatorProfile(namaOperator) {
+    const cleanName = namaOperator ? namaOperator.toUpperCase() : "";
+    const profile = operatorsProfile[cleanName] || { id: "GDN-999", name: namaOperator, photo: "" };
+    
+    const elName = document.getElementById('operatorName');
+    const elId = document.getElementById('operatorId');
+    const elAvatarBox = document.getElementById('operatorAvatarBox');
+    
+    if (elName) elName.innerText = profile.name;
+    if (elId) elId.innerText = `ID: ${profile.id}`;
+    
+    if (elAvatarBox) {
+        if (profile.photo && profile.photo.trim() !== "") {
+            elAvatarBox.innerHTML = `<img src="${profile.photo}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 3px;">`;
+            elAvatarBox.style.background = 'transparent';
+        } else {
+            const initials = profile.name.slice(0, 2).toUpperCase();
+            elAvatarBox.innerHTML = initials;
+            elAvatarBox.style.background = 'rgba(56, 189, 248, 0.3)';
+        }
     }
-  }
 }
 
 // Fungsi Verifikasi Login dengan Animasi Sukses
