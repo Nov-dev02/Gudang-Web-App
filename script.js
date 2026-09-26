@@ -683,3 +683,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) modal.style.display = 'flex';
   }
 });
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('PWA Service Worker Berhasil Didaftarkan!'))
+            .catch((err) => console.log('Gagal daftar Service Worker:', err));
+    });
+}
