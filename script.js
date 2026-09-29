@@ -731,7 +731,6 @@ function selesaiDanDownload() {
     alert("Transaksi selesai.");
   }
 }
-
 // Fungsi kirim aksi Pending / Cancel ke server Google Apps Script
 function kirimAksiPendingCancel(actionType) {
   const inputEl = document.getElementById('inputNoTrx');
@@ -740,6 +739,26 @@ function kirimAksiPendingCancel(actionType) {
   if (!noTransaksi) {
     alert("Harap masukkan atau scan Nomor Transaksi terlebih dahulu!");
     return;
+  }
+
+  // Tangkap elemen tombol dan teks status
+  const btnPending = document.getElementById('btnSetPending');
+  const btnCancel = document.getElementById('btnSetCancel');
+  const statusText = document.getElementById('pendingStatusText');
+
+  // 1. Ubah tombol jadi "Memproses..." dan matikan (disabled)
+  if (btnPending) { btnPending.disabled = true; btnPending.style.opacity = '0.6'; }
+  if (btnCancel) { btnCancel.disabled = true; btnCancel.style.opacity = '0.6'; }
+
+  if (actionType === 'pending') {
+    if (btnPending) btnPending.innerText = "Memproses...";
+  } else {
+    if (btnCancel) btnCancel.innerText = "Memproses...";
+  }
+
+  // 2. Munculkan teks status loading di atas input
+  if (statusText) {
+    statusText.style.display = 'block';
   }
 
   fetch(WEB_APP_URL, {
@@ -751,6 +770,9 @@ function kirimAksiPendingCancel(actionType) {
   })
   .then(res => res.text())
   .then(text => {
+    // 3. Kembalikan tombol & sembunyikan status setelah selesai
+    resetButtonState(btnPending, btnCancel, statusText);
+
     try {
       const res = JSON.parse(text);
       if (res.status === 'success') {
@@ -777,9 +799,29 @@ function kirimAksiPendingCancel(actionType) {
     }
   })
   .catch(err => {
+    // 3. Kembalikan tombol & sembunyikan status jika terjadi error jaringan
+    resetButtonState(btnPending, btnCancel, statusText);
     alert("Terjadi kesalahan koneksi: " + err);
   });
 }
+
+// Fungsi pembantu untuk mengembalikan tombol ke semula
+function resetButtonState(btnPending, btnCancel, statusText) {
+  if (btnPending) {
+    btnPending.disabled = false;
+    btnPending.style.opacity = '1';
+    btnPending.innerText = "Set Pending";
+  }
+  if (btnCancel) {
+    btnCancel.disabled = false;
+    btnCancel.style.opacity = '1';
+    btnCancel.innerText = "Set Cancel";
+  }
+  if (statusText) {
+    statusText.style.display = 'none';
+  }
+}
+
 
 // Shortcut tombol Enter di input nomor transaksi
 document.addEventListener('DOMContentLoaded', () => {
