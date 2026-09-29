@@ -278,7 +278,6 @@ if (btn) btn.disabled = true;
         addCumulativeTotal(messageLines.length);
         
         currentDownloadUrl = res.downloadUrl || "";
-<<<<<<< HEAD
         window.globalServerResponse = res; // Simpan data server agar bisa dipakai modal
         
         setTimeout(() => {
@@ -289,11 +288,6 @@ if (btn) btn.disabled = true;
           } else {
             showCustomAlert(res.message, currentDownloadUrl);
           }
-=======
-        
-        setTimeout(() => {
-          showCustomAlert(res.message, currentDownloadUrl);
->>>>>>> 17f70d7a9d345080895b3e37113948441130cf3d
         }, 1200);
 
       } else {
@@ -703,7 +697,6 @@ if ('serviceWorker' in navigator) {
             .catch((err) => console.log('Gagal daftar Service Worker:', err));
     });
 }
-<<<<<<< HEAD
 // ==========================================
 // FUNGSI MODAL PENDING & CANCEL (VERSI ONCLICK AMAN)
 // ==========================================
@@ -800,5 +793,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-=======
->>>>>>> 17f70d7a9d345080895b3e37113948441130cf3d
