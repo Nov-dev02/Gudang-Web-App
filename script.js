@@ -189,7 +189,12 @@ async function processData() {
   
   if (btn) btn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = 'block';
-  if (btnText) btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
+  if (btnText) btnText.innerHTML = `
+  <div style="display: inline-flex; align-items: center; gap: 8px;">
+    <div class="modern-spinner"></div>
+    <span>Sedang Memproses & Sinkronisasi<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span></span>
+  </div>
+`;
   
   if (logDiv) {
     logDiv.style.display = 'block';
