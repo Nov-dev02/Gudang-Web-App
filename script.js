@@ -568,37 +568,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-//if ('serviceWorker' in navigator) {
- //window.addEventListener('load', () => {
-     //navigator.serviceWorker.register('./sw.js').catch(() => {});
-  //});
-// }
+ if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+     navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+ }
 function pilihYaPending() {
   document.getElementById('modalKonfirmasi').style.display = 'none';
   document.getElementById('modalInputPending').style.display = 'flex';
   const inputEl = document.getElementById('inputNoTrx');
   if (inputEl) inputEl.focus();
-}
-function pilihTidakPending() {
-  // 1. Tutup modal konfirmasi
-  const modalKonfirm = document.getElementById('modalKonfirmasi');
-  if (modalKonfirm) {
-    modalKonfirm.style.display = 'none';
-  }
-  
-  // 2. Gunakan logika pengecekan bertingkat yang SAMA PERSIS dengan selesaiDanDownload()
-  const targetUrl = 
-    (typeof currentDownloadUrl !== 'undefined' && currentDownloadUrl) ? currentDownloadUrl : 
-    (window.globalServerResponse && window.globalServerResponse.downloadUrl) ? window.globalServerResponse.downloadUrl : 
-    "";
-
-  if (targetUrl) {
-    // Dijamin modal download Excel akan muncul dengan mulus!
-    showCustomAlert("✅ Proses selesai tanpa nota pending. Laporan Excel siap diunduh!", targetUrl);
-  } else {
-    // Pengaman terakhir jika dari server awal memang tidak membawa data sama sekali
-    alert("✅ Proses selesai tanpa nota pending.");
-  }
 }
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
