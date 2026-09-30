@@ -423,11 +423,6 @@
 <div id="modalInputPending" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
   <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
     <h3 style="margin-bottom: 12px; color: #38bdf8; font-size: 1.1rem; text-align: center;">⚙️ Input Nota Pending / Cancel</h3>
-    
-    <!-- Teks Status Loading Interaktif -->
-    <div id="pendingStatusText" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 12px; text-align: center; font-weight: 500;">
-      ⏳ Sabar ya gais, masih proses hapus dan pindah data...
-    </div>
 
     <div style="margin-bottom: 12px;">
       <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; color: #cbd5e1; font-weight: 600;">Nomor Transaksi / Resi:</label>
@@ -450,6 +445,18 @@
     <button onclick="selesaiDanDownload()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">✅ Selesai & Download Laporan</button>
   </div>
 </div>
-
+<!-- Floating Glass Toast (Notifikasi Melayang) -->
+<div id="glassToast" class="glass-toast">
+  <div class="toast-icon-wrapper" id="toastIconContainer">
+    <div class="gradient-spinner"></div>
+  </div>
+  <div class="toast-content">
+    <div class="toast-title" id="toastTitle">Memproses data gudang...</div>
+    <div class="toast-desc" id="toastDesc">
+      Sabar ya gais, lagi mindah & bersih-bersih data
+      <span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>
+    </div>
+  </div>
+</div>
 </body>
 </html>
