@@ -835,3 +835,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+function kirimAksiPendingCancel(actionType) {
+  // Tentukan tombol mana yang diklik berdasarkan parameter dari HTML-mu ('pending' atau 'cancel')
+  const btnId = actionType === 'pending' ? 'btnSetPending' : 'btnSetCancel';
+  const btn = document.getElementById(btnId);
+  const actionLabel = actionType === 'pending' ? 'Pending' : 'Cancel';
+
+  const noTrx = document.getElementById('inputNoTrx').value;
+  const toast = document.getElementById('glassToast');
+  const spinnerContainer = document.getElementById('toastIconContainer');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastDesc = document.getElementById('toastDesc');
+
+  // 1. Disable tombol yang diklik & ubah teks jadi "Memproses..." dengan titik memantul
+  btn.disabled = true;
+  btn.innerHTML = `Memproses<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
+
+  // Reset tampilan Toast ke state loading awal
+  spinnerContainer.innerHTML = '<div class="gradient-spinner"></div>';
+  spinnerContainer.className = 'toast-icon-wrapper';
+  toastTitle.textContent = `Memproses data (${actionLabel})...`;
+  toastDesc.innerHTML = `Sabar ya gais, lagi proses ${actionLabel.toLowerCase()} data gudang<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
+
+  // Munculkan Floating Glass Toast
+  toast.classList.add('show');
+
+  // 2. BAGIAN BACKEND (Google Apps Script / Fetch kamu)
+  // Contoh jika pakai google.script.run:
+  /*
+  google.script.run
+    .withSuccessHandler(function(response) {
+      tampilkanSukses(btn, actionLabel, toast, spinnerContainer, toastTitle, toastDesc);
+    })
+    .withFailureHandler(function(error) {
+      alert("Terjadi kesalahan: " + error);
+      btn.disabled = false;
+      btn.innerHTML = `Set ${actionLabel}`;
+      toast.classList.remove('show');
+    })
+    .namaFungsiBackendAnda(actionType, noTrx);
+  */
+
+  // --- SIMULASI SEMENTARA (Hapus bagian setTimeout ini kalau sudah dihubungkan ke backend aslimu) ---
+  setTimeout(() => {
+    tampilkanSukses(btn, actionLabel, toast, spinnerContainer, toastTitle, toastDesc);
+  }, 2500);
+}
+
+// Fungsi bantu untuk memicu animasi sukses
+function tampilkanSukses(btn, actionLabel, toast, spinnerContainer, toastTitle, toastDesc) {
+  // 3. TRANSISI SUKSES (Spinner berubah jadi hijau + centang pop-up)
+  spinnerContainer.innerHTML = '<span class="checkmark">✓</span>';
+  spinnerContainer.className = 'toast-icon-wrapper success';
+  toastTitle.textContent = 'Berhasil diproses!';
+  toastDesc.textContent = `Status gudang berhasil di-${actionLabel.toLowerCase()}.`;
+
+  // Kembalikan tombol ke kondisi normal & aktif
+  btn.disabled = false;
+  btn.innerHTML = `Set ${actionLabel}`;
+
+  // 4. HILANGKAN TOAST (Fade-Out mulus setelah 1.8 detik)
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 1800);
+}
