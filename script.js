@@ -579,48 +579,25 @@ function pilihYaPending() {
   const inputEl = document.getElementById('inputNoTrx');
   if (inputEl) inputEl.focus();
 }
-async function pilihTidakPending() {
-  // 1. Sembunyikan dulu modal konfirmasi
+function pilihTidakPending() {
+  // 1. Tutup modal konfirmasi
   const modalKonfirm = document.getElementById('modalKonfirmasi');
   if (modalKonfirm) {
     modalKonfirm.style.display = 'none';
   }
-
-  // 2. CEK JALUR 1: Apakah URL sudah ada di memori frontend?
-  let targetUrl = (typeof currentDownloadUrl !== 'undefined' && currentDownloadUrl) ? currentDownloadUrl : "";
+  
+  // 2. Gunakan logika pengecekan bertingkat yang SAMA PERSIS dengan selesaiDanDownload()
+  const targetUrl = 
+    (typeof currentDownloadUrl !== 'undefined' && currentDownloadUrl) ? currentDownloadUrl : 
+    (window.globalServerResponse && window.globalServerResponse.downloadUrl) ? window.globalServerResponse.downloadUrl : 
+    "";
 
   if (targetUrl) {
-    // Jika ada, langsung munculkan modal download detik itu juga!
-    showCustomAlert("✅ Data berhasil diproses tanpa nota pending. Laporan Excel siap diunduh!", targetUrl);
-    return;
-  }
-
-  // 3. CEK JALUR 2 (PENGAMANAN MUTLAK): Jika variabel kosong, jemput paksa ke backend!
-  showToast("Menyiapkan laporan Excel final...", "info");
-
-  try {
-    const response = await fetch(WEB_APP_URL, {
-      method: "POST",
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({
-        action: "selesai_tanpa_pending", 
-        noTransaksi: ""
-      })
-    });
-
-    const text = await response.text();
-    const res = JSON.parse(text);
-
-    if (res.status === 'success' && res.downloadUrl) {
-      currentDownloadUrl = res.downloadUrl;
-      // Dijamin modal download akan muncul di sini!
-      showCustomAlert("✅ Data berhasil diproses tanpa nota pending. Laporan Excel siap diunduh!", currentDownloadUrl);
-    } else {
-      // Fallback terakhir jika backend mengembalikan pesan sukses biasa tanpa URL
-      showCustomAlert("✅ Proses selesai tanpa nota pending.", "");
-    }
-  } catch (error) {
-    showToast("Gagal mengambil link download: " + error.message, "error");
+    // Dijamin modal download Excel akan muncul dengan mulus!
+    showCustomAlert("✅ Proses selesai tanpa nota pending. Laporan Excel siap diunduh!", targetUrl);
+  } else {
+    // Pengaman terakhir jika dari server awal memang tidak membawa data sama sekali
+    alert("✅ Proses selesai tanpa nota pending.");
   }
 }
 function selesaiDanDownload() {
