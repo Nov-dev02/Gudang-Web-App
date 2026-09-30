@@ -579,6 +579,19 @@ function pilihYaPending() {
   const inputEl = document.getElementById('inputNoTrx');
   if (inputEl) inputEl.focus();
 }
+function pilihTidakPending() {
+  const modalKonfirm = document.getElementById('modalKonfirmasi');
+  if (modalKonfirm) {
+    modalKonfirm.style.display = 'none';
+  }
+  
+  // Memunculkan notifikasi atau langsung memicu download laporan Excel
+  if (typeof currentDownloadUrl !== 'undefined' && currentDownloadUrl) {
+    showCustomAlert("✅ Proses selesai. Laporan Excel siap diunduh!");
+  } else {
+    showToast("Data berhasil diproses tanpa nota pending!", "🚀");
+  }
+}
 
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
@@ -702,3 +715,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
