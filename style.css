@@ -301,36 +301,37 @@ button:hover {
   height: 100%;
   object-fit: cover;    /* Agar foto pas dan tidak gepeng di dalam kotak */
 }
-/* Floating Glass Toast - Center & Dark Glassmorphism */
+
+/* Floating Glass Toast - Posisi Tengah Atas (Top-Center) */
 .glass-toast {
   position: fixed;
-  top: 50%;
+  top: 24px; /* Jarak pas dari atas layar */
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.95);
+  transform: translateX(-50%) scale(0.95); /* Hanya menggeser ke kiri 50% tanpa geser vertikal */
   z-index: 99999;
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 18px 24px;
+  padding: 16px 22px;
   
-  /* Efek Kaca Gelap (Dark Glassmorphism) menyesuaikan tema aplikasi */
-  background: rgba(30, 41, 59, 0.85);
+  /* Efek Kaca Gelap (Dark Glassmorphism) */
+  background: rgba(30, 41, 59, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
   
-  /* State awal (Hidden & Di tengah) */
+  /* State awal (Hidden & Di atas) */
   opacity: 0;
   pointer-events: none;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* State Muncul (Show) di Tengah Layar */
+/* State Muncul (Show) di Tengah Atas */
 .glass-toast.show {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateX(-50%) scale(1);
   pointer-events: auto;
 }
 
