@@ -579,42 +579,19 @@ function pilihYaPending() {
   const inputEl = document.getElementById('inputNoTrx');
   if (inputEl) inputEl.focus();
 }
-async function pilihTidakPending() {
+function pilihTidakPending() {
   const modalKonfirm = document.getElementById('modalKonfirmasi');
   if (modalKonfirm) {
     modalKonfirm.style.display = 'none';
   }
-
-  // Tampilkan loading sebentar sambil minta link download ke backend
-  showToast("Menyiapkan laporan Excel final...", "success");
-
-  try {
-    // Kirim sinyal ke backend bahwa tidak ada pending, minta generate laporan
-    const response = await fetch(WEB_APP_URL, {
-      method: "POST",
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({
-        action: "selesai_tanpa_pending", 
-        noTransaksi: ""
-      })
-    });
-
-    const text = await response.text();
-    const res = JSON.parse(text);
-
-    if (res.status === 'success' && res.downloadUrl) {
-      currentDownloadUrl = res.downloadUrl;
-      showCustomAlert("✅ Data berhasil diproses tanpa nota pending. Laporan Excel siap diunduh!", currentDownloadUrl);
-    } else {
-      // Fallback jika backend mengembalikan cara lama
-      if (currentDownloadUrl) {
-        showCustomAlert("✅ Proses selesai. Laporan Excel siap diunduh!", currentDownloadUrl);
-      } else {
-        showToast("Data berhasil diproses, tapi link download belum tersedia dari server.", "warning");
-      }
-    }
-  } catch (error) {
-    showToast("Gagal mengambil link download: " + error.message, "error");
+  
+  // Karena currentDownloadUrl sudah ada sejak proses awal, langsung panggil bersama modal!
+  if (currentDownloadUrl) {
+    showCustomAlert("✅ Proses sinkronisasi selesai tanpa nota pending. Laporan Excel siap diunduh!", currentDownloadUrl);
+  } else if (window.globalServerResponse && window.globalServerResponse.downloadUrl) {
+    showCustomAlert(window.globalServerResponse.message, window.globalServerResponse.downloadUrl);
+  } else {
+    showCustomAlert("✅ Transaksi selesai tanpa nota pending.", "");
   }
 }
 function selesaiDanDownload() {
