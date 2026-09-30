@@ -28,7 +28,6 @@ const operatorsProfile = {
   }
 };
 
-// Fungsi Mengatur Tampilan Header (Inisial Avatar / Foto Profil & ID)
 function setOperatorProfile(namaOperator) {
     const cleanName = namaOperator ? namaOperator.toUpperCase() : "";
     const profile = operatorsProfile[cleanName] || { id: "GDN-999", name: namaOperator, photo: "" };
@@ -52,7 +51,6 @@ function setOperatorProfile(namaOperator) {
     }
 }
 
-// Fungsi Verifikasi Login dengan Animasi Sukses
 function verifyOperatorLogin() {
   const inputEl = document.getElementById('inputOperatorKey');
   if (!inputEl) return;
@@ -95,7 +93,6 @@ function verifyOperatorLogin() {
   }
 }
 
-// Fungsi untuk menghitung jumlah baris & mendeteksi jenis transaksi secara otomatis berdasarkan pola
 function updateRowCounter() {
   const textarea = document.getElementById('shopeeData');
   const rowCounter = document.getElementById('rowCounter');
@@ -136,6 +133,7 @@ function updateRowCounter() {
     rowCounter.innerText = `📊 ${totalLines.toLocaleString()} baris data`;
   }
 }
+
 function initAppListeners() {
   const textarea = document.getElementById('shopeeData');
   if (textarea) {
@@ -273,7 +271,8 @@ async function processData() {
             showCustomAlert(res.message || "Transaksi selesai.", currentDownloadUrl);
           }
         }, 1200);
-        } else {
+
+      } else {
         if (logDiv) {
           logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
           logDiv.scrollTop = logDiv.scrollHeight;
@@ -299,7 +298,6 @@ async function processData() {
   if (btnSpinner) btnSpinner.style.display = 'none';
   if (btnText) btnText.innerText = '⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)';
 }
-
 function showCustomAlert(message, downloadUrl) {
   const msgEl = document.getElementById('customAlertMessage');
   if (msgEl) msgEl.innerText = message;
@@ -370,7 +368,9 @@ function downloadExcelWithProgress() {
 function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
-  // ==========================================
+} // <--- Tanda kurung kurawal penutup yang tadinya kurang
+
+// ==========================================
 // 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS
 // ==========================================
 const fadeTexts = [
@@ -583,7 +583,6 @@ function pilihYaPending() {
   if (inputEl) inputEl.focus();
 }
 
-// DIPERBAIKI: Menggunakan showCustomAlert agar modal sukses dan tombol download selalu muncul dengan aman
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
   if (modalInput) modalInput.style.display = 'none';
@@ -596,7 +595,7 @@ function selesaiDanDownload() {
   
   showCustomAlert(msg, url);
 }
-  // FUNGSI UTAMA PENDING & CANCEL YANG TERHUBUNG KE BACKEND & GLASS TOAST
+
 async function kirimAksiPendingCancel(actionType) {
   const inputEl = document.getElementById('inputNoTrx');
   const noTransaksi = inputEl ? inputEl.value.trim() : '';
@@ -610,13 +609,11 @@ async function kirimAksiPendingCancel(actionType) {
   const btn = document.getElementById(btnId);
   const actionLabel = actionType === 'pending' ? 'Pending' : 'Cancel';
 
-  // Elemen Toast Animasi Kaca
   const toast = document.getElementById('glassToast');
   const spinnerContainer = document.getElementById('toastIconContainer');
   const toastTitle = document.getElementById('toastTitle');
   const toastDesc = document.getElementById('toastDesc');
 
-  // 1. Ubah tombol & aktifkan toast loading
   if (btn) {
     btn.disabled = true;
     btn.innerHTML = `Memproses<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
@@ -635,7 +632,7 @@ async function kirimAksiPendingCancel(actionType) {
       method: "POST",
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
-        action: actionType, // 'pending' atau 'cancel'
+        action: actionType,
         noTransaksi: noTransaksi
       })
     });
@@ -663,7 +660,6 @@ async function kirimAksiPendingCancel(actionType) {
         inputEl.focus();
       }
 
-      // 2. Transisi Toast ke Sukses (Centang Hijau)
       if (spinnerContainer) {
         spinnerContainer.innerHTML = '<span class="checkmark">✓</span>';
         spinnerContainer.className = 'toast-icon-wrapper success';
@@ -694,14 +690,23 @@ async function kirimAksiPendingCancel(actionType) {
   }
 }
 
-// Shortcut Enter di input nomor transaksi
 document.addEventListener('DOMContentLoaded', () => {
   const inputTrx = document.getElementById('inputNoTrx');
   if (inputTrx) {
     inputTrx.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
-        kirimAksiPendingCancel('pending'); // Default Enter kirim sebagai pending
+        kirimAksiPendingCancel('pending');
+      }
+    });
+  }
+
+  const inputLogin = document.getElementById('inputOperatorKey');
+  if (inputLogin) {
+    inputLogin.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyOperatorLogin();
       }
     });
   }
