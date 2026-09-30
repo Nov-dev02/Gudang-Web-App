@@ -9,27 +9,27 @@ const operatorsProfile = {
   "IRGI": { 
     id: "GDN-001", 
     name: "IRGI", 
-    photo: "https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/img/IRGI.jpg" // Kosong = otomatis pakai inisial huruf "IR"
+    photo: "https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/img/IRGI.jpg" 
   },
   "NOVAN": { 
     id: "GDN-002", 
     name: "NOVAN", 
-    photo: "" // Kosong = otomatis pakai inisial huruf "NO"
+    photo: "" 
   },
   "DWI": { 
     id: "GDN-003", 
     name: "DWI", 
-    photo: "" // Kosong = otomatis pakai inisial huruf "DW"
+    photo: "" 
   },
   "ERIKA": { 
     id: "GDN-004", 
     name: "ERIKA", 
-    photo: "" // Kosong = otomatis pakai inisial huruf "ER"
+    photo: "" 
   }
 };
 
 // Fungsi Mengatur Tampilan Header (Inisial Avatar / Foto Profil & ID)
- function setOperatorProfile(namaOperator) {
+function setOperatorProfile(namaOperator) {
     const cleanName = namaOperator ? namaOperator.toUpperCase() : "";
     const profile = operatorsProfile[cleanName] || { id: "GDN-999", name: namaOperator, photo: "" };
     
@@ -51,7 +51,6 @@ const operatorsProfile = {
         }
     }
 }
-
 // Fungsi Verifikasi Login dengan Animasi Sukses
 function verifyOperatorLogin() {
   const inputEl = document.getElementById('inputOperatorKey');
@@ -71,21 +70,15 @@ function verifyOperatorLogin() {
   }
 
   if (matchedName) {
-    // Simpan status login ke localStorage
-    // Simpan nama operator beserta waktu login (dalam format timestamp)
-const sessionData = {
-  name: matchedName,
-  loginTime: new Date().getTime()
-};
-localStorage.setItem('gudang_active_operator', JSON.stringify(sessionData));
+    const sessionData = {
+      name: matchedName,
+      loginTime: new Date().getTime()
+    };
+    localStorage.setItem('gudang_active_operator', JSON.stringify(sessionData));
     
-    // Tampilkan animasi alert sukses turun ke bawah
     if (alertBox) alertBox.style.top = '0px';
-    
-    // Terapkan profil operator ke header
     setOperatorProfile(matchedName);
     
-    // Jeda sejenak untuk memperlihatkan animasi sukses, lalu tutup modal & izinkan akses sistem booting/utama
     setTimeout(() => {
       if (modal) {
         modal.style.opacity = '0';
@@ -94,13 +87,13 @@ localStorage.setItem('gudang_active_operator', JSON.stringify(sessionData));
     }, 1000);
 
   } else {
-    // Jika tidak valid / tidak sesuai jadwal
     if (errorMsg) {
       errorMsg.innerText = "❌ Nama atau ID tidak terdaftar dalam jadwal shift minggu ini!";
       errorMsg.style.display = 'block';
     }
   }
 }
+
 // Fungsi untuk menghitung jumlah baris & mendeteksi jenis transaksi secara otomatis berdasarkan pola
 function updateRowCounter() {
   const textarea = document.getElementById('shopeeData');
@@ -123,10 +116,7 @@ function updateRowCounter() {
     let line = rawLine.trim();
     let upperLine = line.toUpperCase();
 
-    // Pola Shopee: 14 karakter, diawali 6 digit angka (tanggal) + 8 karakter alfanumerik (Contoh: 260922N6CJPBGB)
     const shopeePattern = /^\d{6}[A-Z0-9]{8}$/i;
-
-    // Pola TikTok Resi: Diawali prefiks kurir seperti JY, TG, GTL, atau mengandung kata tiktok
     const isTiktok = upperLine.startsWith('JY') || 
                      upperLine.startsWith('TG') || 
                      upperLine.startsWith('GTL') || 
@@ -139,7 +129,6 @@ function updateRowCounter() {
     }
   });
 
-  // Jika ada data yang terdeteksi polanya, tampilkan rincian di badge
   if (shopeeCount > 0 || tiktokCount > 0) {
     rowCounter.innerHTML = `📊 ${totalLines.toLocaleString()} baris <span style="font-size: 10px; opacity: 0.85; margin-left: 4px; font-weight: normal;">(Shopee: ${shopeeCount} | TikTok: ${tiktokCount})</span>`;
   } else {
@@ -147,7 +136,6 @@ function updateRowCounter() {
   }
 }
 
-// Inisialisasi event listener dengan aman (menangani kondisi DOM yang sudah siap)
 function initAppListeners() {
   const textarea = document.getElementById('shopeeData');
   if (textarea) {
@@ -159,7 +147,6 @@ function initAppListeners() {
   }
 }
 
-// Cek status DOM agar event listener langsung terpasang tanpa menunggu DOMContentLoaded yang sudah lewat
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initAppListeners);
 } else {
@@ -183,9 +170,6 @@ async function processData() {
     return;
   }
 
-  // ==========================================
-  // 🔍 VALIDASI KEYWORD
-  // ==========================================
   const lowerData = shopeeData.toLowerCase();
   const hasValidIndicator = lowerData.includes('shopee') || 
                             lowerData.includes('tiktok') || 
@@ -197,17 +181,16 @@ async function processData() {
   if (!hasValidIndicator) {
     showToast("⚠️ Peringatan: Format data terlihat tidak valid. Pastikan Anda mempaste laporan resmi Shopee/TikTok.", "warning");
   }
-  // ==========================================
   
   if (WEB_APP_URL.includes("MASUKKAN_URL")) {
     alert('Harap isi URL Web App Apps Script di dalam file script.js terlebih dahulu!');
     return;
   }
-if (btn) btn.disabled = true;
+  
+  if (btn) btn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = 'block';
   if (btnText) btnText.innerText = 'Sedang Memproses & Sinkronisasi...';
   
-  // TAHAP 1: Log awal koneksi
   if (logDiv) {
     logDiv.style.display = 'block';
     logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive...';
@@ -227,9 +210,9 @@ if (btn) btn.disabled = true;
       logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database...';
       logDiv.scrollTop = logDiv.scrollHeight;
     }
-
     const response = await fetch(WEB_APP_URL, {
       method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ shopeeData: shopeeData })
     });
     
@@ -248,11 +231,9 @@ if (btn) btn.disabled = true;
         const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
         const formattedSyncTime = `${now.toLocaleDateString('id-ID', dateOptions)} - ${now.toLocaleTimeString('id-ID', timeOptions)} WIB`;
         
-        // Simpan ke localStorage agar aman saat halaman di-refresh
         localStorage.setItem('gudang_last_sync', formattedSyncTime);
         updateLastSyncDisplay(formattedSyncTime);
         
-        // TAHAP 2: Pecah pesan dari server dan cetak SATU PER SATU secara bertahap
         const messageLines = res.message.split('\n');
         for (let i = 0; i < messageLines.length; i++) {
           if (messageLines[i].trim() !== '') {
@@ -264,7 +245,6 @@ if (btn) btn.disabled = true;
           }
         }
         
-        // TAHAP 3: Baris penutup log
         await new Promise(resolve => setTimeout(resolve, 400));
         if (logDiv) {
           logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
@@ -278,10 +258,9 @@ if (btn) btn.disabled = true;
         addCumulativeTotal(messageLines.length);
         
         currentDownloadUrl = res.downloadUrl || "";
-        window.globalServerResponse = res; // Simpan data server agar bisa dipakai modal
+        window.globalServerResponse = res;
         
         setTimeout(() => {
-          // Munculkan modal konfirmasi pending / cancel terlebih dahulu
           const modalKonfirmasi = document.getElementById('modalKonfirmasi');
           if (modalKonfirmasi) {
             modalKonfirmasi.style.display = 'flex';
@@ -316,7 +295,6 @@ if (btn) btn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = 'none';
   if (btnText) btnText.innerText = '⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)';
 }
-
 function showCustomAlert(message, downloadUrl) {
   const msgEl = document.getElementById('customAlertMessage');
   if (msgEl) msgEl.innerText = message;
@@ -385,8 +363,9 @@ function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
 }
+
 // ==========================================
-// 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS ROTATOR (SMOOTH)
+// 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS
 // ==========================================
 const fadeTexts = [
   "📦 SISTEM MANAJEMEN GUDANG ONLINE",
@@ -399,29 +378,25 @@ const fadeTexts = [
 
 let fadeIndex = 0;
 let rotatorInterval = null;
-
 function initTextFadeRotator() {
   const textEl = document.getElementById('rotating-text');
   if (!textEl) return;
 
   if (rotatorInterval) clearInterval(rotatorInterval);
-
   textEl.innerText = fadeTexts[fadeIndex];
 
   rotatorInterval = setInterval(() => {
     textEl.style.opacity = 0;
-
     setTimeout(() => {
       fadeIndex = (fadeIndex + 1) % fadeTexts.length;
       textEl.innerText = fadeTexts[fadeIndex];
       textEl.style.opacity = 1;
     }, 800); 
-
   }, 5000); 
 }
 
 // ==========================================
-// 🌐 MONITORING STATUS JARINGAN & TOAST NOTIFIKASI ESTETIK
+// 🌐 MONITORING STATUS JARINGAN & TOAST
 // ==========================================
 function showToast(message, type = "warning") {
   let toastContainer = document.getElementById('custom-toast-container');
@@ -429,63 +404,28 @@ function showToast(message, type = "warning") {
     toastContainer = document.createElement('div');
     toastContainer.id = 'custom-toast-container';
     toastContainer.style.cssText = `
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
+      position: fixed; top: 24px; right: 24px; z-index: 99999;
+      display: flex; flex-direction: column; gap: 10px; pointer-events: none;
     `;
     document.body.appendChild(toastContainer);
   }
 
   const toast = document.createElement('div');
+  let bgColor = '#1e293b', borderColor = '#334155', icon = '⚠️';
   
-  let bgColor = '#1e293b';
-  let borderColor = '#334155';
-  let icon = '⚠️';
-  
-  if (type === 'error') {
-    bgColor = '#7f1d1d';
-    borderColor = '#991b1b';
-    icon = '❌';
-  } else if (type === 'success') {
-    bgColor = '#065f46';
-    borderColor = '#047857';
-    icon = '✅';
-  } else if (type === 'warning') {
-    bgColor = '#78350f';
-    borderColor = '#92400e';
-    icon = '⚠️';
-  }
+  if (type === 'error') { bgColor = '#7f1d1d'; borderColor = '#991b1b'; icon = '❌'; }
+  else if (type === 'success') { bgColor = '#065f46'; borderColor = '#047857'; icon = '✅'; }
+  else if (type === 'warning') { bgColor = '#78350f'; borderColor = '#92400e'; icon = '⚠️'; }
 
   toast.style.cssText = `
-    background: ${bgColor};
-    border: 1px solid ${borderColor};
-    color: #f8fafc;
-    padding: 14px 18px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 300px;
-    max-width: 420px;
-    pointer-events: auto;
-    opacity: 0;
-    transform: translateY(-15px) scale(0.98);
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    background: ${bgColor}; border: 1px solid ${borderColor}; color: #f8fafc;
+    padding: 14px 18px; border-radius: 10px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 12px;
+    min-width: 300px; max-width: 420px; pointer-events: auto; opacity: 0;
+    transform: translateY(-15px) scale(0.98); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   `;
   
-  toast.innerHTML = `
-    <span style="font-size: 18px; flex-shrink: 0;">${icon}</span>
-    <div style="flex: 1; line-height: 1.4; word-break: break-word;">${message}</div>
-  `;
-  
+  toast.innerHTML = `<span style="font-size: 18px; flex-shrink: 0;">${icon}</span><div style="flex: 1; line-height: 1.4; word-break: break-word;">${message}</div>`;
   toastContainer.appendChild(toast);
 
   setTimeout(() => {
@@ -496,66 +436,37 @@ function showToast(message, type = "warning") {
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(-15px) scale(0.98)';
-    setTimeout(() => {
-      toast.remove();
-    }, 350);
+    setTimeout(() => { toast.remove(); }, 350);
   }, 4500);
 }
 
 function updateNetworkStatus() {
   const netStatusEl = document.getElementById('net-status-text');
-  
   if (navigator.onLine) {
-    if (netStatusEl) {
-      netStatusEl.innerText = "Online";
-      netStatusEl.style.color = "#22c55e";
-    }
+    if (netStatusEl) { netStatusEl.innerText = "Online"; netStatusEl.style.color = "#22c55e"; }
     showToast("Koneksi internet kembali terhubung! Database siap disinkronkan.", "success");
   } else {
-    if (netStatusEl) {
-      netStatusEl.innerText = "Offline (Terputus)";
-      netStatusEl.style.color = "#ef4444";
-    }
+    if (netStatusEl) { netStatusEl.innerText = "Offline (Terputus)"; netStatusEl.style.color = "#ef4444"; }
     showToast("PERHATIAN: Koneksi internet terputus! Sinkronisasi database tertunda.", "warning");
   }
 }
 
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
-
-window.addEventListener('DOMContentLoaded', () => {
-  const netStatusEl = document.getElementById('net-status-text');
-  if (netStatusEl) {
-    if (navigator.onLine) {
-      netStatusEl.innerText = "Online";
-      netStatusEl.style.color = "#22c55e";
-    } else {
-      netStatusEl.innerText = "Offline (Terputus)";
-      netStatusEl.style.color = "#ef4444";
-    }
-  }
-});
 // ==========================================
-// ⏱️ MANAJEMEN WAKTU SINKRONISASI TERAKHIR (LAST SYNC)
+// ⏱️ LAST SYNC & PANDUAN
 // ==========================================
 function updateLastSyncDisplay(timeString) {
   const lastSyncEl = document.getElementById('last-sync-text');
   if (lastSyncEl) {
-    if (timeString) {
-      lastSyncEl.innerText = timeString;
-      lastSyncEl.style.color = "#38bdf8";
-    } else {
-      lastSyncEl.innerText = "Belum ada";
-      lastSyncEl.style.color = "#e2e8f0";
-    }
+    if (timeString) { lastSyncEl.innerText = timeString; lastSyncEl.style.color = "#38bdf8"; }
+    else { lastSyncEl.innerText = "Belum ada"; lastSyncEl.style.color = "#e2e8f0"; }
   }
 }
 
 function initLastSync() {
   const savedLastSync = localStorage.getItem('gudang_last_sync');
-  if (savedLastSync) {
-    updateLastSyncDisplay(savedLastSync);
-  }
+  if (savedLastSync) updateLastSyncDisplay(savedLastSync);
 }
 
 if (document.readyState === 'loading') {
@@ -564,85 +475,56 @@ if (document.readyState === 'loading') {
   initLastSync();
 }
 
-// ==========================================
-// 📖 KONTROL MODAL PANDUAN FORMAT
-// ==========================================
-function openGuideModal() {
-  const modal = document.getElementById('guideModal');
-  if (modal) modal.style.display = 'flex';
-}
+function openGuideModal() { const modal = document.getElementById('guideModal'); if (modal) modal.style.display = 'flex'; }
+function closeGuideModal() { const modal = document.getElementById('guideModal'); if (modal) modal.style.display = 'none'; }
 
-function closeGuideModal() {
-  const modal = document.getElementById('guideModal');
-  if (modal) modal.style.display = 'none';
-}
-
-// Fungsi otomatis mengambil data dari Clipboard komputer
 async function pasteFromClipboard() {
   try {
     const text = await navigator.clipboard.readText();
     const textarea = document.getElementById('shopeeData');
-    
     if (textarea) {
       textarea.value = text;
       textarea.focus();
-      
-      if (typeof updateRowCounter === 'function') {
-        updateRowCounter();
-      }
-      
-      console.log("[SYSTEM] Berhasil menempelkan data dari clipboard.");
+      if (typeof updateRowCounter === 'function') updateRowCounter();
     }
   } catch (err) {
-    alert("Gagal membaca clipboard secara otomatis. Pastikan browser diizinkan mengakses clipboard atau gunakan shortcut manual (Ctrl + V).");
-    console.error("Clipboard error: ", err);
+    alert("Gagal membaca clipboard secara otomatis.");
   }
 }
+
 // ==========================================
-// FITUR TAMBAHAN: AUDIO SUKSES & TOTAL AKUMULATOR
+// 🎵 AUDIO & AKUMULATOR
 // ==========================================
 function playSuccessSound() {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
-
     oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.1); // G5
-
+    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.1);
     gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
-
     oscillator.start();
     oscillator.stop(audioCtx.currentTime + 0.3);
-  } catch (e) {
-    console.log("Audio not supported or restricted by browser policy.", e);
-  }
+  } catch (e) {}
 }
 
-function getCumulativeTotal() {
-  return parseInt(localStorage.getItem('gudang_total_alltime') || '0', 10);
-}
-
+function getCumulativeTotal() { return parseInt(localStorage.getItem('gudang_total_alltime') || '0', 10); }
 function addCumulativeTotal(amount) {
-  let currentTotal = getCumulativeTotal();
-  let newTotal = currentTotal + amount;
+  let newTotal = getCumulativeTotal() + amount;
   localStorage.setItem('gudang_total_alltime', newTotal);
   renderCumulativeCounter();
 }
-
 function renderCumulativeCounter() {
   const badge = document.getElementById('dailyCounterBadge');
-  if (badge) {
-    badge.innerText = `📦 Total: ${getCumulativeTotal().toLocaleString()} paket`;
-  }
+  if (badge) badge.innerText = `📦 Total: ${getCumulativeTotal().toLocaleString()} paket`;
 }
+
 // ==========================================
-// 🚀 PENGECEKAN STATUS LOGIN & INISIALISASI UTAMA
+// 🚀 INISIALISASI UTAMA & LOGIN CHECK
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderCumulativeCounter();
@@ -652,64 +534,40 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (savedSession) {
     try {
-      let operatorName = "";
-      let loginTime = 0;
-      
-      // Cek apakah data berupa format JSON baru atau teks biasa lama
+      let operatorName = "", loginTime = 0;
       if (savedSession.startsWith('{')) {
         const session = JSON.parse(savedSession);
         operatorName = session.name ? session.name.toUpperCase() : "";
         loginTime = session.loginTime || 0;
       } else {
-        // Fallback untuk format data lama (plain string)
         operatorName = savedSession.toUpperCase();
         loginTime = new Date().getTime();
       }
       
       const currentTime = new Date().getTime();
-      const oneWeekMilliseconds = 7 * 24 * 60 * 60 * 1000; // Batas 7 hari
+      const oneWeekMilliseconds = 7 * 24 * 60 * 60 * 1000;
       
-      // Validasi masa aktif (belum 7 hari) dan pastikan nama operator terdaftar
       if ((currentTime - loginTime) < oneWeekMilliseconds && operatorsProfile[operatorName]) {
         setOperatorProfile(operatorName);
-        if (modal) {
-          modal.style.display = 'none';
-        }
+        if (modal) modal.style.display = 'none';
       } else {
-        // Sesi kedaluwarsa atau data tidak valid
         localStorage.removeItem('gudang_active_operator');
         if (modal) modal.style.display = 'flex';
       }
     } catch (e) {
-      // Jika terjadi error parsing, bersihkan storage demi keamanan
       localStorage.removeItem('gudang_active_operator');
       if (modal) modal.style.display = 'flex';
     }
   } else {
-    // Belum pernah login sama sekali
     if (modal) modal.style.display = 'flex';
   }
 });
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(() => console.log('PWA Service Worker Berhasil Didaftarkan!'))
-            .catch((err) => console.log('Gagal daftar Service Worker:', err));
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
 }
-// ==========================================
-// FUNGSI MODAL PENDING & CANCEL (VERSI ONCLICK AMAN)
-// ==========================================
-
-// Fungsi saat tombol [Tidak] diklik
-function pilihTidakPending() {
-  document.getElementById('modalKonfirmasi').style.display = 'none';
-  if (window.globalServerResponse) {
-    showCustomAlert(window.globalServerResponse.message, currentDownloadUrl);
-  }
-}
-
-// Fungsi saat tombol [Ya, Ada] diklik
 function pilihYaPending() {
   document.getElementById('modalKonfirmasi').style.display = 'none';
   document.getElementById('modalInputPending').style.display = 'flex';
@@ -717,12 +575,10 @@ function pilihYaPending() {
   if (inputEl) inputEl.focus();
 }
 
-// Fungsi saat tombol [Selesai & Download] diklik
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
   if (modalInput) modalInput.style.display = 'none';
   
-  // 🔥 Tampilkan pop-up download dengan link terbaru yang sudah memuat data cancel/pending
   if (currentDownloadUrl) {
     showCustomAlert("✅ Data pending/cancel berhasil dicatat dan laporan diperbarui!", currentDownloadUrl);
   } else if (window.globalServerResponse && window.globalServerResponse.downloadUrl) {
@@ -731,8 +587,9 @@ function selesaiDanDownload() {
     alert("Transaksi selesai.");
   }
 }
-// Fungsi kirim aksi Pending / Cancel ke server Google Apps Script
-function kirimAksiPendingCancel(actionType) {
+
+// FUNGSI UTAMA PENDING & CANCEL YANG TERHUBUNG KE BACKEND & GLASS TOAST
+async function kirimAksiPendingCancel(actionType) {
   const inputEl = document.getElementById('inputNoTrx');
   const noTransaksi = inputEl ? inputEl.value.trim() : '';
   
@@ -741,89 +598,94 @@ function kirimAksiPendingCancel(actionType) {
     return;
   }
 
-  // Tangkap elemen tombol dan teks status
-  const btnPending = document.getElementById('btnSetPending');
-  const btnCancel = document.getElementById('btnSetCancel');
-  const statusText = document.getElementById('pendingStatusText');
+  const btnId = actionType === 'pending' ? 'btnSetPending' : 'btnSetCancel';
+  const btn = document.getElementById(btnId);
+  const actionLabel = actionType === 'pending' ? 'Pending' : 'Cancel';
 
-  // 1. Ubah tombol jadi "Memproses..." dan matikan (disabled)
-  if (btnPending) { btnPending.disabled = true; btnPending.style.opacity = '0.6'; }
-  if (btnCancel) { btnCancel.disabled = true; btnCancel.style.opacity = '0.6'; }
+  // Elemen Toast Animasi Kaca
+  const toast = document.getElementById('glassToast');
+  const spinnerContainer = document.getElementById('toastIconContainer');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastDesc = document.getElementById('toastDesc');
 
-  if (actionType === 'pending') {
-    if (btnPending) btnPending.innerText = "Memproses...";
-  } else {
-    if (btnCancel) btnCancel.innerText = "Memproses...";
+  // 1. Ubah tombol & aktifkan toast loading
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `Memproses<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
   }
 
-  // 2. Munculkan teks status loading di atas input
-  if (statusText) {
-    statusText.style.display = 'block';
+  if (spinnerContainer) {
+    spinnerContainer.innerHTML = '<div class="gradient-spinner"></div>';
+    spinnerContainer.className = 'toast-icon-wrapper';
   }
+  if (toastTitle) toastTitle.textContent = `Memproses data (${actionLabel})...`;
+  if (toastDesc) toastDesc.innerHTML = `Sabar ya gais, lagi proses ${actionLabel.toLowerCase()} data gudang<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
+  if (toast) toast.classList.add('show');
 
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: actionType, // 'pending' atau 'cancel'
-      noTransaksi: noTransaksi
-    })
-  })
-  .then(res => res.text())
-  .then(text => {
-    // 3. Kembalikan tombol & sembunyikan status setelah selesai
-    resetButtonState(btnPending, btnCancel, statusText);
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: "POST",
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: actionType, // 'pending' atau 'cancel'
+        noTransaksi: noTransaksi
+      })
+    });
 
-    try {
-      const res = JSON.parse(text);
-      if (res.status === 'success') {
-        // 🔥 UPDATE LINK DOWNLOAD TERBARU DARI SERVER JIKA ADA
-        if (res.downloadUrl) {
-          currentDownloadUrl = res.downloadUrl;
-        }
+    const text = await response.text();
+    const res = JSON.parse(text);
 
-        const listLog = document.getElementById('listLogPending');
+    if (res.status === 'success') {
+      if (res.downloadUrl) {
+        currentDownloadUrl = res.downloadUrl;
+      }
+
+      const listLog = document.getElementById('listLogPending');
+      if (listLog) {
         if (listLog.children.length === 1 && listLog.children[0].style.color === 'rgb(100, 116, 139)') {
           listLog.innerHTML = ''; 
         }
-        
         const badgeColor = actionType === 'pending' ? '#f59e0b' : '#ef4444';
         listLog.innerHTML += `<li><b style="color:${badgeColor}">[${actionType.toUpperCase()}]</b> TRX: ${noTransaksi}</li>`;
-        
+      }
+
+      if (inputEl) {
         inputEl.value = '';
         inputEl.focus();
-      } else {
-        alert("Gagal: " + res.message);
       }
-    } catch(err) {
-      alert("Respon server tidak valid.");
+
+      // 2. Transisi Toast ke Sukses (Centang Hijau)
+      if (spinnerContainer) {
+        spinnerContainer.innerHTML = '<span class="checkmark">✓</span>';
+        spinnerContainer.className = 'toast-icon-wrapper success';
+      }
+      if (toastTitle) toastTitle.textContent = 'Berhasil diproses!';
+      if (toastDesc) toastDesc.textContent = res.message || `Status gudang berhasil di-${actionLabel.toLowerCase()}.`;
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `Set ${actionLabel}`;
+      }
+
+      setTimeout(() => {
+        if (toast) toast.classList.remove('show');
+      }, 2000);
+
+    } else {
+      throw new Error(res.message || "Gagal memproses data.");
     }
-  })
-  .catch(err => {
-    // 3. Kembalikan tombol & sembunyikan status jika terjadi error jaringan
-    resetButtonState(btnPending, btnCancel, statusText);
-    alert("Terjadi kesalahan koneksi: " + err);
-  });
-}
 
-// Fungsi pembantu untuk mengembalikan tombol ke semula
-function resetButtonState(btnPending, btnCancel, statusText) {
-  if (btnPending) {
-    btnPending.disabled = false;
-    btnPending.style.opacity = '1';
-    btnPending.innerText = "Set Pending";
-  }
-  if (btnCancel) {
-    btnCancel.disabled = false;
-    btnCancel.style.opacity = '1';
-    btnCancel.innerText = "Set Cancel";
-  }
-  if (statusText) {
-    statusText.style.display = 'none';
+  } catch (error) {
+    alert("Terjadi kesalahan: " + error.message);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `Set ${actionLabel}`;
+    }
+    if (toast) toast.classList.remove('show');
   }
 }
 
-
-// Shortcut tombol Enter di input nomor transaksi
+// Shortcut Enter di input nomor transaksi
 document.addEventListener('DOMContentLoaded', () => {
   const inputTrx = document.getElementById('inputNoTrx');
   if (inputTrx) {
@@ -835,67 +697,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-function kirimAksiPendingCancel(actionType) {
-  // Tentukan tombol mana yang diklik berdasarkan parameter dari HTML-mu ('pending' atau 'cancel')
-  const btnId = actionType === 'pending' ? 'btnSetPending' : 'btnSetCancel';
-  const btn = document.getElementById(btnId);
-  const actionLabel = actionType === 'pending' ? 'Pending' : 'Cancel';
-
-  const noTrx = document.getElementById('inputNoTrx').value;
-  const toast = document.getElementById('glassToast');
-  const spinnerContainer = document.getElementById('toastIconContainer');
-  const toastTitle = document.getElementById('toastTitle');
-  const toastDesc = document.getElementById('toastDesc');
-
-  // 1. Disable tombol yang diklik & ubah teks jadi "Memproses..." dengan titik memantul
-  btn.disabled = true;
-  btn.innerHTML = `Memproses<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
-
-  // Reset tampilan Toast ke state loading awal
-  spinnerContainer.innerHTML = '<div class="gradient-spinner"></div>';
-  spinnerContainer.className = 'toast-icon-wrapper';
-  toastTitle.textContent = `Memproses data (${actionLabel})...`;
-  toastDesc.innerHTML = `Sabar ya gais, lagi proses ${actionLabel.toLowerCase()} data gudang<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>`;
-
-  // Munculkan Floating Glass Toast
-  toast.classList.add('show');
-
-  // 2. BAGIAN BACKEND (Google Apps Script / Fetch kamu)
-  // Contoh jika pakai google.script.run:
-  /*
-  google.script.run
-    .withSuccessHandler(function(response) {
-      tampilkanSukses(btn, actionLabel, toast, spinnerContainer, toastTitle, toastDesc);
-    })
-    .withFailureHandler(function(error) {
-      alert("Terjadi kesalahan: " + error);
-      btn.disabled = false;
-      btn.innerHTML = `Set ${actionLabel}`;
-      toast.classList.remove('show');
-    })
-    .namaFungsiBackendAnda(actionType, noTrx);
-  */
-
-  // --- SIMULASI SEMENTARA (Hapus bagian setTimeout ini kalau sudah dihubungkan ke backend aslimu) ---
-  setTimeout(() => {
-    tampilkanSukses(btn, actionLabel, toast, spinnerContainer, toastTitle, toastDesc);
-  }, 2500);
-}
-
-// Fungsi bantu untuk memicu animasi sukses
-function tampilkanSukses(btn, actionLabel, toast, spinnerContainer, toastTitle, toastDesc) {
-  // 3. TRANSISI SUKSES (Spinner berubah jadi hijau + centang pop-up)
-  spinnerContainer.innerHTML = '<span class="checkmark">✓</span>';
-  spinnerContainer.className = 'toast-icon-wrapper success';
-  toastTitle.textContent = 'Berhasil diproses!';
-  toastDesc.textContent = `Status gudang berhasil di-${actionLabel.toLowerCase()}.`;
-
-  // Kembalikan tombol ke kondisi normal & aktif
-  btn.disabled = false;
-  btn.innerHTML = `Set ${actionLabel}`;
-
-  // 4. HILANGKAN TOAST (Fade-Out mulus setelah 1.8 detik)
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 1800);
-}
