@@ -1,4 +1,4 @@
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyZ8_XEkSCtihAlee9ZXfnZA2EhP2Hg94BRTjgKqypuPiavCrhN-paPfhYTG0v-CyKp/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbylbmiPyoMoGER_rLRZjlvRA5hJQxxb_oabD48bi0CwKLrDuQfLXBsjSfhbZhvHOM2K/exec";
 
 let currentDownloadUrl = "";
 
