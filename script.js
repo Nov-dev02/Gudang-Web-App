@@ -585,14 +585,15 @@ function pilihTidakPending() {
     modalKonfirm.style.display = 'none';
   }
   
-  // Memunculkan notifikasi atau langsung memicu download laporan Excel
-  if (typeof currentDownloadUrl !== 'undefined' && currentDownloadUrl) {
-    showCustomAlert("✅ Proses selesai. Laporan Excel siap diunduh!");
+  // Perbaikan: Kirim currentDownloadUrl ke dalam showCustomAlert agar tombol download-nya muncul!
+  if (currentDownloadUrl) {
+    showCustomAlert("✅ Proses sinkronisasi selesai. Laporan Excel siap diunduh!", currentDownloadUrl);
+  } else if (window.globalServerResponse && window.globalServerResponse.downloadUrl) {
+    showCustomAlert(window.globalServerResponse.message, window.globalServerResponse.downloadUrl);
   } else {
     showToast("Data berhasil diproses tanpa nota pending!", "🚀");
   }
 }
-
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
   if (modalInput) modalInput.style.display = 'none';
