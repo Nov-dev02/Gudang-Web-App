@@ -568,11 +568,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-    });
-}
+//if ('serviceWorker' in navigator) {
+ //window.addEventListener('load', () => {
+     //navigator.serviceWorker.register('./sw.js').catch(() => {});
+  //});
+// }
 function pilihYaPending() {
   document.getElementById('modalKonfirmasi').style.display = 'none';
   document.getElementById('modalInputPending').style.display = 'flex';
