@@ -585,7 +585,7 @@ function pilihTidakPending() {
     modalKonfirm.style.display = 'none';
   }
   
-  // Perbaikan: Kirim currentDownloadUrl ke dalam showCustomAlert agar tombol download-nya muncul!
+  // Perbaikan: Sertakan currentDownloadUrl sebagai parameter kedua di showCustomAlert!
   if (currentDownloadUrl) {
     showCustomAlert("✅ Proses sinkronisasi selesai. Laporan Excel siap diunduh!", currentDownloadUrl);
   } else if (window.globalServerResponse && window.globalServerResponse.downloadUrl) {
@@ -594,6 +594,7 @@ function pilihTidakPending() {
     showToast("Data berhasil diproses tanpa nota pending!", "🚀");
   }
 }
+
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
   if (modalInput) modalInput.style.display = 'none';
