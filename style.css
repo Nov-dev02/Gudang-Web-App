@@ -431,7 +431,7 @@ button:hover {
   width: 16px;
   height: 16px;
   border: 2px solid rgba(56, 189, 248, 0.2);
-  border-top: 2px solid #38bdf8;
+  border-top: 2px solid #ffffff;
   border-radius: 50%;
   animation: spinRing 0.8s linear infinite;
 }
