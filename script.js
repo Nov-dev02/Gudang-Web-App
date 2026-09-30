@@ -51,6 +51,7 @@ function setOperatorProfile(namaOperator) {
         }
     }
 }
+
 // Fungsi Verifikasi Login dengan Animasi Sukses
 function verifyOperatorLogin() {
   const inputEl = document.getElementById('inputOperatorKey');
@@ -135,7 +136,6 @@ function updateRowCounter() {
     rowCounter.innerText = `📊 ${totalLines.toLocaleString()} baris data`;
   }
 }
-
 function initAppListeners() {
   const textarea = document.getElementById('shopeeData');
   if (textarea) {
@@ -239,7 +239,7 @@ async function processData() {
         localStorage.setItem('gudang_last_sync', formattedSyncTime);
         updateLastSyncDisplay(formattedSyncTime);
         
-        const messageLines = res.message.split('\n');
+        const messageLines = res.message ? res.message.split('\n') : [];
         for (let i = 0; i < messageLines.length; i++) {
           if (messageLines[i].trim() !== '') {
             await new Promise(resolve => setTimeout(resolve, 250));
@@ -262,7 +262,7 @@ async function processData() {
         playSuccessSound();
         addCumulativeTotal(messageLines.length);
         
-        currentDownloadUrl = res.downloadUrl || "";
+        currentDownloadUrl = res.downloadUrl || res.fileUrl || res.spreadsheetUrl || "";
         window.globalServerResponse = res;
         
         setTimeout(() => {
@@ -270,11 +270,10 @@ async function processData() {
           if (modalKonfirmasi) {
             modalKonfirmasi.style.display = 'flex';
           } else {
-            showCustomAlert(res.message, currentDownloadUrl);
+            showCustomAlert(res.message || "Transaksi selesai.", currentDownloadUrl);
           }
         }, 1200);
-
-      } else {
+        } else {
         if (logDiv) {
           logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
           logDiv.scrollTop = logDiv.scrollHeight;
@@ -300,6 +299,7 @@ async function processData() {
   if (btnSpinner) btnSpinner.style.display = 'none';
   if (btnText) btnText.innerText = '⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)';
 }
+
 function showCustomAlert(message, downloadUrl) {
   const msgEl = document.getElementById('customAlertMessage');
   if (msgEl) msgEl.innerText = message;
@@ -312,7 +312,7 @@ function showCustomAlert(message, downloadUrl) {
   if (downloadBtn) downloadBtn.disabled = false;
   
   if (downloadBtn) {
-    if (downloadUrl) {
+    if (downloadUrl && downloadUrl.trim() !== "") {
       downloadBtn.style.display = 'flex';
     } else {
       downloadBtn.style.display = 'none';
@@ -324,7 +324,10 @@ function showCustomAlert(message, downloadUrl) {
 }
 
 function downloadExcelWithProgress() {
-  if (!currentDownloadUrl) {
+  const targetUrl = currentDownloadUrl || (window.globalServerResponse && (window.globalServerResponse.downloadUrl || window.globalServerResponse.fileUrl || window.globalServerResponse.spreadsheetUrl)) || "";
+
+  if (!targetUrl) {
+    alert("Link download belum tersedia dari server.");
     closeCustomAlert();
     return;
   }
@@ -351,7 +354,7 @@ function downloadExcelWithProgress() {
       clearInterval(interval);
       if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
       
-      window.open(currentDownloadUrl, '_blank');
+      window.open(targetUrl, '_blank');
 
       setTimeout(() => {
         if (closeModalBtn) {
@@ -367,9 +370,7 @@ function downloadExcelWithProgress() {
 function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
-}
-
-// ==========================================
+  // ==========================================
 // 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS
 // ==========================================
 const fadeTexts = [
@@ -458,6 +459,7 @@ function updateNetworkStatus() {
 
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
+
 // ==========================================
 // ⏱️ LAST SYNC & PANDUAN
 // ==========================================
@@ -573,26 +575,28 @@ document.addEventListener('DOMContentLoaded', () => {
      navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
  }
+
 function pilihYaPending() {
   document.getElementById('modalKonfirmasi').style.display = 'none';
   document.getElementById('modalInputPending').style.display = 'flex';
   const inputEl = document.getElementById('inputNoTrx');
   if (inputEl) inputEl.focus();
 }
+
+// DIPERBAIKI: Menggunakan showCustomAlert agar modal sukses dan tombol download selalu muncul dengan aman
 function selesaiDanDownload() {
   const modalInput = document.getElementById('modalInputPending');
   if (modalInput) modalInput.style.display = 'none';
   
-  if (currentDownloadUrl) {
-    showCustomAlert("✅ Data pending/cancel berhasil dicatat dan laporan diperbarui!", currentDownloadUrl);
-  } else if (window.globalServerResponse && window.globalServerResponse.downloadUrl) {
-    showCustomAlert(window.globalServerResponse.message, window.globalServerResponse.downloadUrl);
-  } else {
-    alert("Transaksi selesai.");
-  }
+  const msg = (window.globalServerResponse && window.globalServerResponse.message) 
+    ? window.globalServerResponse.message 
+    : "✅ Transaksi selesai dan laporan berhasil diproses!";
+    
+  const url = currentDownloadUrl || (window.globalServerResponse && (window.globalServerResponse.downloadUrl || window.globalServerResponse.fileUrl || window.globalServerResponse.spreadsheetUrl)) || "";
+  
+  showCustomAlert(msg, url);
 }
-
-// FUNGSI UTAMA PENDING & CANCEL YANG TERHUBUNG KE BACKEND & GLASS TOAST
+  // FUNGSI UTAMA PENDING & CANCEL YANG TERHUBUNG KE BACKEND & GLASS TOAST
 async function kirimAksiPendingCancel(actionType) {
   const inputEl = document.getElementById('inputNoTrx');
   const noTransaksi = inputEl ? inputEl.value.trim() : '';
@@ -640,8 +644,9 @@ async function kirimAksiPendingCancel(actionType) {
     const res = JSON.parse(text);
 
     if (res.status === 'success') {
-      if (res.downloadUrl) {
-        currentDownloadUrl = res.downloadUrl;
+      const foundUrl = res.downloadUrl || res.fileUrl || res.spreadsheetUrl;
+      if (foundUrl) {
+        currentDownloadUrl = foundUrl;
       }
 
       const listLog = document.getElementById('listLogPending');
@@ -701,4 +706,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
