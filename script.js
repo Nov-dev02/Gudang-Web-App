@@ -210,88 +210,108 @@ async function processData() {
   try {
     await new Promise(resolve => setTimeout(resolve, 500));
     if (logDiv) {
-      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database...';
+      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database... (Mohon tunggu, proses memakan waktu)';
       logDiv.scrollTop = logDiv.scrollHeight;
     }
+
+    // 🛡️ Menggunakan AbortController dengan batas waktu 2 menit (120.000 ms) 
+    // agar browser sabar menunggu proses backend yang berjalan 40-90 detik.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
+
     const response = await fetch(WEB_APP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ shopeeData: shopeeData })
+      body: JSON.stringify({ shopeeData: shopeeData }),
+      signal: controller.signal
     });
     
+    clearTimeout(timeoutId); // Batalkan timer timeout jika respon sudah diterima
+
+    if (!response.ok) {
+      throw new Error(`Server merespons dengan status error HTTP: ${response.status}`);
+    }
+
     const result = await response.text();
     
+    let res;
     try {
-      const res = JSON.parse(result);
-      if (res.status === 'success') {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        if (logDiv) {
-          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
-          logDiv.scrollTop = logDiv.scrollHeight;
-        }
-        const now = new Date();
-        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-        const formattedSyncTime = `${now.toLocaleDateString('id-ID', dateOptions)} - ${now.toLocaleTimeString('id-ID', timeOptions)} WIB`;
-        
-        localStorage.setItem('gudang_last_sync', formattedSyncTime);
-        updateLastSyncDisplay(formattedSyncTime);
-        
-        const messageLines = res.message ? res.message.split('\n') : [];
-        for (let i = 0; i < messageLines.length; i++) {
-          if (messageLines[i].trim() !== '') {
-            await new Promise(resolve => setTimeout(resolve, 250));
-            if (logDiv) {
-              logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️ ' + messageLines[i];
-              logDiv.scrollTop = logDiv.scrollHeight;
-            }
-          }
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 400));
-        if (logDiv) {
-          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
-          logDiv.scrollTop = logDiv.scrollHeight;
-        }
-        
-        textarea.value = '';
-        if (rowCounter) rowCounter.innerText = '📊 0 baris data';
+      res = JSON.parse(result);
+    } catch (parseError) {
+      throw new Error("Respon server bukan format JSON yang valid (Kemungkinan halaman error HTML / Gateway Timeout).");
+    }
 
-        playSuccessSound();
-        addCumulativeTotal(messageLines.length);
-        
-        currentDownloadUrl = res.downloadUrl || res.fileUrl || res.spreadsheetUrl || "";
-        window.globalServerResponse = res;
-        
-        setTimeout(() => {
-          const modalKonfirmasi = document.getElementById('modalKonfirmasi');
-          if (modalKonfirmasi) {
-            modalKonfirmasi.style.display = 'flex';
-          } else {
-            showCustomAlert(res.message || "Transaksi selesai.", currentDownloadUrl);
-          }
-        }, 1200);
-
-      } else {
-        if (logDiv) {
-          logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
-          logDiv.scrollTop = logDiv.scrollHeight;
-        }
-        setTimeout(() => {
-          showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
-        }, 800);
-      }
-    } catch(e) {
+    if (res.status === 'success') {
+      await new Promise(resolve => setTimeout(resolve, 300));
       if (logDiv) {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Gagal memproses respon server.';
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
         logDiv.scrollTop = logDiv.scrollHeight;
       }
+      const now = new Date();
+      const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+      const formattedSyncTime = `${now.toLocaleDateString('id-ID', dateOptions)} - ${now.toLocaleTimeString('id-ID', timeOptions)} WIB`;
+      
+      localStorage.setItem('gudang_last_sync', formattedSyncTime);
+      updateLastSyncDisplay(formattedSyncTime);
+      
+      const messageLines = res.message ? res.message.split('\n') : [];
+      for (let i = 0; i < messageLines.length; i++) {
+        if (messageLines[i].trim() !== '') {
+          await new Promise(resolve => setTimeout(resolve, 250));
+          if (logDiv) {
+            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️ ' + messageLines[i];
+            logDiv.scrollTop = logDiv.scrollHeight;
+          }
+        }
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 400));
+      if (logDiv) {
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+      
+      textarea.value = '';
+      if (rowCounter) rowCounter.innerText = '📊 0 baris data';
+
+      playSuccessSound();
+      addCumulativeTotal(messageLines.length);
+      
+      currentDownloadUrl = res.downloadUrl || res.fileUrl || res.spreadsheetUrl || "";
+      window.globalServerResponse = res;
+      
+      setTimeout(() => {
+        const modalKonfirmasi = document.getElementById('modalKonfirmasi');
+        if (modalKonfirmasi) {
+          modalKonfirmasi.style.display = 'flex';
+        } else {
+          showCustomAlert(res.message || "Transaksi selesai.", currentDownloadUrl);
+        }
+      }, 1200);
+
+    } else {
+      if (logDiv) {
+        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+      setTimeout(() => {
+        showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
+      }, 800);
     }
+
   } catch (error) {
+    let errorMessage = error.message;
+    if (error.name === 'AbortError') {
+      errorMessage = "Batas waktu tunggu habis (> 2 menit). Proses server terlalu lama atau koneksi terputus.";
+    }
     if (logDiv) {
-      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + error.message;
+      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + errorMessage;
       logDiv.scrollTop = logDiv.scrollHeight;
     }
+    setTimeout(() => {
+      showCustomAlert('Terjadi Kesalahan: ' + errorMessage, '');
+    }, 800);
   }
   
   if (btn) btn.disabled = false;
