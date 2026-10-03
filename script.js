@@ -578,6 +578,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if ((currentTime - loginTime) < oneWeekMilliseconds && operatorsProfile[operatorName]) {
         setOperatorProfile(operatorName);
         if (modal) modal.style.display = 'none';
+        
+        // 🔊 TAMBAHKAN INI: Supaya Welcome.mp3 tetap bunyi walau auto-login dari sesi tersimpan!
+        const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=99');
+        welcomeAudio.volume = 0.9;
+        welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
+
       } else {
         localStorage.removeItem('gudang_active_operator');
         if (modal) modal.style.display = 'flex';
