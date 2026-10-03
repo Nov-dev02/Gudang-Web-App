@@ -81,7 +81,15 @@ function verifyOperatorLogin() {
     setTimeout(() => {
       if (modal) {
         modal.style.opacity = '0';
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
+        setTimeout(() => { 
+          modal.style.display = 'none'; 
+          
+          // 🔊 AUDIO SYSTEM (Menggunakan 'Welcome.mp3' sesuai nama file GitHub)
+          const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3');
+          welcomeAudio.volume = 0.9;
+          welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
+
+        }, 300);
       }
     }, 1000);
 
@@ -150,7 +158,9 @@ if (document.readyState === 'loading') {
 } else {
   initAppListeners();
 }
-
+// ==========================================
+// ⚙️ PROSES DATA & SINKRONISASI SERVER
+// ==========================================
 async function processData() {
   const textarea = document.getElementById('shopeeData');
   const rowCounter = document.getElementById('rowCounter');
@@ -214,8 +224,6 @@ async function processData() {
       logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    // 🛡️ Menggunakan AbortController dengan batas waktu 2 menit (120.000 ms) 
-    // agar browser sabar menunggu proses backend yang berjalan 40-90 detik.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000);
 
@@ -226,7 +234,7 @@ async function processData() {
       signal: controller.signal
     });
     
-    clearTimeout(timeoutId); // Batalkan timer timeout jika respon sudah diterima
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`Server merespons dengan status error HTTP: ${response.status}`);
@@ -318,6 +326,7 @@ async function processData() {
   if (btnSpinner) btnSpinner.style.display = 'none';
   if (btnText) btnText.innerText = '⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)';
 }
+
 function showCustomAlert(message, downloadUrl) {
   const msgEl = document.getElementById('customAlertMessage');
   if (msgEl) msgEl.innerText = message;
@@ -388,10 +397,10 @@ function downloadExcelWithProgress() {
 function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
-} // <--- Tanda kurung kurawal penutup yang tadinya kurang
+}
 
 // ==========================================
-// 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS
+// 🔄 ANIMASI TEKS & MONITORING JARINGAN
 // ==========================================
 const fadeTexts = [
   "📦 SISTEM MANAJEMEN GUDANG ONLINE",
@@ -421,9 +430,6 @@ function initTextFadeRotator() {
   }, 5000); 
 }
 
-// ==========================================
-// 🌐 MONITORING STATUS JARINGAN & TOAST
-// ==========================================
 function showToast(message, type = "warning") {
   let toastContainer = document.getElementById('custom-toast-container');
   if (!toastContainer) {
@@ -479,9 +485,8 @@ function updateNetworkStatus() {
 
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
-
 // ==========================================
-// ⏱️ LAST SYNC & PANDUAN
+// ⏱️ LAST SYNC, PANDUAN, AUDIO & PENDING/CANCEL
 // ==========================================
 function updateLastSyncDisplay(timeString) {
   const lastSyncEl = document.getElementById('last-sync-text');
@@ -490,7 +495,6 @@ function updateLastSyncDisplay(timeString) {
     else { lastSyncEl.innerText = "Belum ada"; lastSyncEl.style.color = "#e2e8f0"; }
   }
 }
-
 function initLastSync() {
   const savedLastSync = localStorage.getItem('gudang_last_sync');
   if (savedLastSync) updateLastSyncDisplay(savedLastSync);
@@ -519,9 +523,6 @@ async function pasteFromClipboard() {
   }
 }
 
-// ==========================================
-// 🎵 AUDIO & AKUMULATOR
-// ==========================================
 function playSuccessSound() {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
