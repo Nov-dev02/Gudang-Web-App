@@ -242,40 +242,16 @@
             }
     
 
-    // 4. Fungsi suara sapaan otomatis
-    //function speakSystemReady() {
-        //if ('speechSynthesis' in window) {
-           //window.speechSynthesis.cancel();
-            
-            //const currentOperator = getActiveOperator(); 
-            //const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
-            
-            //const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            //utterance.lang = 'id-ID'; 
-            //utterance.rate = 0.90;  
-            //utterance.pitch = 0.5;  
-            
-            //const voices = window.speechSynthesis.getVoices();
-            //const maleVoice = voices.find(v => 
-                //(v.lang.includes('id') || v.lang.includes('ID')) && 
-                //(v.name.toLowerCase().includes('male') || 
-                 //v.name.toLowerCase().includes('david') || 
-                 //v.name.toLowerCase().includes('giri'))
-            //);
-            
-            //if (maleVoice) {
-                //utterance.voice = maleVoice;
-            //}
-
-            //window.speechSynthesis.speak(utterance);
-        //}
-    //}
-
-    //if ('speechSynthesis' in window) {
-        //window.speechSynthesis.onvoiceschanged = () => {
-            //window.speechSynthesis.getVoices();
-        //};
-    //}
+    // 4. Fungsi suara sapaan otomatis menggunakan MP3 ElevenLabs dari GitHub
+function speakSystemReady() {
+    const currentOperator = typeof getActiveOperator === 'function' ? getActiveOperator() : (localStorage.getItem('gudang_active_operator') || 'IRGI');
+    const operatorKey = currentOperator.toUpperCase();
+    
+    const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/${operatorKey}.mp3?v=${new Date().getTime()}`);
+    welcomeAudio.volume = 0.9;
+    welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
+}
+   
 
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 },
@@ -330,7 +306,7 @@
             setTimeout(executeStep, stepDuration);
           } else {
             setTimeout(() => {
-              //speakSystemReady(); 
+              speakSystemReady(); 
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
