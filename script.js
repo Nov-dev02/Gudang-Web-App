@@ -85,7 +85,7 @@ function verifyOperatorLogin() {
           modal.style.display = 'none'; 
           
           // 🔊 AUDIO SYSTEM: Putar suara sambutan pasca-booting / login sukses
-          const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/welcome.mp3');
+const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3');
           welcomeAudio.volume = 0.9;
           welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
 
