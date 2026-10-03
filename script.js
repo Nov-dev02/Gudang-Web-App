@@ -84,8 +84,9 @@ function verifyOperatorLogin() {
         setTimeout(() => { 
           modal.style.display = 'none'; 
           
-          // 🔊 AUDIO SYSTEM (Menggunakan 'Welcome.mp3' sesuai nama file GitHub)
-          const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3');
+          // 🔊 DYNAMIC ELEVENLABS AUDIO: Putar MP3 sesuai nama operator (Huruf Besar) dari GitHub
+          const operatorKey = matchedName.toUpperCase();
+          const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/${operatorKey}.mp3?v=99`);
           welcomeAudio.volume = 0.9;
           welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
 
@@ -141,7 +142,6 @@ function updateRowCounter() {
     rowCounter.innerText = `📊 ${totalLines.toLocaleString()} baris data`;
   }
 }
-
 function initAppListeners() {
   const textarea = document.getElementById('shopeeData');
   if (textarea) {
@@ -158,6 +158,7 @@ if (document.readyState === 'loading') {
 } else {
   initAppListeners();
 }
+
 // ==========================================
 // ⚙️ PROSES DATA & SINKRONISASI SERVER
 // ==========================================
@@ -268,7 +269,7 @@ async function processData() {
         if (messageLines[i].trim() !== '') {
           await new Promise(resolve => setTimeout(resolve, 250));
           if (logDiv) {
-            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️ ' + messageLines[i];
+            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️️ ' + messageLines[i];
             logDiv.scrollTop = logDiv.scrollHeight;
           }
         }
@@ -349,8 +350,7 @@ function showCustomAlert(message, downloadUrl) {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'flex';
 }
-
-function downloadExcelWithProgress() {
+  function downloadExcelWithProgress() {
   const targetUrl = currentDownloadUrl || (window.globalServerResponse && (window.globalServerResponse.downloadUrl || window.globalServerResponse.fileUrl || window.globalServerResponse.spreadsheetUrl)) || "";
 
   if (!targetUrl) {
@@ -485,6 +485,7 @@ function updateNetworkStatus() {
 
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
+
 // ==========================================
 // ⏱️ LAST SYNC, PANDUAN, AUDIO & PENDING/CANCEL
 // ==========================================
@@ -552,7 +553,7 @@ function renderCumulativeCounter() {
 }
 
 // ==========================================
-// 🚀 INISIALISASI UTAMA & LOGIN CHECK
+// 🚀 INISIALISASI UTAMA & LOGIN CHECK (Dengan Auto-Login ElevenLabs Audio)
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderCumulativeCounter();
@@ -579,8 +580,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setOperatorProfile(operatorName);
         if (modal) modal.style.display = 'none';
         
-        // 🔊 TAMBAHKAN INI: Supaya Welcome.mp3 tetap bunyi walau auto-login dari sesi tersimpan!
-        const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=99');
+        // 🔊 Auto-login: Putar file MP3 ElevenLabs sesuai operator aktif
+        const operatorKey = operatorName.toUpperCase();
+        const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/${operatorKey}.mp3?v=99`);
         welcomeAudio.volume = 0.9;
         welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
 
