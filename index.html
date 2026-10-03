@@ -243,39 +243,39 @@
     
 
     // 4. Fungsi suara sapaan otomatis
-    function speakSystemReady() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
+    //function speakSystemReady() {
+        //if ('speechSynthesis' in window) {
+           //window.speechSynthesis.cancel();
             
-            const currentOperator = getActiveOperator(); 
-            const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
+            //const currentOperator = getActiveOperator(); 
+            //const textToSpeak = `Hellow ${currentOperator}!! SYSTEM READY`;
             
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'id-ID'; 
-            utterance.rate = 0.90;  
-            utterance.pitch = 0.5;  
+            //const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            //utterance.lang = 'id-ID'; 
+            //utterance.rate = 0.90;  
+            //utterance.pitch = 0.5;  
             
-            const voices = window.speechSynthesis.getVoices();
-            const maleVoice = voices.find(v => 
-                (v.lang.includes('id') || v.lang.includes('ID')) && 
-                (v.name.toLowerCase().includes('male') || 
-                 v.name.toLowerCase().includes('david') || 
-                 v.name.toLowerCase().includes('giri'))
-            );
+            //const voices = window.speechSynthesis.getVoices();
+            //const maleVoice = voices.find(v => 
+                //(v.lang.includes('id') || v.lang.includes('ID')) && 
+                //(v.name.toLowerCase().includes('male') || 
+                 //v.name.toLowerCase().includes('david') || 
+                 //v.name.toLowerCase().includes('giri'))
+            //);
             
-            if (maleVoice) {
-                utterance.voice = maleVoice;
-            }
+            //if (maleVoice) {
+                //utterance.voice = maleVoice;
+            //}
 
-            window.speechSynthesis.speak(utterance);
-        }
-    }
+            //window.speechSynthesis.speak(utterance);
+        //}
+    //}
 
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = () => {
-            window.speechSynthesis.getVoices();
-        };
-    }
+    //if ('speechSynthesis' in window) {
+        //window.speechSynthesis.onvoiceschanged = () => {
+            //window.speechSynthesis.getVoices();
+        //};
+    //}
 
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 },
