@@ -81,15 +81,7 @@ function verifyOperatorLogin() {
     setTimeout(() => {
       if (modal) {
         modal.style.opacity = '0';
-        setTimeout(() => { 
-          modal.style.display = 'none'; 
-          
-          // 🔊 AUDIO SYSTEM: Putar suara sambutan pasca-booting / login sukses
-const welcomeAudio = new Audio('https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3');
-          welcomeAudio.volume = 0.9;
-          welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
-
-        }, 300);
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
       }
     }, 1000);
 
@@ -158,6 +150,7 @@ if (document.readyState === 'loading') {
 } else {
   initAppListeners();
 }
+
 async function processData() {
   const textarea = document.getElementById('shopeeData');
   const rowCounter = document.getElementById('rowCounter');
@@ -221,6 +214,8 @@ async function processData() {
       logDiv.scrollTop = logDiv.scrollHeight;
     }
 
+    // 🛡️ Menggunakan AbortController dengan batas waktu 2 menit (120.000 ms) 
+    // agar browser sabar menunggu proses backend yang berjalan 40-90 detik.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000);
 
@@ -231,7 +226,7 @@ async function processData() {
       signal: controller.signal
     });
     
-    clearTimeout(timeoutId);
+    clearTimeout(timeoutId); // Batalkan timer timeout jika respon sudah diterima
 
     if (!response.ok) {
       throw new Error(`Server merespons dengan status error HTTP: ${response.status}`);
@@ -393,7 +388,7 @@ function downloadExcelWithProgress() {
 function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
-}
+} // <--- Tanda kurung kurawal penutup yang tadinya kurang
 
 // ==========================================
 // 🔄 LOGIKA ANIMASI FADE-IN / FADE-OUT TEKS
@@ -495,6 +490,7 @@ function updateLastSyncDisplay(timeString) {
     else { lastSyncEl.innerText = "Belum ada"; lastSyncEl.style.color = "#e2e8f0"; }
   }
 }
+
 function initLastSync() {
   const savedLastSync = localStorage.getItem('gudang_last_sync');
   if (savedLastSync) updateLastSyncDisplay(savedLastSync);
@@ -689,4 +685,49 @@ async function kirimAksiPendingCancel(actionType) {
         spinnerContainer.className = 'toast-icon-wrapper success';
       }
       if (toastTitle) toastTitle.textContent = 'Berhasil diproses!';
-      if (toastDesc) toastDesc.textContent = res.m
+      if (toastDesc) toastDesc.textContent = res.message || `Status gudang berhasil di-${actionLabel.toLowerCase()}.`;
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `Set ${actionLabel}`;
+      }
+
+      setTimeout(() => {
+        if (toast) toast.classList.remove('show');
+      }, 2000);
+
+    } else {
+      throw new Error(res.message || "Gagal memproses data.");
+    }
+
+  } catch (error) {
+    alert("Terjadi kesalahan: " + error.message);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `Set ${actionLabel}`;
+    }
+    if (toast) toast.classList.remove('show');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inputTrx = document.getElementById('inputNoTrx');
+  if (inputTrx) {
+    inputTrx.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        kirimAksiPendingCancel('pending');
+      }
+    });
+  }
+
+  const inputLogin = document.getElementById('inputOperatorKey');
+  if (inputLogin) {
+    inputLogin.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyOperatorLogin();
+      }
+    });
+  }
+});
