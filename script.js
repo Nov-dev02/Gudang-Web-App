@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 🔊 Auto-login: Putar file MP3 ElevenLabs sesuai operator aktif
         const operatorKey = operatorName.toUpperCase();
-        const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=99`);
+        const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=100`);
         welcomeAudio.volume = 0.9;
         welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
 
