@@ -581,10 +581,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) modal.style.display = 'none';
         
         // 🔊 Auto-login: Putar file MP3 ElevenLabs sesuai operator aktif
-        const operatorKey = operatorName.toUpperCase();
-        const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=100`);
-        welcomeAudio.volume = 0.9;
-        welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
+        //const operatorKey = operatorName.toUpperCase();
+        //const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=100`);
+        //welcomeAudio.volume = 0.9;
+        //welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
 
       } else {
         localStorage.removeItem('gudang_active_operator');
@@ -739,4 +739,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const gate = document.getElementById('tap-to-enter-gate');
+    
+    if (gate) {
+        gate.addEventListener('click', () => {
+            // 1. PUTAR AUDIO Welcome.mp3 DARI GITHUB (Dijamin lolos dari satpam browser!)
+            const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=${new Date().getTime()}`);
+            welcomeAudio.volume = 0.9;
+            welcomeAudio.play().catch(err => console.log("Audio welcome error:", err));
+
+            // 2. TUTUP & HILANGKAN LAYAR BLUR DENGAN HALUS
+            gate.style.opacity = '0';
+            setTimeout(() => {
+                gate.style.display = 'none';
+            }, 500);
+            
+            console.log("Gerbang dibuka, Welcome.mp3 diputar!");
+        }, { once: true }); // Hanya tereksekusi sekali pada klik pertama user
+    }
 });
