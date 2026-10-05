@@ -781,3 +781,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('gudang_theme') || 'cyber-blue';
     document.documentElement.setAttribute('data-theme', savedTheme);
 });
+
