@@ -705,17 +705,14 @@ async function kirimAksiPendingCancel(actionType) {
       // 🚀 PERBAIKAN UTAMA: Tutup toast, lalu MUNCULKAN MODAL DOWNLOAD DENGAN LINK KUSTOM!
       setTimeout(() => {
         if (toast) toast.classList.remove('show');
-        // Panggil showCustomAlert agar modal download muncul membawa file "TRANSAKSI GUDANG..."
         showCustomAlert(res.message || `Transaksi ${noTransaksi} berhasil diproses.`, foundUrl);
       }, 1500);
 
-    }
-
-    } else {
+    } else { 
       throw new Error(res.message || "Gagal memproses data.");
     }
 
-  } catch (error) {
+  } catch (error) { 
     alert("Terjadi kesalahan: " + error.message);
     if (btn) {
       btn.disabled = false;
@@ -723,7 +720,6 @@ async function kirimAksiPendingCancel(actionType) {
     }
     if (toast) toast.classList.remove('show');
   }
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   const inputTrx = document.getElementById('inputNoTrx');
