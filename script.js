@@ -702,9 +702,14 @@ async function kirimAksiPendingCancel(actionType) {
         btn.innerHTML = `Set ${actionLabel}`;
       }
 
+      // 🚀 PERBAIKAN UTAMA: Tutup toast, lalu MUNCULKAN MODAL DOWNLOAD DENGAN LINK KUSTOM!
       setTimeout(() => {
         if (toast) toast.classList.remove('show');
-      }, 2000);
+        // Panggil showCustomAlert agar modal download muncul membawa file "TRANSAKSI GUDANG..."
+        showCustomAlert(res.message || `Transaksi ${noTransaksi} berhasil diproses.`, foundUrl);
+      }, 1500);
+
+    }
 
     } else {
       throw new Error(res.message || "Gagal memproses data.");
