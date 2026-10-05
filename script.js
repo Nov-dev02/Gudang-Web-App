@@ -783,8 +783,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Fungsi untuk menjemput data Kolom H dan otomatis masuk ke textarea
-async function ambilDanPasteRekapan() {
+// Fungsi untuk menjemput data Kolom H dengan efek Loading
+async function ambilDanPasteRekapan(btn) {
+  // Simpan teks asli tombol dan ubah jadi loading
+  const originalText = btn ? btn.innerHTML : '⚡ Sync';
+  if (btn) {
+    btn.disabled = true; // Cegah klik beruntun
+    btn.innerHTML = '⏳ Loading...';
+  }
+
   try {
     // Menarik data dari Apps Script spreadsheet "TRANSAKSI JUNI"
     const response = await fetch(SCRIPT_URL_REKAPAN);
@@ -811,7 +818,7 @@ async function ambilDanPasteRekapan() {
       // Masukkan teks secara otomatis ke dalam kotak teks
       textarea.value = teksGabungan;
       
-      // Memicu event input supaya sistem web app membaca perubahan (counter jumlah paket ikut ter-update)
+      // Memicu event input supaya sistem web app membaca perubahan (counter baris ikut ter-update)
       textarea.dispatchEvent(new Event('input'));
       
       console.log(`✅ Berhasil menarik ${res.transactions.length} No Transaksi dari TRANSAKSI JUNI.`);
@@ -821,6 +828,12 @@ async function ambilDanPasteRekapan() {
     
   } catch (err) {
     alert("❌ Gagal mengambil data rekapan: " + err);
+  } finally {
+    // Kembalikan tombol ke kondisi semula (apapun yang terjadi: sukses atau gagal)
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
   }
 }
 
