@@ -720,6 +720,7 @@ async function kirimAksiPendingCancel(actionType) {
     }
     if (toast) toast.classList.remove('show');
   }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const inputTrx = document.getElementById('inputNoTrx');
