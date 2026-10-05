@@ -1,7 +1,10 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzukrX8QXwYKbgXIwyskJMHtuNS509kL5fTgK_WAxgQ7x4FoCAxHuumM-Dc02XA8zIY/exec";
 
 let currentDownloadUrl = "";
-
+// ==========================================
+// URL WEB APP REKAPAN (TRANSAKSI JUNI)
+// ==========================================
+const SCRIPT_URL_REKAPAN = "https://script.google.com/macros/s/AKfycbzLud58sY-o4azbshEww7-JSXCLoZ2sbmALaS2z6aRhmT-Q_vvXCzlDn4NqzBCedZpS/exec";
 // ==========================================
 // 🛡️ DATABASE & VERIFIKASI OPERATOR SHIFT
 // ==========================================
@@ -778,4 +781,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('gudang_theme') || 'cyber-blue';
     document.documentElement.setAttribute('data-theme', savedTheme);
 });
+
+
+// Fungsi untuk menjemput data Kolom H dan otomatis masuk ke textarea
+async function ambilDanPasteRekapan() {
+  try {
+    // Menarik data dari Apps Script spreadsheet "TRANSAKSI JUNI"
+    const response = await fetch(SCRIPT_URL_REKAPAN);
+    const res = await response.json();
+    
+    // Cek jika ada error dari server
+    if (res.error) {
+      alert("⚠ Error: " + res.error);
+      return;
+    }
+    
+    // Cek jika data kosong
+    if (!res.transactions || res.transactions.length === 0) {
+      alert("⚠️ Tidak ada No Transaksi yang ditemukan di Kolom H sheet 'ALL' spreadsheet TRANSAKSI JUNI!");
+      return;
+    }
+    
+    // Gabungkan nomor transaksi dengan baris baru (enter)
+    const teksGabungan = res.transactions.join('\n');
+    
+    // Cari kotak teks (textarea) utama di halaman web app kamu
+    const textarea = document.querySelector('textarea'); 
+    if (textarea) {
+      // Masukkan teks secara otomatis ke dalam kotak teks
+      textarea.value = teksGabungan;
+      
+      // Memicu event input supaya sistem web app membaca perubahan (counter jumlah paket ikut ter-update)
+      textarea.dispatchEvent(new Event('input'));
+      
+      console.log(`✅ Berhasil menarik ${res.transactions.length} No Transaksi dari TRANSAKSI JUNI.`);
+    } else {
+      alert("⚠️ Kotak teks (textarea) tidak ditemukan di halaman ini!");
+    }
+    
+  } catch (err) {
+    alert("❌ Gagal mengambil data rekapan: " + err);
+  }
+}
 
