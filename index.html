@@ -113,6 +113,9 @@
       <button onclick="setTheme('matrix-green')" title="Matrix Green" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #22c55e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
       <button onclick="setTheme('royal-cobalt')" title="Royal Cobalt" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #3b82f6 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
     </div>
+         <button type="button" class="btn btn-success" onclick="copyTransaksiLangsung()">
+  📋 1-Klik Copy No Transaksi Rekapan
+</button>
     
     <!-- STATUS AKTIF UTAMA -->
     <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); margin-top: 15px; margin-bottom: 20px; width: fit-content;">
@@ -154,9 +157,7 @@
         <div class="spinner" id="btnSpinner"></div>
         <span id="btnText">⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)</span>
       </button>
-      <button type="button" class="btn btn-success" onclick="copyTransaksiLangsung()">
-  📋 1-Klik Copy No Transaksi Rekapan
-</button>
+ 
       
       <!-- DEVOPS TERMINAL LOG CONTAINER -->
       <div id="log"><span>[SYSTEM] Menunggu masukan data transaksi gudang...</span></div>
