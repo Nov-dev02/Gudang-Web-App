@@ -760,3 +760,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true }); // Hanya tereksekusi sekali pada klik pertama user
     }
 });
+// ==========================================
+// 🎨 SCRIPT PENGATUR 5 TEMA GLOBAL
+// ==========================================
+
+// 1. Fungsi untuk mengganti tema dan menyimpannya ke memori browser
+function setTheme(themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    localStorage.setItem('gudang_theme', themeName);
+}
+
+// 2. Otomatis terapkan tema yang terakhir dipilih saat halaman dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('gudang_theme') || 'cyber-blue';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+});
