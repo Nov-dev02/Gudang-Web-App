@@ -329,6 +329,7 @@ async function processData() {
 }
 
 function showCustomAlert(message, downloadUrl) {
+  currentDownloadUrl = downloadUrl || "";
   const msgEl = document.getElementById('customAlertMessage');
   if (msgEl) msgEl.innerText = message;
   const downloadBtn = document.getElementById('downloadBtn');
