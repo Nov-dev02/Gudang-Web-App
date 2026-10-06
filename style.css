@@ -5,12 +5,9 @@ html, body {
   overflow: hidden; 
 }
 
-/* 1. BACKGROUND LUAR DENGAN EFEK AMBIENT GLASS BLUR (DEFAULT BLUE) */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #090d16 0%, #131b2e 50%, #0a0f1d 100%);
-  background-size: 300% 300%;
-  animation: ambientGlow 18s ease infinite;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
   padding: 10px;
   color: #f8fafc;
   height: 100vh;
@@ -19,30 +16,19 @@ body {
   justify-content: center; 
   align-items: center;     
   box-sizing: border-box;
-  transition: background 0.5s ease;
 }
 
-@keyframes ambientGlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* 2. KONTAINER UTAMA DENGAN GAYA GLASS MENGAMBANG */
 .container {
   width: 100%;
   max-width: 800px;
-  background: rgba(15, 23, 42, 0.85); 
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #1e293b;
   padding: 25px;           
   border-radius: 18px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #334155;
   position: relative;
   overflow: visible;
-  transition: background 0.5s ease, border-color 0.5s ease;
 }
 
 /* ENTERPRISE STATUS BAR */
@@ -80,7 +66,7 @@ body {
   color: #22c55e;
 }
 
-/* FADE-IN / FADE-OUT TEKS ROTATOR */
+/* ✨ CSS STYLING UNTUK FADE-IN / FADE-OUT TEKS ROTATOR */
 .fade-text-container {
   width: 100%;
   background: rgba(30, 41, 59, 0.7);
@@ -103,7 +89,7 @@ body {
   font-size: 13px;
   font-weight: 500;
   opacity: 1;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 0.8s ease-in-out; /* Durasi transisi halus diperbarui */
   white-space: nowrap;
 }
 
@@ -214,7 +200,7 @@ button:hover {
     word-break: break-all;
 }
 
-/* TOAST & MODAL ANIMATIONS */
+/* TOAST NOTIFICATION CONTAINER & ANIMATION */
 #toast-container {
   position: fixed;
   top: 20px;
@@ -238,38 +224,248 @@ button:hover {
   align-items: center;
   gap: 10px;
   backdrop-filter: blur(8px);
+  animation: slideInRight 0.3s ease-out, fadeOutToast 0.3s ease-in 2.7s forwards;
 }
 
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOutToast {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* Animasi Kedip / Pulse */
+@keyframes blink-pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animasi Garis Scan Cyber */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(800%);
+  }
+}
+
+/* Animasi Server Melayang */
+@keyframes floatServer {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Animasi Modal Muncul */
+@keyframes popUpModal {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 #operatorAvatarBox {
-  width: 40px;          
-  height: 40px;         
-  border-radius: 4px;   
-  overflow: hidden;     
+  width: 40px;          /* Lebar kotak avatar */
+  height: 40px;         /* Tinggi kotak avatar */
+  border-radius: 4px;   /* Membuat sudutnya sedikit melengkung */
+  overflow: hidden;     /* Wajib agar gambar tidak keluar dari kotak */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #38bdf8;  
-  color: #ffffff;       
+  background: #38bdf8;  /* Warna latar belakang jika pakai inisial huruf */
+  color: #ffffff;       /* Warna teks inisial */
   font-weight: bold;
 }
 
 #operatorAvatarBox img {
   width: 100%;
   height: 100%;
-  object-fit: cover;    
+  object-fit: cover;    /* Agar foto pas dan tidak gepeng di dalam kotak */
 }
 
+/* Floating Glass Toast - Posisi Tengah Atas (Top-Center) */
+.glass-toast {
+  position: fixed;
+  top: 24px; /* Jarak pas dari atas layar */
+  left: 50%;
+  transform: translateX(-50%) scale(0.95); /* Hanya menggeser ke kiri 50% tanpa geser vertikal */
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  
+  /* Efek Kaca Gelap (Dark Glassmorphism) */
+  background: rgba(30, 41, 59, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+  
+  /* State awal (Hidden & Di atas) */
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* State Muncul (Show) di Tengah Atas */
+.glass-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
+/* Icon / Spinner Wrapper */
+.toast-icon-wrapper {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Gradient Spinner Modern */
+.gradient-spinner {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #38bdf8, #818cf8, #c084fc, #f43f5e, #38bdf8);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #fff calc(100% - 3.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #fff calc(100% - 3.5px));
+  animation: modernSpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes modernSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success State (Lingkaran Hijau + Centang Pop-up) */
+.toast-icon-wrapper.success {
+  background: #10b981;
+  border-radius: 50%;
+  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.checkmark {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Teks Toast (Disesuaikan untuk Dark Mode) */
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+
+.toast-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc; /* Putih bersih */
+}
+
+.toast-desc {
+  font-size: 12px;
+  color: #94a3b8; /* Abu-abu terang agar mudah dibaca */
+}
+
+/* Animasi Titik Memantul (. . .) */
+.bouncing-dots span {
+  animation: bounceDot 1.4s infinite ease-in-out both;
+  display: inline-block;
+}
+.bouncing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.bouncing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounceDot {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+/* Container Bar Proses Modern */
+.modern-process-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(2, 132, 199, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+/* Spinner Bulat Berputar */
+.modern-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(56, 189, 248, 0.2);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spinRing 0.8s linear infinite;
+}
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Animasi Titik-titik (...) Bergerak Naik Turun */
+.bouncing-dots span {
+  display: inline-block;
+  animation: dotBounce 1.4s infinite ease-in-out both;
+  font-weight: bold;
+}
+.bouncing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.bouncing-dots span:nth-child(2) { animation-delay: -0.16s; }
+.bouncing-dots span:nth-child(3) { animation-delay: 0s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
+  40% { transform: translateY(-3px); opacity: 1; }
+}
 /* ==========================================
-   🎨 TEMA PILIHAN (SUPPORT AMBIENT GLASS BLUR)
+   🎨 TEMA TAMBAHAN (VERSI SOFT & ADEM DI MATA)
    ========================================== */
 
-/* 1. Rose Pink */
+/* 1. Rose Pink (Soft Dusty Rose) */
 [data-theme="rose-pink"] body {
-    background: linear-gradient(135deg, #12090c 0%, #1f1016 50%, #0d0609 100%) !important;
+    background: linear-gradient(135deg, #12090c 0%, #1f1016 100%) !important;
 }
 [data-theme="rose-pink"] .container {
-    background: rgba(26, 16, 20, 0.85) !important;
-    border-color: rgba(251, 113, 133, 0.25) !important;
+    background: #1a1014 !important;
+    border-color: #3f1a24 !important;
 }
 [data-theme="rose-pink"] h2, 
 [data-theme="rose-pink"] label, 
@@ -279,20 +475,20 @@ button:hover {
 }
 [data-theme="rose-pink"] textarea:focus {
     border-color: #fb7185 !important;
-    box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.15) !important;
+    box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.1) !important;
 }
 [data-theme="rose-pink"] button {
     background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%) !important;
-    box-shadow: 0 2px 10px rgba(225, 29, 72, 0.3) !important;
+    box-shadow: 0 2px 10px rgba(225, 29, 72, 0.2) !important;
 }
 
-/* 2. Amethyst Purple */
+/* 2. Amethyst Purple (Soft Lavender) */
 [data-theme="amethyst-purple"] body {
-    background: linear-gradient(135deg, #0d0914 0%, #171126 50%, #09060f 100%) !important;
+    background: linear-gradient(135deg, #0d0914 0%, #171126 100%) !important;
 }
 [data-theme="amethyst-purple"] .container {
-    background: rgba(20, 16, 28, 0.85) !important;
-    border-color: rgba(216, 180, 254, 0.25) !important;
+    background: #14101c !important;
+    border-color: #3b2063 !important;
 }
 [data-theme="amethyst-purple"] h2, 
 [data-theme="amethyst-purple"] label, 
@@ -302,20 +498,20 @@ button:hover {
 }
 [data-theme="amethyst-purple"] textarea:focus {
     border-color: #d8b4fe !important;
-    box-shadow: 0 0 0 3px rgba(216, 180, 254, 0.15) !important;
+    box-shadow: 0 0 0 3px rgba(216, 180, 254, 0.1) !important;
 }
 [data-theme="amethyst-purple"] button {
     background: linear-gradient(135deg, #7e22ce 0%, #581c87 100%) !important;
-    box-shadow: 0 2px 10px rgba(126, 34, 206, 0.3) !important;
+    box-shadow: 0 2px 10px rgba(126, 34, 206, 0.2) !important;
 }
 
-/* 3. Matrix Green */
+/* 3. Matrix Green (Sage / Muted Terminal Green) */
 [data-theme="matrix-green"] body {
-    background: linear-gradient(135deg, #07120a 0%, #0e2014 50%, #040a06 100%) !important;
+    background: linear-gradient(135deg, #07120a 0%, #0e2014 100%) !important;
 }
 [data-theme="matrix-green"] .container {
-    background: rgba(11, 23, 16, 0.85) !important;
-    border-color: rgba(74, 222, 128, 0.25) !important;
+    background: #0b1710 !important;
+    border-color: #14532d !important;
 }
 [data-theme="matrix-green"] h2, 
 [data-theme="matrix-green"] label, 
@@ -325,20 +521,20 @@ button:hover {
 }
 [data-theme="matrix-green"] textarea:focus {
     border-color: #4ade80 !important;
-    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15) !important;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1) !important;
 }
 [data-theme="matrix-green"] button {
     background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important;
-    box-shadow: 0 2px 10px rgba(21, 128, 61, 0.3) !important;
+    box-shadow: 0 2px 10px rgba(21, 128, 61, 0.2) !important;
 }
 
-/* 4. Royal Cobalt Blue */
+/* 4. Royal Cobalt Blue (Muted Slate Blue) */
 [data-theme="royal-cobalt"] body {
-    background: linear-gradient(135deg, #070d1a 0%, #111e38 50%, #04070f 100%) !important;
+    background: linear-gradient(135deg, #070d1a 0%, #111e38 100%) !important;
 }
 [data-theme="royal-cobalt"] .container {
-    background: rgba(13, 20, 36, 0.85) !important;
-    border-color: rgba(96, 165, 250, 0.25) !important;
+    background: #0d1424 !important;
+    border-color: #1d4ed8 !important;
 }
 [data-theme="royal-cobalt"] h2, 
 [data-theme="royal-cobalt"] label, 
@@ -348,13 +544,12 @@ button:hover {
 }
 [data-theme="royal-cobalt"] textarea:focus {
     border-color: #60a5fa !important;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15) !important;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1) !important;
 }
 [data-theme="royal-cobalt"] button {
     background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-    box-shadow: 0 2px 10px rgba(29, 78, 216, 0.3) !important;
+    box-shadow: 0 2px 10px rgba(29, 78, 216, 0.2) !important;
 }
-
 /* TAMPILAN KOTAK TOMBOL TOGGLE TEMA */
 .theme-switcher {
   position: fixed;
