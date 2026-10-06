@@ -66,7 +66,7 @@
   <!-- KOTAK UTAMA APLIKASI -->
   <div class="container">
     
-    <!-- ENTERPRISE STATUS BAR -->
+   <!-- ENTERPRISE STATUS BAR (Gudang Nuhsantara) -->
     <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px;">
       
       <!-- Group Kiri: Info Gudang & Status Sync -->
@@ -78,16 +78,12 @@
         <span style="color: #94a3b8; white-space: nowrap;">Sinkron Terakhir: <span id="last-sync-text" style="color: #e2e8f0; font-weight: 500;">Belum ada</span></span>
       </div>
      
-
-      <!-- Group Kanan: Jam & Badge Operator + Next -->
+      <!-- Group Kanan: Jam & Badge Operator -->
       <div class="status-group" style="display: flex; align-items: center; gap: 6px; white-space: nowrap; margin-left: auto;">
         <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;"></span>
         <span style="color: #64748b;">•</span>
         
-        
-        <!-- Wadah Badge Operator & Next Operator (Mentok Kanan) -->
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
-          <!-- Profil Operator (Badge Utama) -->
           <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.08); padding: 4px 8px; border-radius: 6px;">
             <div id="operatorAvatarBox" style="width: 20px; height: 20px; border-radius: 4px; background: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #0f172a;">--</div>
             <div style="display: flex; flex-direction: column; line-height: 1.1;">
@@ -96,29 +92,34 @@
             </div>
           </div>
 
-          <!-- Teks Next Operator di bawah badge -->
           <div style="font-size: 9px; color: #94a3b8; margin-top: 3px; letter-spacing: 0.5px;">
             Next: <span id="nextOperatorName" style="color: #38bdf8; font-weight: bold;">-</span>
           </div>
         </div>
 
       </div>
-    </div>
-                 <!-- 🎨 TOMBOL PILIHAN TEMA (FIXED COLOR VERSION) -->
-    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin: 6px 0 10px 0; padding-right: 2px;">
-      <span style="font-size: 10px; color: #94a3b8; font-weight: 500;">🎨 Tema:</span>
-      <button onclick="setTheme('cyber-blue')" title="Cyber Blue" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #38bdf8 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-      <button onclick="setTheme('rose-pink')" title="Rose Pink" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #f43f5e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-      <button onclick="setTheme('amethyst-purple')" title="Amethyst Purple" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #c084fc !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-      <button onclick="setTheme('matrix-green')" title="Matrix Green" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #22c55e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-      <button onclick="setTheme('royal-cobalt')" title="Royal Cobalt" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #3b82f6 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-    </div>
-       
-    
-    <!-- STATUS AKTIF UTAMA -->
-    <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 5px 14px; border-radius: 20px; font-size: 12px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); margin-top: 15px; margin-bottom: 20px; width: fit-content;">
-      <span style="width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 8px; animation: blink-pulse 1.4s infinite;"></span>
-      <span>Sistem Aktif</span>
+    </div> <!-- (Akhir Enterprise Status Bar) -->
+
+
+    <!-- 🟢 KONTAINER SEBARIS: Sistem Aktif (Kiri) & Tombol Tema (Kanan) tepat di bawah garis -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 12px 0; flex-wrap: wrap; gap: 8px;">
+      
+      <!-- Sisi Kiri: Status Aktif -->
+      <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 4px 12px; border-radius: 20px; font-size: 11.5px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25);">
+        <span style="width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 6px; animation: blink-pulse 1.4s infinite;"></span>
+        <span>Sistem Aktif</span>
+      </div>
+
+      <!-- Sisi Kanan: Tombol Tema -->
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 10px; color: #94a3b8; font-weight: 500;">🎨 Tema:</span>
+        <button onclick="setTheme('cyber-blue')" title="Cyber Blue" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #38bdf8 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+        <button onclick="setTheme('rose-pink')" title="Rose Pink" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #f43f5e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+        <button onclick="setTheme('amethyst-purple')" title="Amethyst Purple" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #c084fc !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+        <button onclick="setTheme('matrix-green')" title="Matrix Green" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #22c55e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+        <button onclick="setTheme('royal-cobalt')" title="Royal Cobalt" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #3b82f6 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+      </div>
+
     </div>
     
     <!-- KOTAK ANIMASI FADE-IN / FADE-OUT TEKS -->
