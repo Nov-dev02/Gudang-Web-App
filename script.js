@@ -385,7 +385,20 @@ function showCustomAlert(message, downloadUrl) {
       clearInterval(interval);
       if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
       
-      window.open(targetUrl, '_blank');
+      // Buat tanggal otomatis berdasarkan hari saat tombol diklik
+const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+const now = new Date();
+const day = ("0" + now.getDate()).slice(-2);
+const monthName = months[now.getMonth()];
+const year = now.getFullYear();
+const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
+
+const a = document.createElement('a');
+a.href = targetUrl;
+a.download = dynamicFileName; // Otomatis ngikutin tanggal hari ini!
+document.body.appendChild(a);
+a.click();
+a.remove();
 
       setTimeout(() => {
         if (closeModalBtn) {
