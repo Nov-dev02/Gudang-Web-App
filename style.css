@@ -160,26 +160,28 @@ textarea:focus {
 }
 
 button {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  font-size: 14.5px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%); /* Warna Emerald Green yang Elegan */
+  color: #ffffff;
+  border: 1px solid #10b981;
+  padding: 10px 24px;
+  font-size: 13.5px;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
-  width: 100%;
-  transition: all 0.2s;
+  width: fit-content;        /* Ukuran ringkas sesuai teks */
+  margin: 0 auto 15px auto;  /* Posisi di tengah rapi */
+  transition: all 0.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35); /* Efek glow hijau halus */
 }
 
 button:hover {
-  opacity: 0.92;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
 }
 
 /* DEVOPS TERMINAL LOG STYLE */
