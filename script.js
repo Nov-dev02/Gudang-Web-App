@@ -163,7 +163,7 @@ if (document.readyState === 'loading') {
 }
 
 // ==========================================
-// ⚙️ PROSES DATA & SINKRONISASI SERVER
+// ⚙️ PROSES DATA & SINKRONISASI SERVER (DENGAN ANIMASI TERMINAL)
 // ==========================================
 async function processData() {
   const textarea = document.getElementById('shopeeData');
@@ -176,6 +176,7 @@ async function processData() {
   const btnSpinner = document.getElementById('btnSpinner');
   const btnText = document.getElementById('btnText');
   const logDiv = document.getElementById('log');
+  const logTextSpan = document.getElementById('logText');
   
   if (!shopeeData) {
     showCustomAlert('Silakan paste data Shopee & TikTok terlebih dahulu ya! 😊', '');
@@ -199,34 +200,30 @@ async function processData() {
     return;
   }
   
+  // Ubah tombol jadi mode loading terminal
   if (btn) btn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = 'block';
   if (btnText) btnText.innerHTML = `
-  <div style="display: inline-flex; align-items: center; gap: 8px;">
-    <div class="modern-spinner"></div>
-    <span>Sedang Memproses & Sinkronisasi<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span></span>
-  </div>
-`;
+    <div style="display: inline-flex; align-items: center; gap: 8px;">
+      <div class="modern-spinner"></div>
+      <span>[ ••• ] Sedang Memproses & Sinkronisasi<span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span></span>
+    </div>
+  `;
   
-  if (logDiv) {
-    logDiv.style.display = 'block';
-    logDiv.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Google Drive...';
-    logDiv.scrollTop = logDiv.scrollHeight;
-  }
+  // Rangkaian teks simulasi terminal real-time
+  if (logDiv) logDiv.style.display = 'block';
+  if (logTextSpan) logTextSpan.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Cloud Database Google Drive...';
+  if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
   
-  await new Promise(resolve => setTimeout(resolve, 400));
+  await new Promise(resolve => setTimeout(resolve, 600));
   
-  if (logDiv) {
-    logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔍 Memvalidasi format data Shopee & TikTok Shop...';
-    logDiv.scrollTop = logDiv.scrollHeight;
-  }
+  if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔍 Memvalidasi format data Shopee & TikTok Shop...';
+  if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
   
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    if (logDiv) {
-      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database... (Mohon tunggu, proses memakan waktu)';
-      logDiv.scrollTop = logDiv.scrollHeight;
-    }
+    await new Promise(resolve => setTimeout(resolve, 700));
+    if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] ⚡ Mengirim payload ke database... (Mohon tunggu sebentar)';
+    if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -254,11 +251,10 @@ async function processData() {
     }
 
     if (res.status === 'success') {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      if (logDiv) {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server.';
-        logDiv.scrollTop = logDiv.scrollHeight;
-      }
+      await new Promise(resolve => setTimeout(resolve, 400));
+      if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] ✔️ Menerima respon sukses dari server pusat.';
+      if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
+
       const now = new Date();
       const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -270,19 +266,15 @@ async function processData() {
       const messageLines = res.message ? res.message.split('\n') : [];
       for (let i = 0; i < messageLines.length; i++) {
         if (messageLines[i].trim() !== '') {
-          await new Promise(resolve => setTimeout(resolve, 250));
-          if (logDiv) {
-            logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪️️ ' + messageLines[i];
-            logDiv.scrollTop = logDiv.scrollHeight;
-          }
+          await new Promise(resolve => setTimeout(resolve, 200));
+          if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + ']   ▪ ' + messageLines[i];
+          if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
         }
       }
       
       await new Promise(resolve => setTimeout(resolve, 400));
-      if (logDiv) {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 Silakan cek sheet Nota Masuk, Nota Selesai, TRX, dan Laporan.';
-        logDiv.scrollTop = logDiv.scrollHeight;
-      }
+      if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 SUCCESS: Data berhasil diproses & disimpan ke Sheet.';
+      if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
       
       textarea.value = '';
       if (rowCounter) rowCounter.innerText = '📊 0 baris data';
@@ -303,10 +295,8 @@ async function processData() {
       }, 1200);
 
     } else {
-      if (logDiv) {
-        logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
-        logDiv.scrollTop = logDiv.scrollHeight;
-      }
+      if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
+      if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
       setTimeout(() => {
         showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
       }, 800);
@@ -317,10 +307,8 @@ async function processData() {
     if (error.name === 'AbortError') {
       errorMessage = "Batas waktu tunggu habis (> 2 menit). Proses server terlalu lama atau koneksi terputus.";
     }
-    if (logDiv) {
-      logDiv.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + errorMessage;
-      logDiv.scrollTop = logDiv.scrollHeight;
-    }
+    if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + errorMessage;
+    if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
     setTimeout(() => {
       showCustomAlert('Terjadi Kesalahan: ' + errorMessage, '');
     }, 800);
