@@ -342,7 +342,7 @@ function showCustomAlert(message, downloadUrl) {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'flex';
 }
-  function downloadExcelWithProgress() {
+  async function downloadExcelWithProgress() {
   const targetUrl = currentDownloadUrl || (window.globalServerResponse && (window.globalServerResponse.downloadUrl || window.globalServerResponse.fileUrl || window.globalServerResponse.spreadsheetUrl)) || "";
 
   if (!targetUrl) {
@@ -364,39 +364,59 @@ function showCustomAlert(message, downloadUrl) {
 
   let progress = 0;
   
+  // Animasi progress bar berjalan
   const interval = setInterval(() => {
-    progress += 2;
-    if (progress <= 100) {
+    if (progress < 90) {
+      progress += 5;
       if (progressBar) progressBar.style.width = progress + '%';
       if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
-    } else {
-      clearInterval(interval);
-      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
-      
-      // Buat tanggal otomatis berdasarkan hari saat tombol diklik
-const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-const now = new Date();
-const day = ("0" + now.getDate()).slice(-2);
-const monthName = months[now.getMonth()];
-const year = now.getFullYear();
-const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
-
-const a = document.createElement('a');
-a.href = targetUrl;
-a.download = dynamicFileName; // Otomatis ngikutin tanggal hari ini!
-document.body.appendChild(a);
-a.click();
-a.remove();
-
-      setTimeout(() => {
-        if (closeModalBtn) {
-          closeModalBtn.style.opacity = '1';
-          closeModalBtn.style.pointerEvents = 'auto';
-        }
-        closeCustomAlert();
-      }, 600);
     }
-  }, 25);
+  }, 50);
+
+  try {
+    // Tarik file Excel langsung lewat JavaScript fetch untuk mengatasi batasan CORS
+    const response = await fetch(targetUrl);
+    const blob = await response.blob();
+    
+    clearInterval(interval);
+    if (progressBar) progressBar.style.width = '100%';
+    if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+
+    // Buat tanggal dinamis kustom hari ini
+    const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+    const now = new Date();
+    const day = ("0" + now.getDate()).slice(-2);
+    const monthName = months[now.getMonth()];
+    const year = now.getFullYear();
+    const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
+
+    // Buat objek URL lokal dari blob agar nama file kustomnya dipatuhi browser
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = dynamicFileName; 
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+
+    setTimeout(() => {
+      if (closeModalBtn) {
+        closeModalBtn.style.opacity = '1';
+        closeModalBtn.style.pointerEvents = 'auto';
+      }
+      closeCustomAlert();
+    }, 600);
+
+  } catch (err) {
+    clearInterval(interval);
+    alert("Gagal mendownload file Excel: " + err.message);
+    if (downloadBtn) downloadBtn.disabled = false;
+    if (closeModalBtn) {
+      closeModalBtn.style.opacity = '1';
+      closeModalBtn.style.pointerEvents = 'auto';
+    }
+  }
 }
 
 function closeCustomAlert() {
