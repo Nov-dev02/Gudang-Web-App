@@ -571,3 +571,27 @@ button:hover {
   align-self: center;
   margin-right: 4px;
 }
+/* ==========================================
+   💻 KELAS TAMBAHAN TERMINAL TYPING & KURSOR
+   ========================================== */
+.terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background-color: #22c55e; /* Hijau fosfor terminal */
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: terminalBlink 0.8s infinite;
+}
+
+@keyframes terminalBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+#log {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11.5px;
+  color: #22c55e;
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+}
