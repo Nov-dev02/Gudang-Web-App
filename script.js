@@ -385,32 +385,36 @@ function downloadExcelWithProgress() {
       const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
 
       if (base64Data) {
-        // Eksekusi download lokal dari Base64 (Nama file custom DIJAMIN BERHASIL 100%)
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = dynamicFileName; // 🎯 Nama kustom sukses diterapkan!
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(blobUrl);
-      } else {
-        // Fallback jika pakai URL biasa
-        const a = document.createElement('a');
-        a.href = targetUrl;
-        a.download = dynamicFileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
+      const byteArray = new Uint8Array(byteNumbers);
+      
+      const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8" });
+      
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = dynamicFileName; 
+      
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      }, 100);
+    } else {
+      const a = document.createElement('a');
+      a.href = targetUrl;
+      a.download = dynamicFileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
 
       setTimeout(() => {
         if (closeModalBtn) {
