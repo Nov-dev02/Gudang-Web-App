@@ -343,10 +343,12 @@ function showCustomAlert(message, downloadUrl) {
   if (modal) modal.style.display = 'flex';
 }
 function downloadExcelWithProgress() {
-  const targetUrl = currentDownloadUrl || (window.globalServerResponse && (window.globalServerResponse.downloadUrl || window.globalServerResponse.fileUrl || window.globalServerResponse.spreadsheetUrl)) || "";
+  // Cek apakah server mengirim data Base64
+  const base64Data = window.globalServerResponse && window.globalServerResponse.fileData;
+  const targetUrl = currentDownloadUrl || (window.globalServerResponse && window.globalServerResponse.downloadUrl) || "";
 
-  if (!targetUrl) {
-    alert("Link download belum tersedia dari server.");
+  if (!base64Data && !targetUrl) {
+    alert("Data file belum tersedia dari server.");
     closeCustomAlert();
     return;
   }
@@ -370,51 +372,53 @@ function downloadExcelWithProgress() {
       if (progressBar) progressBar.style.width = progress + '%';
       if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
     } else {
-    clearInterval(interval);
-    if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
-    
-    // Buat tanggal otomatis berdasarkan hari saat tombol diklik
-    const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-    const now = new Date();
-    const day = ("0" + now.getDate()).slice(-2);
-    const monthName = months[now.getMonth()];
-    const year = now.getFullYear();
-    const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
+      clearInterval(interval);
+      
+      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
 
-    const a = document.createElement('a');
-    a.href = targetUrl;
-    a.download = dynamicFileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+      // Buat tanggal otomatis berdasarkan hari saat tombol diklik
+      const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+      const now = new Date();
+      const day = ("0" + now.getDate()).slice(-2);
+      const monthName = months[now.getMonth()];
+      const year = now.getFullYear();
+      const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
 
-    setTimeout(() => {
-      if (closeModalBtn) {
-        closeModalBtn.style.opacity = '1';
-        closeModalBtn.style.pointerEvents = 'auto';
+      if (base64Data) {
+        // Eksekusi download lokal dari Base64 (Nama file custom DIJAMIN BERHASIL 100%)
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = dynamicFileName; // 🎯 Nama kustom sukses diterapkan!
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+      } else {
+        // Fallback jika pakai URL biasa
+        const a = document.createElement('a');
+        a.href = targetUrl;
+        a.download = dynamicFileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       }
-      closeCustomAlert();
-    }, 600);
-  }
-        .catch(error => {
-          console.error("Download Error:", error);
-          // Fallback jika fetch diblokir CORS, langsung lempar ke link asli
-          const a = document.createElement('a');
-          a.href = targetUrl;
-          a.download = dynamicFileName;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
 
-          if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
-          setTimeout(() => {
-            if (closeModalBtn) {
-              closeModalBtn.style.opacity = '1';
-              closeModalBtn.style.pointerEvents = 'auto';
-            }
-            closeCustomAlert();
-          }, 600);
-        });
+      setTimeout(() => {
+        if (closeModalBtn) {
+          closeModalBtn.style.opacity = '1';
+          closeModalBtn.style.pointerEvents = 'auto';
+        }
+        closeCustomAlert();
+      }, 600);
     }
   }, 25);
 }
