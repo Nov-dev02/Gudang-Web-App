@@ -370,35 +370,64 @@ function showCustomAlert(message, downloadUrl) {
       if (progressBar) progressBar.style.width = progress + '%';
       if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
     } else {
-      clearInterval(interval);
-      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
-      
-      // Buat tanggal otomatis berdasarkan hari saat tombol diklik
-const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-const now = new Date();
-const day = ("0" + now.getDate()).slice(-2);
-const monthName = months[now.getMonth()];
-const year = now.getFullYear();
-const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
+    clearInterval(interval);
+    
+    if (downloadBtnText) downloadBtnText.innerText = `⏳ Memproses File...`;
 
-const a = document.createElement('a');
-a.href = targetUrl;
-a.download = dynamicFileName; // Otomatis ngikutin tanggal hari ini!
-document.body.appendChild(a);
-a.click();
-a.remove();
+    // Buat tanggal otomatis berdasarkan hari saat tombol diklik
+    const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+    const now = new Date();
+    const day = ("0" + now.getDate()).slice(-2);
+    const monthName = months[now.getMonth()];
+    const year = now.getFullYear();
+    const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
 
-      setTimeout(() => {
-        if (closeModalBtn) {
-          closeModalBtn.style.opacity = '1';
-          closeModalBtn.style.pointerEvents = 'auto';
-        }
-        closeCustomAlert();
-      }, 600);
-    }
-  }, 25);
-}
+    // 💡 Trik Blob Fetch agar nama file kustom berhasil diterapkan di browser
+    fetch(targetUrl)
+      .then(response => {
+        if (!response.ok) throw new Error("Gagal mengambil file dari server.");
+        return response.blob();
+      })
+      .then(blob => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = dynamicFileName; // ✅ Berhasil dipaksa pakai nama kustom!
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
 
+        if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+
+        setTimeout(() => {
+          if (closeModalBtn) {
+            closeModalBtn.style.opacity = '1';
+            closeModalBtn.style.pointerEvents = 'auto';
+          }
+          closeCustomAlert();
+        }, 600);
+      })
+      .catch(error => {
+        console.error("Download Error:", error);
+        // Fallback jika fetch diblokir CORS ketat, langsung lempar ke link asli
+        const a = document.createElement('a');
+        a.href = targetUrl;
+        a.download = dynamicFileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+        setTimeout(() => {
+          if (closeModalBtn) {
+            closeModalBtn.style.opacity = '1';
+            closeModalBtn.style.pointerEvents = 'auto';
+          }
+          closeCustomAlert();
+        }, 600);
+      });
+  }
 function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
