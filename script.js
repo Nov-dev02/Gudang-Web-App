@@ -342,15 +342,21 @@ function showCustomAlert(message, downloadUrl) {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'flex';
 }
-function downloadExcelWithProgress() {
-  // Ambil data base64 langsung dari respons server
+function downloadExcelWithProgress(serverResponse) {
+  // Jika serverResponse dikirim langsung saat fungsi dipanggil, simpan ke global
+  if (serverResponse) {
+    window.globalServerResponse = serverResponse;
+  }
+
   const base64Data = window.globalServerResponse && window.globalServerResponse.fileData;
+  const targetUrl = currentDownloadUrl || (window.globalServerResponse && window.globalServerResponse.downloadUrl) || "";
 
   if (!base64Data) {
     alert("Data file Base64 belum tersedia dari server.");
     closeCustomAlert();
     return;
   }
+  // ... (lanjutan kode di bawahnya biarkan tetap sama)
 
   const downloadBtn = document.getElementById('downloadBtn');
   const closeModalBtn = document.getElementById('closeModalBtn');
@@ -708,6 +714,7 @@ async function kirimAksiPendingCancel(actionType) {
     const res = JSON.parse(text);
 
     if (res.status === 'success') {
+      window.globalServerResponse = res; // <--- Tambahkan baris ini di sini!
       const foundUrl = res.downloadUrl || res.fileUrl || res.spreadsheetUrl;
       if (foundUrl) {
         currentDownloadUrl = foundUrl;
