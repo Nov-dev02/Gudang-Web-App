@@ -343,12 +343,11 @@ function showCustomAlert(message, downloadUrl) {
   if (modal) modal.style.display = 'flex';
 }
 function downloadExcelWithProgress() {
-  // Cek apakah server mengirim data Base64
+  // Ambil data base64 langsung dari respons server
   const base64Data = window.globalServerResponse && window.globalServerResponse.fileData;
-  const targetUrl = currentDownloadUrl || (window.globalServerResponse && window.globalServerResponse.downloadUrl) || "";
 
-  if (!base64Data && !targetUrl) {
-    alert("Data file belum tersedia dari server.");
+  if (!base64Data) {
+    alert("Data file Base64 belum tersedia dari server.");
     closeCustomAlert();
     return;
   }
@@ -374,9 +373,9 @@ function downloadExcelWithProgress() {
     } else {
       clearInterval(interval);
       
-      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+      if (downloadBtnText) downloadBtnText.innerText = `⏳ Memproses File...`;
 
-      // Buat tanggal otomatis berdasarkan hari saat tombol diklik
+      // Buat nama file dinamis berdasarkan tanggal hari ini
       const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
       const now = new Date();
       const day = ("0" + now.getDate()).slice(-2);
@@ -384,37 +383,44 @@ function downloadExcelWithProgress() {
       const year = now.getFullYear();
       const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
 
-      if (base64Data) {
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      try {
+        // Konversi Base64 mentah kembali menjadi byte array biner
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        
+        // Bungkus menjadi Blob murni dengan tipe Excel yang spesifik
+        const blob = new Blob([byteArray], { 
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+        });
+        
+        // Buat objek URL lokal yang terisolasi dari Google Drive
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = dynamicFileName; // 🎯 Nama kustom dipaksa masuk di sini!
+        
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        
+        // Eksekusi klik otomatis untuk memicu download browser
+        a.click();
+        
+        // Bersihkan memori setelah file terunduh
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(blobUrl);
+        }, 200);
+
+      } catch (e) {
+        console.error("Gagal merakit file Blob:", e);
+        alert("Terjadi kesalahan saat memproses unduhan file.");
       }
-      const byteArray = new Uint8Array(byteNumbers);
-      
-      const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8" });
-      
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = dynamicFileName; 
-      
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      
-      setTimeout(() => {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      }, 100);
-    } else {
-      const a = document.createElement('a');
-      a.href = targetUrl;
-      a.download = dynamicFileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
+
+      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
 
       setTimeout(() => {
         if (closeModalBtn) {
