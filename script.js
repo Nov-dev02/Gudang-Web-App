@@ -370,44 +370,32 @@ function downloadExcelWithProgress() {
       if (progressBar) progressBar.style.width = progress + '%';
       if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
     } else {
-      clearInterval(interval);
-      
-      if (downloadBtnText) downloadBtnText.innerText = `⏳ Memproses File...`;
+    clearInterval(interval);
+    if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+    
+    // Buat tanggal otomatis berdasarkan hari saat tombol diklik
+    const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+    const now = new Date();
+    const day = ("0" + now.getDate()).slice(-2);
+    const monthName = months[now.getMonth()];
+    const year = now.getFullYear();
+    const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
 
-      // Buat tanggal otomatis berdasarkan hari saat tombol diklik
-      const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-      const now = new Date();
-      const day = ("0" + now.getDate()).slice(-2);
-      const monthName = months[now.getMonth()];
-      const year = now.getFullYear();
-      const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
+    const a = document.createElement('a');
+    a.href = targetUrl;
+    a.download = dynamicFileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 
-      // Trik Fetch Blob agar nama file kustom berhasil diterapkan di browser
-      fetch(targetUrl)
-        .then(response => {
-          if (!response.ok) throw new Error("Gagal mengambil file dari server.");
-          return response.blob();
-        })
-        .then(blob => {
-          const blobUrl = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = dynamicFileName; // Berhasil dipaksa pakai nama kustom!
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          window.URL.revokeObjectURL(blobUrl);
-
-          if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
-
-          setTimeout(() => {
-            if (closeModalBtn) {
-              closeModalBtn.style.opacity = '1';
-              closeModalBtn.style.pointerEvents = 'auto';
-            }
-            closeCustomAlert();
-          }, 600);
-        })
+    setTimeout(() => {
+      if (closeModalBtn) {
+        closeModalBtn.style.opacity = '1';
+        closeModalBtn.style.pointerEvents = 'auto';
+      }
+      closeCustomAlert();
+    }, 600);
+  }
         .catch(error => {
           console.error("Download Error:", error);
           // Fallback jika fetch diblokir CORS, langsung lempar ke link asli
