@@ -342,21 +342,20 @@ function showCustomAlert(message, downloadUrl) {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'flex';
 }
-function downloadExcelWithProgress(serverResponse) {
+async function downloadExcelWithProgress(serverResponse) {
   // Jika serverResponse dikirim langsung saat fungsi dipanggil, simpan ke global
   if (serverResponse) {
     window.globalServerResponse = serverResponse;
   }
 
-  const base64Data = window.globalServerResponse && window.globalServerResponse.fileData;
+  // 🎯 Menggunakan targetUrl dari Plan B (bukan base64 lagi)
   const targetUrl = currentDownloadUrl || (window.globalServerResponse && window.globalServerResponse.downloadUrl) || "";
 
-  if (!base64Data) {
-    alert("Data file Base64 belum tersedia dari server.");
+  if (!targetUrl) {
+    alert("URL download belum tersedia dari server.");
     closeCustomAlert();
     return;
   }
-  // ... (lanjutan kode di bawahnya biarkan tetap sama)
 
   const downloadBtn = document.getElementById('downloadBtn');
   const closeModalBtn = document.getElementById('closeModalBtn');
@@ -369,80 +368,68 @@ function downloadExcelWithProgress(serverResponse) {
     closeModalBtn.style.pointerEvents = 'none';
   }
 
-  let progress = 0;
-  
-  const interval = setInterval(() => {
-    progress += 2;
-    if (progress <= 100) {
-      if (progressBar) progressBar.style.width = progress + '%';
-      if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan File... (${progress}%)`;
-    } else {
-      clearInterval(interval);
-      
-      if (downloadBtnText) downloadBtnText.innerText = `⏳ Memproses File...`;
+  let progress = 10;
+  if (progressBar) progressBar.style.width = progress + '%';
+  if (downloadBtnText) downloadBtnText.innerText = `⏳ Menyiapkan Unduhan... (${progress}%)`;
 
-      // Buat nama file dinamis berdasarkan tanggal hari ini
-      const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-      const now = new Date();
-      const day = ("0" + now.getDate()).slice(-2);
-      const monthName = months[now.getMonth()];
-      const year = now.getFullYear();
-      const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + monthName + " " + year + ".xlsx";
+  try {
+    progress = 40;
+    if (progressBar) progressBar.style.width = progress + '%';
+    if (downloadBtnText) downloadBtnText.innerText = `⏳ Mengambil Berkas... (${progress}%)`;
 
-      try {
-        // Konversi Base64 mentah kembali menjadi byte array biner
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        
-        // Bungkus menjadi Blob murni dengan tipe Excel yang spesifik
-        const blob = new Blob([byteArray], { 
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
-        });
-        
-        // Buat objek URL lokal yang terisolasi dari Google Drive
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = dynamicFileName; // 🎯 Nama kustom dipaksa masuk di sini!
-        
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        
-        // Eksekusi klik otomatis untuk memicu download browser
-        a.click();
-        
-        // Bersihkan memori setelah file terunduh
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(blobUrl);
-        }, 200);
+    // Tarik file Excel langsung secara asinkron dari URL Google Sheets
+    const response = await fetch(targetUrl);
+    const blobData = await response.blob();
 
-      } catch (e) {
-        console.error("Gagal merakit file Blob:", e);
-        alert("Terjadi kesalahan saat memproses unduhan file.");
+    progress = 80;
+    if (progressBar) progressBar.style.width = progress + '%';
+    if (downloadBtnText) downloadBtnText.innerText = `⏳ Merakit Berkas... (${progress}%)`;
+
+    // Buat nama file dinamis secara instan di sisi frontend
+    const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+    const now = new Date();
+    const day = ("0" + now.getDate()).slice(-2);
+    const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + months[now.getMonth()] + " " + now.getFullYear() + ".xlsx";
+
+    // Eksekusi download lokal menggunakan Blob URL
+    const blobUrl = window.URL.createObjectURL(blobData);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = dynamicFileName; // 🎯 Nama kustom dipaksa masuk di sini dengan bersih!
+    
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+
+    progress = 100;
+    if (progressBar) progressBar.style.width = progress + '%';
+    if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
+
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+      if (closeModalBtn) {
+        closeModalBtn.style.opacity = '1';
+        closeModalBtn.style.pointerEvents = 'auto';
       }
+      closeCustomAlert();
+    }, 600);
 
-      if (downloadBtnText) downloadBtnText.innerText = `✅ Berhasil Diunduh!`;
-
-      setTimeout(() => {
-        if (closeModalBtn) {
-          closeModalBtn.style.opacity = '1';
-          closeModalBtn.style.pointerEvents = 'auto';
-        }
-        closeCustomAlert();
-      }, 600);
+  } catch (err) {
+    console.error("Gagal mendownload file:", err);
+    alert("Terjadi kesalahan saat mengunduh file Excel.");
+    if (downloadBtn) downloadBtn.disabled = false;
+    if (closeModalBtn) {
+      closeModalBtn.style.opacity = '1';
+      closeModalBtn.style.pointerEvents = 'auto';
     }
-  }, 25);
+  }
 }
+
 function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
 }
-
 // ==========================================
 // 🔄 ANIMASI TEKS & MONITORING JARINGAN
 // ==========================================
