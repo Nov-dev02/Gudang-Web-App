@@ -261,12 +261,12 @@ function getNextOperator() {
     }
    
     const bootSteps = [
-      { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 },
-      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 },
-      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", progress: "60%", duration: 5000 },
-      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", progress: "85%", duration: 5000 },
-      { text: "Mengamankan enkripsi token API...", color: "#facc15", progress: "95%", duration: 4000 },
-      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", progress: "100%", duration: 6000 }
+      { text: "Menghubungkan ke server pusat...", color: "#facc15", duration: 5000 },
+      { text: "Memeriksa koneksi database Cloud...", color: "#facc15", duration: 4000 },
+      { text: "Sinkronisasi master STOK & Gudang...", color: "#facc15", duration: 5000 },
+      { text: "Memuat data admin & riwayat transaksi...", color: "#facc15", duration: 5000 },
+      { text: "Mengamankan enkripsi token API...", color: "#facc15", duration: 4000 },
+      { text: "Sistem Aktif & Terverifikasi", color: "#22c55e", duration: 6000 }
     ];
 
     function startSystemInitialization() {
@@ -295,30 +295,46 @@ function getNextOperator() {
 
       if (!bootScreenEl) return;
 
+      // Hitung total durasi dari semua step secara otomatis
+      const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
+
+      // Picu animasi CSS murni agar progress bar mengalir mulus dari 0% ke 100%
+      if (bootProgressFill) {
+        bootProgressFill.style.transition = `width ${totalDuration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
+        bootProgressFill.style.width = "100%";
+      }
+
       let currentStep = 0;
 
       function executeStep() {
         if (currentStep < bootSteps.length) {
-          bootTextEl.innerText = bootSteps[currentStep].text;
-          bootIconEl.style.backgroundColor = bootSteps[currentStep].color;
-          bootIconEl.style.boxShadow = `0 0 10px ${bootSteps[currentStep].color}`;
+          const step = bootSteps[currentStep];
           
-          if (bootProgressFill) {
-            bootProgressFill.style.width = bootSteps[currentStep].progress;
+          if (bootTextEl) bootTextEl.innerText = step.text;
+          if (bootIconEl) {
+            bootIconEl.style.backgroundColor = step.color;
+            bootIconEl.style.boxShadow = `0 0 10px ${step.color}`;
           }
 
-          let stepDuration = bootSteps[currentStep].duration;
+          let stepDuration = step.duration;
           currentStep++;
 
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
+            // Selesai di step terakhir
             setTimeout(() => {
-              speakSystemReady(); 
+              if (typeof speakSystemReady === 'function') speakSystemReady(); 
+              
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
-              document.querySelector('.container').classList.add('run-animation');
-              showToast("Sistem siap beroperasi secara maksimal!", "🟢");
+              
+              const mainContainer = document.querySelector('.container');
+              if (mainContainer) mainContainer.classList.add('run-animation');
+              
+              if (typeof showToast === 'function') {
+                showToast("Sistem siap beroperasi secara maksimal!", "🟢");
+              }
               
               const initBtn = document.getElementById("init-btn");
               if (initBtn) {
@@ -335,9 +351,9 @@ function getNextOperator() {
         }
       }
 
+      // Mulai jalankan step pertama
       executeStep();
     }
-
     function updateClock() {
       const clockEl = document.getElementById("live-clock");
       if (clockEl) {
