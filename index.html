@@ -295,9 +295,13 @@ function getNextOperator() {
 
       if (!bootScreenEl) return;
 
-      // Cukup aktifkan class animasi CSS-nya saja di sini
+      // Hitung total durasi dari semua step
+      const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
+
+      // Paksa langsung jalankan transisi lebar dari JS secara mulus tanpa nunggu kelas CSS
       if (bootProgressFill) {
-        bootProgressFill.classList.add("running");
+        bootProgressFill.style.transition = `width ${totalDuration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
+        bootProgressFill.style.width = "100%";
       }
 
       let currentStep = 0;
@@ -318,7 +322,6 @@ function getNextOperator() {
           if (currentStep < bootSteps.length) {
             setTimeout(executeStep, stepDuration);
           } else {
-            // Selesai di step terakhir
             setTimeout(() => {
               if (typeof speakSystemReady === 'function') speakSystemReady(); 
               
@@ -337,8 +340,6 @@ function getNextOperator() {
                 initBtn.style.opacity = "1";
                 initBtn.style.pointerEvents = "auto";
                 initBtn.innerText = "⚡ [ CLICK TO INITIALIZE SYSTEM ]";
-                // Reset class running untuk animasi berikutnya jika diperlukan
-                if (bootProgressFill) bootProgressFill.classList.remove("running");
               }
               
               if (typeof initTextFadeRotator === 'function') {
