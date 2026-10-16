@@ -2,7 +2,7 @@
 <html>
 <head>
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0f172a">
   <meta charset="utf-8">
   <title>Web App Otomasi Gudang</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f172a'/><stop offset='100%25' stop-color='%231e293b'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='url(%23bg)'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='20' fill='%2338bdf8'>NM</text></svg>">
@@ -64,7 +64,7 @@
   </div>
 
   <!-- KOTAK UTAMA APLIKASI -->
-  <div class="container">
+  <div class="container animate-entrance">
     
    <!-- ENTERPRISE STATUS BAR (Gudang Nuhsantara) -->
     <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px;">
@@ -101,7 +101,7 @@
     </div> <!-- (Akhir Enterprise Status Bar) -->
 
 
-    <!-- 🟢 KONTAINER SEBARIS: Sistem Aktif (Kiri) & Tombol Tema (Kanan) tepat di bawah garis -->
+    <!-- 🟢 KONTAINER SEBARIS: Sistem Aktif (Kiri) & Tombol Tema Dark/Light (Kanan) -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 12px 0; flex-wrap: wrap; gap: 8px;">
       
       <!-- Sisi Kiri: Status Aktif -->
@@ -110,14 +110,12 @@
         <span>Sistem Aktif</span>
       </div>
 
-      <!-- Sisi Kanan: Tombol Tema -->
+      <!-- Sisi Kanan: Tombol Toggle Tema Dark / Light -->
       <div style="display: flex; align-items: center; gap: 6px;">
-        <span style="font-size: 10px; color: #94a3b8; font-weight: 500;">🎨 Tema:</span>
-        <button onclick="setTheme('cyber-blue')" title="Cyber Blue" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #38bdf8 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-        <button onclick="setTheme('rose-pink')" title="Rose Pink" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #f43f5e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-        <button onclick="setTheme('amethyst-purple')" title="Amethyst Purple" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #c084fc !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-        <button onclick="setTheme('matrix-green')" title="Matrix Green" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #22c55e !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
-        <button onclick="setTheme('royal-cobalt')" title="Royal Cobalt" style="flex: 0 0 auto; width: 12px !important; height: 12px !important; min-width: unset; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: #3b82f6 !important; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+        <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">🎨 Tema:</span>
+        <button id="themeToggleBtn" onclick="toggleDarkLightMode()" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;">
+          <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+        </button>
       </div>
 
     </div>
@@ -158,16 +156,15 @@
  
       
       <!-- DEVOPS TERMINAL LOG CONTAINER DENGAN KURSOR BERKEDIP -->
-<div id="log"><span id="logText">[SYSTEM] Menunggu masukan data transaksi gudang...</span><span class="terminal-cursor"></span></div>
+      <div id="log"><span id="logText">[SYSTEM] Menunggu masukan data transaksi gudang...</span><span class="terminal-cursor"></span></div>
     </div>
 
   </div>
-
   <!-- CUSTOM ALERT MODAL -->
   <div id="customAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
+    <div style="background: var(--card-bg, #1e293b); border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
       <div style="font-size: 36px; margin-bottom: 10px;">💡</div>
-      <p id="customAlertMessage" style="color: #f8fafc; font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; white-space: pre-line;"></p>
+      <p id="customAlertMessage" style="color: var(--text-color, #f8fafc); font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; white-space: pre-line;"></p>
       
       <div id="modalButtons" style="display: flex; flex-direction: column; gap: 10px;">
         <button id="downloadBtn" onclick="downloadExcelWithProgress()" style="position: relative; overflow: hidden; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px;">
@@ -183,9 +180,9 @@
 
   <!-- GUIDE MODAL / PANDUAN FORMAT -->
   <div id="guideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
+    <div style="background: var(--card-bg, #1e293b); border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
       <h3 style="color: #38bdf8; margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">📖 Panduan Format Data</h3>
-      <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin-bottom: 16px;">
+      <p style="color: var(--text-desc, #94a3b8); font-size: 13px; line-height: 1.5; margin-bottom: 16px;">
         Pastikan data yang di-paste adalah laporan unduhan asli dari <b>Shopee</b> atau <b>TikTok Shop</b>.<br><br>
         • Salin seluruh baris dari google sheet transaksi juni sheet All.<br>
         • Pastikan tidak ada teks catatan acak di dalam kotak input.<br>
@@ -219,7 +216,6 @@
 
   <!-- SCRIPT AUDIO API, BOOTING, JAM REAL-TIME & HOTKEYS -->
   <script>
-    // 1. Rumus utama penentu operator berdasarkan minggu berjalan
     function getActiveOperator() {
       const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
       const now = new Date();
@@ -229,7 +225,6 @@
       return operatorList[weekNumber % operatorList.length];
     }
 
-    // 2. Rumus operator untuk MINGGU DEPAN
     function getNextOperator() {
       const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
       const now = new Date();
@@ -239,23 +234,18 @@
       return operatorList[(weekNumber + 1) % operatorList.length];
     }
 
-    // 3. Fungsi untuk menampilkan nama operator aktif & minggu depan ke layar
-            function setWeeklyOperator() {
-      // 1. Selalu jalankan kalkulator untuk MINGGU DEPAN supaya tidak kosong (-)
+    function setWeeklyOperator() {
       const nextOperator = getNextOperator();
       const nextOperatorEl = document.getElementById('nextOperatorName');
       if (nextOperatorEl) {
         nextOperatorEl.textContent = nextOperator;
       }
 
-      // 2. Cek apakah operator sudah login via localStorage
       const savedSession = localStorage.getItem('gudang_active_operator');
       if (savedSession) {
-        // Kalau sudah login, hentikan proses di sini agar profil aktif tidak tertimpa
         return;
       }
 
-      // 3. Jika belum login, gunakan default mingguan untuk operator aktif
       const currentOperator = getActiveOperator();
       const operatorNameEl = document.getElementById('operatorName');
       if (operatorNameEl) {
@@ -266,20 +256,17 @@
       if (avatarBox) {
         avatarBox.textContent = currentOperator.substring(0, 2);
       }
-            }
+    }
     
-
-    // 4. Fungsi suara sapaan otomatis menggunakan MP3 ElevenLabs dari GitHub
-function speakSystemReady() {
-    const currentOperator = typeof getActiveOperator === 'function' ? getActiveOperator() : (localStorage.getItem('gudang_active_operator') || 'IRGI');
-    const operatorKey = currentOperator.toUpperCase();
-    
-    const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/${operatorKey}.mp3?v=${new Date().getTime()}`);
-    welcomeAudio.volume = 0.9;
-    welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
-}
+    function speakSystemReady() {
+      const currentOperator = typeof getActiveOperator === 'function' ? getActiveOperator() : (localStorage.getItem('gudang_active_operator') || 'IRGI');
+      const operatorKey = currentOperator.toUpperCase();
+      
+      const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/${operatorKey}.mp3?v=${new Date().getTime()}`);
+      welcomeAudio.volume = 0.9;
+      welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
+    }
    
-
     const bootSteps = [
       { text: "Menghubungkan ke server pusat...", color: "#facc15", progress: "15%", duration: 5000 },
       { text: "Memeriksa koneksi database Cloud...", color: "#facc15", progress: "35%", duration: 4000 },
@@ -306,6 +293,7 @@ function speakSystemReady() {
 
       runBootSequence();
     }
+
     function runBootSequence() {
       const bootTextEl = document.getElementById("boot-text");
       const bootIconEl = document.getElementById("boot-icon");
@@ -406,68 +394,68 @@ function speakSystemReady() {
       setWeeklyOperator();
     };
   </script>
-  <!-- ================================================================= -->
-<!-- MODAL 1: KONFIRMASI AWAL -->
-<!-- ================================================================= -->
-<div id="modalKonfirmasi" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
-  <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
-    <div style="font-size: 36px; margin-bottom: 10px;">🔍</div>
-    <h3 style="margin-bottom: 10px; color: #f8fafc; font-size: 1.2rem;">Konfirmasi Transaksi</h3>
-    <p style="margin-bottom: 20px; color: #94a3b8; font-size: 0.95rem;">Apakah ada nota pending atau cancel hari ini?</p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <button onclick="pilihTidakPending()" style="display: none;">Tidak</button>
-      <button onclick="pilihYaPending()" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Klik Disini Untuk Melanjutkan</button>
+
+  <!-- MODAL 1: KONFIRMASI AWAL -->
+  <div id="modalKonfirmasi" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: var(--card-bg, #1e293b); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
+      <div style="font-size: 36px; margin-bottom: 10px;">🔍</div>
+      <h3 style="margin-bottom: 10px; color: var(--text-color, #f8fafc); font-size: 1.2rem;">Konfirmasi Transaksi</h3>
+      <p style="margin-bottom: 20px; color: var(--text-desc, #94a3b8); font-size: 0.95rem;">Apakah ada nota pending atau cancel hari ini?</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button onclick="pilihTidakPending()" style="display: none;">Tidak</button>
+        <button onclick="pilihYaPending()" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Klik Disini Untuk Melanjutkan</button>
+      </div>
     </div>
   </div>
-</div>
-<!-- ================================================================= -->
-<!-- MODAL 2: PANEL INPUT PENDING / CANCEL -->
-<!-- ================================================================= -->
-<div id="modalInputPending" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
-  <div style="background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
-    <h3 style="margin-bottom: 12px; color: #38bdf8; font-size: 1.1rem; text-align: center;">⚙️ Input Nota Pending / Cancel</h3>
 
-    <div style="margin-bottom: 12px;">
-      <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; color: #cbd5e1; font-weight: 600;">Nomor Transaksi / Resi:</label>
-      <input type="text" id="inputNoTrx" placeholder="Masukkan / scan nomor transaksi..." style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
-    </div>
+  <!-- MODAL 2: PANEL INPUT PENDING / CANCEL -->
+  <div id="modalInputPending" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: var(--card-bg, #1e293b); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 16px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: left;">
+      <h3 style="margin-bottom: 12px; color: #38bdf8; font-size: 1.1rem; text-align: center;">⚙️ Input Nota Pending / Cancel</h3>
 
-    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-      <button id="btnSetPending" onclick="kirimAksiPendingCancel('pending')" style="flex: 1; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Set Pending</button>
-      <button id="btnSetCancel" onclick="kirimAksiPendingCancel('cancel')" style="flex: 1; padding: 10px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Set Cancel</button>
-    </div>
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; color: #cbd5e1; font-weight: 600;">Nomor Transaksi / Resi:</label>
+        <input type="text" id="inputNoTrx" placeholder="Masukkan / scan nomor transaksi..." style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
+      </div>
 
-    <!-- Log Sesi Ini -->
-    <div style="margin-bottom: 15px; max-height: 100px; overflow-y: auto; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
-      <small style="color: #94a3b8; display: block; margin-bottom: 4px; font-weight: bold;">Log Sesi Ini:</small>
-      <ul id="listLogPending" style="margin: 0; padding-left: 15px; font-size: 0.8rem; color: #cbd5e1;">
-        <li style="color: #64748b;">Belum ada nota diinput.</li>
-      </ul>
-    </div>
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button id="btnSetPending" onclick="kirimAksiPendingCancel('pending')" style="flex: 1; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Set Pending</button>
+        <button id="btnSetCancel" onclick="kirimAksiPendingCancel('cancel')" style="flex: 1; padding: 10px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Set Cancel</button>
+      </div>
 
-    <button onclick="selesaiDanDownload()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">✅ Selesai & Download Laporan</button>
-  </div>
-</div>
-<!-- Floating Glass Toast (Notifikasi Melayang) -->
-<div id="glassToast" class="glass-toast">
-  <div class="toast-icon-wrapper" id="toastIconContainer">
-    <div class="gradient-spinner"></div>
-  </div>
-  <div class="toast-content">
-    <div class="toast-title" id="toastTitle">Memproses data gudang...</div>
-    <div class="toast-desc" id="toastDesc">
-      Sabar ya gais, lagi mindah & bersih-bersih data
-      <span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>
+      <!-- Log Sesi Ini -->
+      <div style="margin-bottom: 15px; max-height: 100px; overflow-y: auto; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
+        <small style="color: #94a3b8; display: block; margin-bottom: 4px; font-weight: bold;">Log Sesi Ini:</small>
+        <ul id="listLogPending" style="margin: 0; padding-left: 15px; font-size: 0.8rem; color: #cbd5e1;">
+          <li style="color: #64748b;">Belum ada nota diinput.</li>
+        </ul>
+      </div>
+
+      <button onclick="selesaiDanDownload()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">✅ Selesai & Download Laporan</button>
     </div>
   </div>
-</div>
-<!-- Footer Copyright & Credits Gudang Nuhsantara -->
-<div style="text-align: center; margin-top: 30px; padding-top: 10px; font-size: 0.8rem; opacity: 0.85;">
-  <p style="margin-bottom: 6px; letter-spacing: 0.5px;">&copy; 2026 <strong>Gudang Nuhsantara</strong>. All Rights Reserved.</p>
-  <p style="margin-bottom: 10px; font-size: 0.72rem; opacity: 0.6;">Powered by Google Apps Script & Cloud Database</p>
-  <p style="font-size: 0.73rem; color: #ff6b81; letter-spacing: 0.3px; opacity: 0.95;">
-    Special Thanks to Operators : <span style="color: #ffffff; font-weight: 600;">IRGI • DWI • ERIKA</span>
-  </p>
-</div>
+
+  <!-- Floating Glass Toast -->
+  <div id="glassToast" class="glass-toast">
+    <div class="toast-icon-wrapper" id="toastIconContainer">
+      <div class="gradient-spinner"></div>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title" id="toastTitle">Memproses data gudang...</div>
+      <div class="toast-desc" id="toastDesc">
+        Sabar ya gais, lagi mindah & bersih-bersih data
+        <span class="bouncing-dots"><span>.</span><span>.</span><span>.</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Copyright & Credits -->
+  <div style="text-align: center; margin-top: 30px; padding-top: 10px; font-size: 0.8rem; opacity: 0.85;" class="animate-entrance animate-delay-3">
+    <p style="margin-bottom: 6px; letter-spacing: 0.5px;">&copy; 2026 <strong>Gudang Nuhsantara</strong>. All Rights Reserved.</p>
+    <p style="margin-bottom: 10px; font-size: 0.72rem; opacity: 0.6;">Powered by Google Apps Script & Cloud Database</p>
+    <p style="font-size: 0.73rem; color: #ff6b81; letter-spacing: 0.3px; opacity: 0.95;">
+      Special Thanks to Operators : <span style="color: #ffffff; font-weight: 600;">IRGI • DWI • ERIKA</span>
+    </p>
+  </div>
 </body>
 </html>
