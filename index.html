@@ -67,7 +67,7 @@
   <div class="container animate-entrance">
     
    <!-- ENTERPRISE STATUS BAR (Gudang Nuhsantara) -->
-    <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px; animation: contentFadeIn 0.5s ease 0.1s forwards; opacity: 0;">
+    <div class="enterprise-status-bar anim-1" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px; animation: contentFadeIn 0.5s ease 0.1s forwards; opacity: 0;">
       
       <!-- Group Kiri: Info Gudang & Status Sync -->
       <div class="status-group" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
@@ -113,23 +113,73 @@
     <!-- Sisi Kanan: Tombol Switch Tema Dark / Light -->
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">Tema:</span>
+  <!-- KOTAK UTAMA APLIKASI -->
+  <div class="container animate-entrance">
+    
+   <!-- 1. ENTERPRISE STATUS BAR -->
+    <div class="enterprise-status-bar anim-1" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px;">
+      
+      <!-- Group Kiri: Info Gudang & Status Sync -->
+      <div class="status-group" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span class="status-badge active" style="white-space: nowrap;">🟢 GUDANG NUHSANTARA <span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 10.5px; margin-left: 4px; font-weight: 600;">v1.2.0</span></span>
+        <span style="color: #64748b;">•</span>
+        <span style="white-space: nowrap;">Sync: <span id="net-status-text" style="color: #22c55e; font-weight: 600;">Online</span></span>
+        <span style="color: #64748b;">•</span>
+        <span style="color: #94a3b8; white-space: nowrap;">Sinkron Terakhir: <span id="last-sync-text" style="color: #e2e8f0; font-weight: 500;">Belum ada</span></span>
+      </div>
+     
+      <!-- Group Kanan: Jam & Badge Operator -->
+      <div class="status-group" style="display: flex; align-items: center; gap: 6px; white-space: nowrap; margin-left: auto;">
+        <span id="live-clock" style="font-family: monospace; color: #f8fafc; font-weight: 600;"></span>
+        <span style="color: #64748b;">•</span>
+        
+        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+          <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.08); padding: 4px 8px; border-radius: 6px;">
+            <div id="operatorAvatarBox" style="width: 20px; height: 20px; border-radius: 4px; background: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #0f172a;">--</div>
+            <div style="display: flex; flex-direction: column; line-height: 1.1;">
+              <span id="operatorName" style="color: #38bdf8; font-weight: 600; font-size: 11px;">-</span>
+              <span id="operatorId" style="color: #94a3b8; font-size: 9px; font-family: monospace;">ID: -</span>
+            </div>
+          </div>
+
+          <div style="font-size: 9px; color: #94a3b8; margin-top: 3px; letter-spacing: 0.5px;">
+            Next: <span id="nextOperatorName" style="color: #38bdf8; font-weight: bold;">-</span>
+          </div>
+        </div>
+
+      </div>
+    </div> <!-- (Akhir Enterprise Status Bar) -->
+
+
+    <!-- 2. KONTAINER SEBARIS: Sistem Aktif & Tombol Tema Dark/Light -->
+    <div class="anim-2" style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 12px 0; flex-wrap: wrap; gap: 8px;">
+      
+      <!-- Sisi Kiri: Status Aktif -->
+      <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 4px 12px; border-radius: 20px; font-size: 11.5px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25);">
+        <span style="width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; margin-right: 6px; animation: blink-pulse 1.4s infinite;"></span>
+        <span>Sistem Aktif</span>
+      </div>
+
+    <!-- Sisi Kanan: Tombol Switch Tema Dark / Light -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">Tema:</span>
         <div class="theme-switch-wrapper" onclick="toggleDarkLightMode()" title="Klik untuk ganti tema" style="display: flex; align-items: center; cursor: pointer; background: var(--card-border, #334155); padding: 3px; border-radius: 20px; width: 50px; height: 24px; position: relative; box-sizing: border-box; border: 1px solid rgba(56,189,248,0.3);">
           <div id="themeSwitchThumb" style="width: 18px; height: 18px; background: #38bdf8; border-radius: 50%; position: absolute; left: 3px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🌙</div>
         </div>
       </div>
     </div>
     
-    <!-- KOTAK ANIMASI FADE-IN / FADE-OUT TEKS -->
-    <div class="fade-text-container" style="animation: contentFadeIn 0.5s ease 0.3s forwards; opacity: 0;">
+    <!-- 3. KOTAK ANIMASI FADE-IN / FADE-OUT TEKS -->
+    <div class="fade-text-container anim-3">
       <div id="rotating-text" class="fade-text-item">🚀 SISTEM MANAJEMEN GUDANG ONLINE</div>
     </div>
     
-    <!-- KONTEN UTAMA -->
-    <div id="app-content" style="animation: contentFadeIn 0.5s ease 0.4s forwards; opacity: 0;">
+    <!-- 4. KONTEN UTAMA -->
+    <div id="app-content" class="anim-4">
       <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
       <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
       
-      <div class="form-group" style="animation: contentFadeIn 0.5s ease 0.5s forwards; opacity: 0;">
+      <div class="form-group">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 10px; flex-wrap: nowrap;">
           <label for="shopeeData" style="margin: 0; white-space: nowrap;">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
           <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0">
@@ -148,17 +198,19 @@
         <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
       </div>
       
-      <button id="submitBtn" onclick="processData()" style="animation: contentFadeIn 0.5s ease 0.6s forwards; opacity: 0;">
+      <button id="submitBtn" onclick="processData()">
         <div class="spinner" id="btnSpinner"></div>
         <span id="btnText">⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)</span>
       </button>
- 
-      
-      <!-- DEVOPS TERMINAL LOG CONTAINER DENGAN KURSOR BERKEDIP -->
-      <div id="log" style="animation: contentFadeIn 0.5s ease 0.7s forwards; opacity: 0;"><span id="logText">[SYSTEM] Menunggu masukan data transaksi gudang...</span><span class="terminal-cursor"></span></div>
+    </div>
+
+    <!-- 5. DEVOPS TERMINAL LOG CONTAINER -->
+    <div id="log" class="anim-5">
+      <span id="logText">[SYSTEM] Menunggu masukan data transaksi gudang...</span><span class="terminal-cursor"></span>
     </div>
 
   </div>
+
   <!-- CUSTOM ALERT MODAL -->
   <div id="customAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: var(--card-bg, #1e293b); border: 1px solid rgba(255, 255, 255, 0.1); padding: 24px; border-radius: 16px; width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
