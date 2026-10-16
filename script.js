@@ -16,15 +16,20 @@ function toggleDarkLightMode() {
 }
 
 function updateThemeButtonUI(theme) {
-    const iconEl = document.getElementById('themeIcon');
-    const textEl = document.getElementById('themeText');
+    const thumbEl = document.getElementById('themeSwitchThumb');
     
     if (theme === 'light') {
-        if (iconEl) iconEl.innerText = '☀️';
-        if (textEl) textEl.innerText = 'Light Mode';
+        if (thumbEl) {
+            thumbEl.style.transform = 'translateX(26px)';
+            thumbEl.style.background = '#f59e0b';
+            thumbEl.innerText = '☀️';
+        }
     } else {
-        if (iconEl) iconEl.innerText = '🌙';
-        if (textEl) textEl.innerText = 'Dark Mode';
+        if (thumbEl) {
+            thumbEl.style.transform = 'translateX(0px)';
+            thumbEl.style.background = '#38bdf8';
+            thumbEl.innerText = '🌙';
+        }
     }
 }
 
