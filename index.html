@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+w<!DOCTYPE html>
 <html>
 <head>
   <link rel="manifest" href="manifest.json">
@@ -341,6 +341,69 @@ function getNextOperator() {
       } else {
         setTimeout(() => {
           if (typeof speakSystemReady === 'function') speakSystemReady(); 
+
+          function runBootSequence() {
+  const bootTextEl = document.getElementById("boot-text");
+  const bootIconEl = document.getElementById("boot-icon");
+  const bootScreenEl = document.getElementById("boot-screen");
+  const bootProgressFill = document.getElementById("boot-progress-fill");
+
+  if (!bootScreenEl) return;
+
+  // Hitung total durasi dari semua step
+  const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
+  console.log("Total durasi booting:", totalDuration);
+
+  // Jalankan progress bar dengan requestAnimationFrame (Suntikan maut agar pasti jalan)
+  if (bootProgressFill) {
+    let startTime = null;
+    let duration = totalDuration; 
+
+    function updateProgress(timestamp) {
+      if (!startTime) startTime = timestamp;
+      let elapsed = timestamp - startTime;
+      let progress = Math.min((elapsed / duration) * 100, 100);
+      
+      bootProgressFill.style.width = progress + "%";
+
+      if (progress < 100) {
+        requestAnimationFrame(updateProgress);
+      }
+    }
+    
+    requestAnimationFrame(updateProgress);
+  }
+
+  let currentStep = 0;
+
+  function executeStep() {
+    if (currentStep < bootSteps.length) {
+      const step = bootSteps[currentStep];
+      
+      // Teks status berganti dengan transisi fade yang smooth (tanpa titik kuning)
+      if (bootTextEl) {
+        bootTextEl.style.transition = "opacity 0.2s ease-in-out";
+        bootTextEl.style.opacity = "0";
+        
+        setTimeout(() => {
+          bootTextEl.innerText = step.text;
+          bootTextEl.style.opacity = "1";
+        }, 200);
+      }
+
+      if (bootIconEl) {
+        bootIconEl.style.backgroundColor = step.color;
+        bootIconEl.style.boxShadow = `0 0 10px ${step.color}`;
+      }
+
+      let stepDuration = step.duration;
+      currentStep++;
+
+      if (currentStep < bootSteps.length) {
+        setTimeout(executeStep, stepDuration);
+      } else {
+        setTimeout(() => {
+          if (typeof speakSystemReady === 'function') speakSystemReady(); 
           
           bootScreenEl.style.opacity = "0";
           bootScreenEl.style.visibility = "hidden";
@@ -368,7 +431,9 @@ function getNextOperator() {
   }
 
   executeStep();
-}
+          }
+          
+
     function updateClock() {
       const clockEl = document.getElementById("live-clock");
       if (clockEl) {
