@@ -426,18 +426,21 @@ button:not(#submitBtn) {
 
 /* Kotak Utama */
 .container {
+  opacity: 0;
+}
+
+.container.run-animation {
   animation: smoothEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-/* Memaksa elemen di dalam muncul berurutan satu per satu dengan delay */
-.enterprise-status-bar { animation: contentFadeIn 0.5s ease 0.15s forwards !important; }
-.fade-text-container   { animation: contentFadeIn 0.5s ease 0.3s forwards !important; }
-#app-content h2        { animation: contentFadeIn 0.5s ease 0.45s forwards !important; }
-#app-content p.desc    { animation: contentFadeIn 0.5s ease 0.6s forwards !important; }
-.form-group            { animation: contentFadeIn 0.5s ease 0.75s forwards !important; }
-#submitBtn             { animation: contentFadeIn 0.5s ease 0.9s forwards !important; }
-#log                   { animation: contentFadeIn 0.5s ease 1.05s forwards !important; }
-
+/* Elemen di dalam kontainer */
+.container.run-animation .enterprise-status-bar { animation: contentFadeIn 0.5s ease 0.15s forwards !important; opacity: 0; }
+.container.run-animation .fade-text-container   { animation: contentFadeIn 0.5s ease 0.3s forwards !important; opacity: 0; }
+.container.run-animation #app-content h2        { animation: contentFadeIn 0.5s ease 0.45s forwards !important; opacity: 0; }
+.container.run-animation #app-content p.desc    { animation: contentFadeIn 0.5s ease 0.6s forwards !important; opacity: 0; }
+.container.run-animation .form-group            { animation: contentFadeIn 0.5s ease 0.75s forwards !important; opacity: 0; }
+.container.run-animation #submitBtn             { animation: contentFadeIn 0.5s ease 0.9s forwards !important; opacity: 0; }
+.container.run-animation #log                   { animation: contentFadeIn 0.5s ease 1.05s forwards !important; opacity: 0; }
 /* Perintah geser tombol switch saat mode light */
 [data-theme="light"] #themeSwitchThumb {
   transform: translateX(26px) !important;
