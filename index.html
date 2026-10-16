@@ -288,23 +288,6 @@ function getNextOperator() {
     }
 
     function runBootSequence() {
-      const bootProgressFill = document.getElementById("boot-progress-fill");
-      console.log("Elemen progress bar ditemukan:", bootProgressFill); // Cek apakah elemennya ketemu
-
-      if (!bootProgressFill) return;
-
-      const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
-      console.log("Total durasi booting:", totalDuration); // Cek durasinya
-
-      bootProgressFill.style.width = "0%";
-      
-      setTimeout(() => {
-        bootProgressFill.style.transition = `width ${totalDuration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
-        bootProgressFill.style.width = "100%";
-        console.log("Animasi width diset ke 100%!"); // Cek apakah perintah ini tereksekusi
-      }, 50);
-
-      // ... sisa kode di bawahnya biarkan seperti biasa ...
       const bootTextEl = document.getElementById("boot-text");
       const bootIconEl = document.getElementById("boot-icon");
       const bootScreenEl = document.getElementById("boot-screen");
@@ -312,8 +295,9 @@ function getNextOperator() {
 
       if (!bootScreenEl) return;
 
-      // Hitung total durasi dari semua step yang ada di array bootSteps
+      // Hitung total durasi dari semua step
       const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
+      console.log("Total durasi booting:", totalDuration);
 
       // Paksa langsung jalankan animasi lebar via JS ke 100% secara mulus
       if (bootProgressFill) {
@@ -322,6 +306,7 @@ function getNextOperator() {
         setTimeout(() => {
           bootProgressFill.style.transition = `width ${totalDuration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
           bootProgressFill.style.width = "100%";
+          console.log("Animasi width diset ke 100%!");
         }, 50);
       }
 
