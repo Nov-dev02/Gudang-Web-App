@@ -442,14 +442,16 @@ button:not(#submitBtn) {
   transform: translateX(26px) !important;
   background: #f59e0b !important;
 }
-#boot-progress-fill {
-  background: linear-gradient(90deg, #38bdf8, #22c55e) !important;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8), 0 0 6px rgba(34, 197, 94, 0.8);
-  /* Hanya gunakan transisi width agar selaras mutlak dengan JavaScript */
-  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  width: 0%; /* Pastikan mulai dari 0 */
+@keyframes continuousFlow {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
-@keyframes shimmerLoading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+
+#boot-progress-fill {
+  background: linear-gradient(90deg, #38bdf8, #22c55e, #38bdf8) !important;
+  background-size: 200% 100%;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8), 0 0 6px rgba(34, 197, 94, 0.8);
+  /* Ubah durasi sesuai selera (misal 5 detik dari kosong sampai penuh) */
+  animation: continuousFlow 5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  width: 0%;
 }
