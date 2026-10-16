@@ -223,9 +223,8 @@ async function processData() {
     </div>
   `;
   
- if (logDiv) logDiv.style.display = 'block';
-  // Awali dengan string kosong atau pastikan formatnya sejajar
-  if (logTextSpan) logTextSpan.innerText = '[' + new Date().toLocaleTimeString() + ']  🔄 Menghubungkan ke Cloud Database Google Drive...';
+if (logDiv) logDiv.style.display = 'block';
+  if (logTextSpan) logTextSpan.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Cloud Database Google Drive...';
   if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
   
   await new Promise(resolve => setTimeout(resolve, 600));
