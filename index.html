@@ -67,7 +67,7 @@
   <div class="container animate-entrance">
     
    <!-- ENTERPRISE STATUS BAR (Gudang Nuhsantara) -->
-    <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px;">
+    <div class="enterprise-status-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11.5px; animation: contentFadeIn 0.5s ease 0.1s forwards; opacity: 0;">
       
       <!-- Group Kiri: Info Gudang & Status Sync -->
       <div class="status-group" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
@@ -102,7 +102,7 @@
 
 
     <!-- 🟢 KONTAINER SEBARIS: Sistem Aktif (Kiri) & Tombol Tema Dark/Light (Kanan) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 12px 0; flex-wrap: wrap; gap: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 12px 0; flex-wrap: wrap; gap: 8px; animation: contentFadeIn 0.5s ease 0.2s forwards; opacity: 0;">
       
       <!-- Sisi Kiri: Status Aktif -->
       <div style="display: inline-flex; align-items: center; background: rgba(34, 197, 94, 0.12); padding: 4px 12px; border-radius: 20px; font-size: 11.5px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25);">
@@ -120,16 +120,16 @@
     </div>
     
     <!-- KOTAK ANIMASI FADE-IN / FADE-OUT TEKS -->
-    <div class="fade-text-container">
+    <div class="fade-text-container" style="animation: contentFadeIn 0.5s ease 0.3s forwards; opacity: 0;">
       <div id="rotating-text" class="fade-text-item">🚀 SISTEM MANAJEMEN GUDANG ONLINE</div>
     </div>
     
     <!-- KONTEN UTAMA -->
-    <div id="app-content">
+    <div id="app-content" style="animation: contentFadeIn 0.5s ease 0.4s forwards; opacity: 0;">
       <h2>📦 Selamat Datang Di Web App Otomasi Gudang</h2>
       <p class="desc">Sistem otomatis mendeteksi file admin berdasarkan tanggal hari ini, validasi data Shopee & Tiktok Shop, dan sinkronisasi ke database.</p>
       
-      <div class="form-group">
+      <div class="form-group" style="animation: contentFadeIn 0.5s ease 0.5s forwards; opacity: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 10px; flex-wrap: nowrap;">
           <label for="shopeeData" style="margin: 0; white-space: nowrap;">Paste Laporan Unduhan Shopee & Tiktok Shop:</label>
           <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0">
@@ -148,14 +148,14 @@
         <textarea id="shopeeData" placeholder="Paste data unduhan Shopee & Tiktok Shop di sini tanpa batas baris..."></textarea>
       </div>
       
-      <button id="submitBtn" onclick="processData()">
+      <button id="submitBtn" onclick="processData()" style="animation: contentFadeIn 0.5s ease 0.6s forwards; opacity: 0;">
         <div class="spinner" id="btnSpinner"></div>
         <span id="btnText">⚡ Tarik & Proses Data Sekarang (Ctrl + Enter)</span>
       </button>
  
       
       <!-- DEVOPS TERMINAL LOG CONTAINER DENGAN KURSOR BERKEDIP -->
-      <div id="log"><span id="logText">[SYSTEM] Menunggu masukan data transaksi gudang...</span><span class="terminal-cursor"></span></div>
+      <div id="log" style="animation: contentFadeIn 0.5s ease 0.7s forwards; opacity: 0;"><span id="logText">[SYSTEM] Menunggu masukan data transaksi gudang...</span><span class="terminal-cursor"></span></div>
     </div>
 
   </div>
@@ -223,8 +223,7 @@
       const weekNumber = Math.floor(daysPassed / 7);
       return operatorList[weekNumber % operatorList.length];
     }
-
-    function getNextOperator() {
+function getNextOperator() {
       const operatorList = ["ERIKA", "NOVAN", "IRGI", "DWI"];
       const now = new Date();
       const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -449,7 +448,7 @@
   </div>
 
   <!-- Footer Copyright & Credits -->
-  <div style="text-align: center; margin-top: 30px; padding-top: 10px; font-size: 0.8rem; opacity: 0.85;" class="animate-entrance animate-delay-3">
+  <div style="text-align: center; margin-top: 30px; padding-top: 10px; font-size: 0.8rem; opacity: 0.85; animation: contentFadeIn 0.5s ease 0.8s forwards; opacity: 0;">
     <p style="margin-bottom: 6px; letter-spacing: 0.5px;">&copy; 2026 <strong>Gudang Nuhsantara</strong>. All Rights Reserved.</p>
     <p style="margin-bottom: 10px; font-size: 0.72rem; opacity: 0.6;">Powered by Google Apps Script & Cloud Database</p>
     <p style="font-size: 0.73rem; color: #ff6b81; letter-spacing: 0.3px; opacity: 0.95;">
