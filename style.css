@@ -437,3 +437,8 @@ button:not(#submitBtn) {
 .form-group            { animation: contentFadeIn 0.5s ease 0.75s forwards; opacity: 0; }
 #submitBtn             { animation: contentFadeIn 0.5s ease 0.9s forwards; opacity: 0; }
 #log                   { animation: contentFadeIn 0.5s ease 1.05s forwards; opacity: 0; }
+/* Perintah geser tombol switch saat mode light di style.css */
+[data-theme="light"] #themeSwitchThumb {
+  transform: translateX(26px) !important;
+  background: #f59e0b !important;
+}
