@@ -344,7 +344,6 @@ function getNextOperator() {
 
           function runBootSequence() {
   const bootTextEl = document.getElementById("boot-text");
-  const bootIconEl = document.getElementById("boot-icon");
   const bootScreenEl = document.getElementById("boot-screen");
   const bootProgressFill = document.getElementById("boot-progress-fill");
 
@@ -352,9 +351,8 @@ function getNextOperator() {
 
   // Hitung total durasi dari semua step
   const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
-  console.log("Total durasi booting:", totalDuration);
 
-  // Jalankan progress bar dengan requestAnimationFrame (Suntikan maut agar pasti jalan)
+  // Jalankan progress bar persis sesuai durasi
   if (bootProgressFill) {
     let startTime = null;
     let duration = totalDuration; 
@@ -380,7 +378,7 @@ function getNextOperator() {
     if (currentStep < bootSteps.length) {
       const step = bootSteps[currentStep];
       
-      // Teks status berganti dengan transisi fade yang smooth (tanpa titik kuning)
+      // Teks status berganti dengan transisi fade smooth
       if (bootTextEl) {
         bootTextEl.style.transition = "opacity 0.2s ease-in-out";
         bootTextEl.style.opacity = "0";
@@ -389,11 +387,6 @@ function getNextOperator() {
           bootTextEl.innerText = step.text;
           bootTextEl.style.opacity = "1";
         }, 200);
-      }
-
-      if (bootIconEl) {
-        bootIconEl.style.backgroundColor = step.color;
-        bootIconEl.style.boxShadow = `0 0 10px ${step.color}`;
       }
 
       let stepDuration = step.duration;
@@ -432,6 +425,7 @@ function getNextOperator() {
 
   executeStep();
           }
+          
           
 
     function updateClock() {
