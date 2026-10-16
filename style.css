@@ -442,9 +442,15 @@ button:not(#submitBtn) {
   transform: translateX(26px) !important;
   background: #f59e0b !important;
 }
-/* ⚡ Efek Styling & Animasi Progress Bar Loading biar Makin Mulus */
+/* Buat animasi mengalir penuh dari 0% ke 100% secara smooth */
+@keyframes smoothFlow {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
 #boot-progress-fill {
   background: linear-gradient(90deg, #38bdf8, #22c55e) !important;
   box-shadow: 0 0 16px rgba(56, 189, 248, 0.8), 0 0 6px rgba(34, 197, 94, 0.8);
-  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  /* Ubah jadi animasi continuous supaya mengalir terus */
+  animation: smoothFlow 4.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
