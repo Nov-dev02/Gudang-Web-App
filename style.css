@@ -443,8 +443,8 @@ button:not(#submitBtn) {
   background: #f59e0b !important;
 }
 @keyframes continuousFlow {
-  0% { width: 0%; }
-  100% { width: 100%; }
+  0% { width: 0% !important; }
+  100% { width: 100% !important; }
 }
 
 #boot-progress-fill {
@@ -457,5 +457,6 @@ button:not(#submitBtn) {
 }
 
 #boot-progress-fill.running {
-  animation: continuousFlow 5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  /* Durasi kita set pas 29 detik sesuai total durasi step kamu */
+  animation: continuousFlow 29s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
