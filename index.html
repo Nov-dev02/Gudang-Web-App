@@ -322,6 +322,7 @@ function getNextOperator() {
               speakSystemReady(); 
               bootScreenEl.style.opacity = "0";
               bootScreenEl.style.visibility = "hidden";
+              document.querySelector('.container').classList.add('run-animation');
               showToast("Sistem siap beroperasi secara maksimal!", "🟢");
               
               const initBtn = document.getElementById("init-btn");
