@@ -239,6 +239,12 @@ button:not(#submitBtn) {
     box-sizing: border-box;
     white-space: pre-wrap;
     word-break: break-all;
+   text-align: left !important;
+}
+#logText {
+    text-align: left !important;
+    display: inline-block;
+    width: 100%;
 }
 
 /* TOAST NOTIFICATION CONTAINER */
