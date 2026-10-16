@@ -237,13 +237,20 @@ button:not(#submitBtn) {
     max-height: 130px;
     overflow-y: auto;
     box-sizing: border-box;
-    white-space: pre-wrap;
-    word-break: break-all;
-   text-align: left !important;
+    text-align: left !important;
+    display: flex;             /* Menggunakan flexbox agar elemen di dalamnya sejajar */
+    align-items: center;
+    flex-wrap: wrap;
 }
+
 #logText {
     text-align: left !important;
     display: inline;
+}
+
+.terminal-cursor {
+    display: inline-block;
+    margin-left: 4px;          /* Jarak dikit dari teks biar gak nempel banget */
 }
 
 /* TOAST NOTIFICATION CONTAINER */
