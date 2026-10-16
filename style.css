@@ -1,3 +1,39 @@
+/* ==========================================
+   🎨 VARIABEL WARNA DARK & LIGHT MODE
+   ========================================== */
+:root {
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --text-color: #f8fafc;
+  --text-desc: #94a3b8;
+  --textarea-bg: #0f172a;
+  --textarea-color: #f8fafc;
+  --textarea-border: #475569;
+  --status-bar-bg: rgba(15, 23, 42, 0.75);
+  --fade-box-bg: rgba(30, 41, 59, 0.7);
+  --log-bg: #030712;
+}
+
+[data-theme="light"] {
+  --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  --card-bg: #ffffff;
+  --card-border: #cbd5e1;
+  --text-color: #0f172a;
+  --text-desc: #475569;
+  --textarea-bg: #f8fafc;
+  --textarea-color: #0f172a;
+  --textarea-border: #94a3b8;
+  --status-bar-bg: rgba(241, 245, 249, 0.9);
+  --fade-box-bg: rgba(241, 245, 249, 0.8);
+  --log-bg: #0f172a;
+}
+
+/* Transisi halus universal untuk perubahan warna Dark/Light Mode */
+*, *::before, *::after {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
+}
+
 html, body {
   height: 100%;
   margin: 0;
@@ -7,9 +43,9 @@ html, body {
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  background: var(--bg-gradient);
   padding: 10px;
-  color: #f8fafc;
+  color: var(--text-color);
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -18,15 +54,33 @@ body {
   box-sizing: border-box;
 }
 
+/* ==========================================
+   ✨ ANIMASI MASUK / ENTRANCE ANIMATION
+   ========================================== */
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(35px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-entrance {
+  animation: cardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .container {
   width: 100%;
-  max-width: 790px; /* Sedikit disesuaikan agar proporsional di layar */
-  background: #1e293b;
-  padding: 18px 22px; /* Padding atas-bawah dipadatkan sedikit */
+  max-width: 790px;
+  background: var(--card-bg);
+  padding: 18px 22px;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
   box-sizing: border-box;
-  border: 1px solid #334155;
+  border: 1px solid var(--card-border);
   position: relative;
   overflow: visible;
 }
@@ -36,12 +90,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid #334155;
+  background: var(--status-bar-bg);
+  border: 1px solid var(--card-border);
   padding: 6px 14px;
   border-radius: 10px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--text-desc);
   margin-bottom: 15px;
   flex-wrap: wrap;
   gap: 10px;
@@ -66,10 +120,10 @@ body {
   color: #22c55e;
 }
 
-/* ✨ CSS STYLING UNTUK FADE-IN / FADE-OUT TEKS ROTATOR */
+/* FADE-IN / FADE-OUT TEKS ROTATOR */
 .fade-text-container {
   width: 100%;
-  background: rgba(30, 41, 59, 0.7);
+  background: var(--fade-box-bg);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 13px 20px;
@@ -89,7 +143,7 @@ body {
   font-size: 13px;
   font-weight: 500;
   opacity: 1;
-  transition: opacity 0.8s ease-in-out; /* Durasi transisi halus diperbarui */
+  transition: opacity 0.8s ease-in-out;
   white-space: nowrap;
 }
 
@@ -104,7 +158,7 @@ h2 {
 }
 
 p.desc {
-  color: #94a3b8;
+  color: var(--text-desc);
   font-size: 13px;
   margin-bottom: 15px;
   line-height: 1.4;
@@ -114,52 +168,32 @@ p.desc {
   margin-bottom: 15px;
 }
 
-.label-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
 label {
   font-weight: 600;
   font-size: 13px;
-  color: #cbd5e1;
-}
-
-.row-counter {
-  font-size: 11px;
-  font-weight: 600;
-  color: #38bdf8;
-  background: #0f172a;
-  border: 1px solid #334155;
-  padding: 2px 8px;
-  border-radius: 10px;
+  color: var(--text-color);
 }
 
 textarea {
   width: 100%;
-  height: 110px; /* Dibuat sedikit lebih ringkas dari sebelumnya (130px) */
+  height: 110px;
   padding: 10px 12px;
-  border: 2px solid #475569;
+  border: 2px solid var(--textarea-border);
   border-radius: 12px;
   font-family: monospace;
   font-size: 12px;
   box-sizing: border-box;
   resize: none;            
-  background-color: #0f172a;
-  color: #f8fafc;
-  transition: all 0.2s;
+  background-color: var(--textarea-bg);
+  color: var(--textarea-color);
 }
 
 textarea:focus {
   border-color: #38bdf8;
   outline: none;
-  background-color: #090d16;
   box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
 }
-
-/* 1. KUSUS TOMBOL UTAMA (Tarik & Proses Data) */
+/* TOMBOL UTAMA */
 #submitBtn {
   background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
   color: #ffffff !important;
@@ -169,14 +203,13 @@ textarea:focus {
   font-weight: 600 !important;
   border-radius: 10px !important;
   cursor: pointer;
-  width: fit-content !important;        /* Ukuran ringkas sesuai teks */
-  margin: 14px auto !important;          /* Posisi tengah rapi */
+  width: fit-content !important;        
+  margin: 14px auto !important;          
   display: flex !important;
   justify-content: center;
   align-items: center;
   gap: 8px;
   box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35) !important;
-  transition: all 0.2s ease;
 }
 
 #submitBtn:hover {
@@ -185,7 +218,6 @@ textarea:focus {
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
 }
 
-/* 2. RESET TOMBOL-TOMBOL KECIL LAINNYA (Biar Sync & Panduan Kembali Normal) */
 button:not(#submitBtn) {
   width: auto;
   margin: 0;
@@ -194,7 +226,7 @@ button:not(#submitBtn) {
 /* DEVOPS TERMINAL LOG STYLE */
 #log {
     margin-top: 12px;
-    background: #030712;                          
+    background: var(--log-bg);                          
     border: 1px solid rgba(34, 197, 94, 0.3);     
     border-radius: 12px;
     padding: 12px;
@@ -209,7 +241,7 @@ button:not(#submitBtn) {
     word-break: break-all;
 }
 
-/* TOAST NOTIFICATION CONTAINER & ANIMATION */
+/* TOAST NOTIFICATION CONTAINER */
 #toast-container {
   position: fixed;
   top: 20px;
@@ -221,12 +253,12 @@ button:not(#submitBtn) {
 }
 
 .toast-item {
-  background: rgba(30, 41, 59, 0.95);
+  background: var(--card-bg);
   border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #f8fafc;
+  color: var(--text-color);
   padding: 12px 18px;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   font-size: 13px;
   font-weight: 500;
   display: flex;
@@ -245,106 +277,69 @@ button:not(#submitBtn) {
   to { opacity: 0; visibility: hidden; }
 }
 
-/* Animasi Kedip / Pulse */
 @keyframes blink-pulse {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-/* Animasi Garis Scan Cyber */
 @keyframes scanline {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(800%);
-  }
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(800%); }
 }
 
-/* Animasi Server Melayang */
 @keyframes floatServer {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
-/* Animasi Modal Muncul */
-@keyframes popUpModal {
-  0% {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
 #operatorAvatarBox {
-  width: 40px;          /* Lebar kotak avatar */
-  height: 40px;         /* Tinggi kotak avatar */
-  border-radius: 4px;   /* Membuat sudutnya sedikit melengkung */
-  overflow: hidden;     /* Wajib agar gambar tidak keluar dari kotak */
+  width: 40px;          
+  height: 40px;         
+  border-radius: 4px;   
+  overflow: hidden;     
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #38bdf8;  /* Warna latar belakang jika pakai inisial huruf */
-  color: #ffffff;       /* Warna teks inisial */
+  background: #38bdf8;  
+  color: #ffffff;       
   font-weight: bold;
 }
 
 #operatorAvatarBox img {
   width: 100%;
   height: 100%;
-  object-fit: cover;    /* Agar foto pas dan tidak gepeng di dalam kotak */
+  object-fit: cover;    
 }
 
-/* Floating Glass Toast - Posisi Tengah Atas (Top-Center) */
+/* Floating Glass Toast */
 .glass-toast {
   position: fixed;
-  top: 24px; /* Jarak pas dari atas layar */
+  top: 24px; 
   left: 50%;
-  transform: translateX(-50%) scale(0.95); /* Hanya menggeser ke kiri 50% tanpa geser vertikal */
+  transform: translateX(-50%) scale(0.95); 
   z-index: 99999;
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 16px 22px;
-  
-  /* Efek Kaca Gelap (Dark Glassmorphism) */
-  background: rgba(30, 41, 59, 0.88);
+  background: var(--card-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
-  
-  /* State awal (Hidden & Di atas) */
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
   opacity: 0;
   pointer-events: none;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* State Muncul (Show) di Tengah Atas */
 .glass-toast.show {
   opacity: 1;
   transform: translateX(-50%) scale(1);
   pointer-events: auto;
 }
 
-/* Icon / Spinner Wrapper */
 .toast-icon-wrapper {
   width: 34px;
   height: 34px;
@@ -355,7 +350,6 @@ button:not(#submitBtn) {
   position: relative;
 }
 
-/* Gradient Spinner Modern */
 .gradient-spinner {
   width: 30px;
   height: 30px;
@@ -371,28 +365,6 @@ button:not(#submitBtn) {
   100% { transform: rotate(360deg); }
 }
 
-/* Success State (Lingkaran Hijau + Centang Pop-up) */
-.toast-icon-wrapper.success {
-  background: #10b981;
-  border-radius: 50%;
-  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
-}
-
-.checkmark {
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-@keyframes popIn {
-  0% { transform: scale(0); }
-  80% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-/* Teks Toast (Disesuaikan untuk Dark Mode) */
 .toast-content {
   display: flex;
   flex-direction: column;
@@ -403,39 +375,14 @@ button:not(#submitBtn) {
 .toast-title {
   font-size: 14px;
   font-weight: 600;
-  color: #f8fafc; /* Putih bersih */
+  color: var(--text-color);
 }
 
 .toast-desc {
   font-size: 12px;
-  color: #94a3b8; /* Abu-abu terang agar mudah dibaca */
+  color: var(--text-desc);
 }
 
-/* Animasi Titik Memantul (. . .) */
-.bouncing-dots span {
-  animation: bounceDot 1.4s infinite ease-in-out both;
-  display: inline-block;
-}
-.bouncing-dots span:nth-child(1) { animation-delay: -0.32s; }
-.bouncing-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes bounceDot {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1.0); }
-}
-/* Container Bar Proses Modern */
-.modern-process-container {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(2, 132, 199, 0.2);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  padding: 8px 16px;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
-}
-
-/* Spinner Bulat Berputar */
 .modern-spinner {
   width: 16px;
   height: 16px;
@@ -450,144 +397,11 @@ button:not(#submitBtn) {
   100% { transform: rotate(360deg); }
 }
 
-/* Animasi Titik-titik (...) Bergerak Naik Turun */
-.bouncing-dots span {
-  display: inline-block;
-  animation: dotBounce 1.4s infinite ease-in-out both;
-  font-weight: bold;
-}
-.bouncing-dots span:nth-child(1) { animation-delay: -0.32s; }
-.bouncing-dots span:nth-child(2) { animation-delay: -0.16s; }
-.bouncing-dots span:nth-child(3) { animation-delay: 0s; }
-
-@keyframes dotBounce {
-  0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
-  40% { transform: translateY(-3px); opacity: 1; }
-}
-/* ==========================================
-   🎨 TEMA TAMBAHAN (VERSI SOFT & ADEM DI MATA)
-   ========================================== */
-
-/* 1. Rose Pink (Soft Dusty Rose) */
-[data-theme="rose-pink"] body {
-    background: linear-gradient(135deg, #12090c 0%, #1f1016 100%) !important;
-}
-[data-theme="rose-pink"] .container {
-    background: #1a1014 !important;
-    border-color: #3f1a24 !important;
-}
-[data-theme="rose-pink"] h2, 
-[data-theme="rose-pink"] label, 
-[data-theme="rose-pink"] .row-counter,
-[data-theme="rose-pink"] .status-badge {
-    color: #fb7185 !important;
-}
-[data-theme="rose-pink"] textarea:focus {
-    border-color: #fb7185 !important;
-    box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.1) !important;
-}
-[data-theme="rose-pink"] button {
-    background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%) !important;
-    box-shadow: 0 2px 10px rgba(225, 29, 72, 0.2) !important;
-}
-
-/* 2. Amethyst Purple (Soft Lavender) */
-[data-theme="amethyst-purple"] body {
-    background: linear-gradient(135deg, #0d0914 0%, #171126 100%) !important;
-}
-[data-theme="amethyst-purple"] .container {
-    background: #14101c !important;
-    border-color: #3b2063 !important;
-}
-[data-theme="amethyst-purple"] h2, 
-[data-theme="amethyst-purple"] label, 
-[data-theme="amethyst-purple"] .row-counter,
-[data-theme="amethyst-purple"] .status-badge {
-    color: #d8b4fe !important;
-}
-[data-theme="amethyst-purple"] textarea:focus {
-    border-color: #d8b4fe !important;
-    box-shadow: 0 0 0 3px rgba(216, 180, 254, 0.1) !important;
-}
-[data-theme="amethyst-purple"] button {
-    background: linear-gradient(135deg, #7e22ce 0%, #581c87 100%) !important;
-    box-shadow: 0 2px 10px rgba(126, 34, 206, 0.2) !important;
-}
-
-/* 3. Matrix Green (Sage / Muted Terminal Green) */
-[data-theme="matrix-green"] body {
-    background: linear-gradient(135deg, #07120a 0%, #0e2014 100%) !important;
-}
-[data-theme="matrix-green"] .container {
-    background: #0b1710 !important;
-    border-color: #14532d !important;
-}
-[data-theme="matrix-green"] h2, 
-[data-theme="matrix-green"] label, 
-[data-theme="matrix-green"] .row-counter,
-[data-theme="matrix-green"] .status-badge {
-    color: #4ade80 !important;
-}
-[data-theme="matrix-green"] textarea:focus {
-    border-color: #4ade80 !important;
-    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1) !important;
-}
-[data-theme="matrix-green"] button {
-    background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important;
-    box-shadow: 0 2px 10px rgba(21, 128, 61, 0.2) !important;
-}
-
-/* 4. Royal Cobalt Blue (Muted Slate Blue) */
-[data-theme="royal-cobalt"] body {
-    background: linear-gradient(135deg, #070d1a 0%, #111e38 100%) !important;
-}
-[data-theme="royal-cobalt"] .container {
-    background: #0d1424 !important;
-    border-color: #1d4ed8 !important;
-}
-[data-theme="royal-cobalt"] h2, 
-[data-theme="royal-cobalt"] label, 
-[data-theme="royal-cobalt"] .row-counter,
-[data-theme="royal-cobalt"] .status-badge {
-    color: #60a5fa !important;
-}
-[data-theme="royal-cobalt"] textarea:focus {
-    border-color: #60a5fa !important;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1) !important;
-}
-[data-theme="royal-cobalt"] button {
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-    box-shadow: 0 2px 10px rgba(29, 78, 216, 0.2) !important;
-}
-/* TAMPILAN KOTAK TOMBOL TOGGLE TEMA */
-.theme-switcher {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  gap: 8px;
-  background: rgba(15, 23, 42, 0.85);
-  padding: 6px 12px;
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-}
-.theme-switcher span {
-  font-size: 12px;
-  color: #94a3b8;
-  align-self: center;
-  margin-right: 4px;
-}
-/* ==========================================
-   💻 KELAS TAMBAHAN TERMINAL TYPING & KURSOR
-   ========================================== */
 .terminal-cursor {
   display: inline-block;
   width: 7px;
   height: 14px;
-  background-color: #22c55e; /* Hijau fosfor terminal */
+  background-color: #22c55e;
   margin-left: 4px;
   vertical-align: middle;
   animation: terminalBlink 0.8s infinite;
@@ -596,11 +410,4 @@ button:not(#submitBtn) {
 @keyframes terminalBlink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
-}
-
-#log {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 11.5px;
-  color: #22c55e;
-  text-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
 }
