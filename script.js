@@ -1,10 +1,40 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzukrX8QXwYKbgXIwyskJMHtuNS509kL5fTgK_WAxgQ7x4FoCAxHuumM-Dc02XA8zIY/exec";
 
 let currentDownloadUrl = "";
-// ==========================================
-// URL WEB APP REKAPAN (TRANSAKSI JUNI)
-// ==========================================
 const SCRIPT_URL_REKAPAN = "https://script.google.com/macros/s/AKfycbzLud58sY-o4azbshEww7-JSXCLoZ2sbmALaS2z6aRhmT-Q_vvXCzlDn4NqzBCedZpS/exec";
+
+// ==========================================
+// 🎨 SCRIPT PENGATUR TOGGLE TEMA DARK / LIGHT
+// ==========================================
+function toggleDarkLightMode() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('gudang_theme', newTheme);
+    updateThemeButtonUI(newTheme);
+}
+
+function updateThemeButtonUI(theme) {
+    const iconEl = document.getElementById('themeIcon');
+    const textEl = document.getElementById('themeText');
+    
+    if (theme === 'light') {
+        if (iconEl) iconEl.innerText = '☀️';
+        if (textEl) textEl.innerText = 'Light Mode';
+    } else {
+        if (iconEl) iconEl.innerText = '🌙';
+        if (textEl) textEl.innerText = 'Dark Mode';
+    }
+}
+
+// Otomatis terapkan tema terakhir saat halaman dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('gudang_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeButtonUI(savedTheme);
+});
+
 // ==========================================
 // 🛡️ DATABASE & VERIFIKASI OPERATOR SHIFT
 // ==========================================
@@ -87,7 +117,6 @@ function verifyOperatorLogin() {
         setTimeout(() => { 
           modal.style.display = 'none'; 
           
-          // 🔊 DYNAMIC ELEVENLABS AUDIO: Putar MP3 sesuai nama operator (Huruf Besar) dari GitHub
           const operatorKey = matchedName.toUpperCase();
           const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/${operatorKey}.mp3?v=99`);
           welcomeAudio.volume = 0.9;
@@ -145,6 +174,7 @@ function updateRowCounter() {
     rowCounter.innerText = `📊 ${totalLines.toLocaleString()} baris data`;
   }
 }
+
 function initAppListeners() {
   const textarea = document.getElementById('shopeeData');
   if (textarea) {
@@ -161,10 +191,6 @@ if (document.readyState === 'loading') {
 } else {
   initAppListeners();
 }
-
-// ==========================================
-// ⚙️ PROSES DATA & SINKRONISASI SERVER (DENGAN ANIMASI TERMINAL)
-// ==========================================
 async function processData() {
   const textarea = document.getElementById('shopeeData');
   const rowCounter = document.getElementById('rowCounter');
@@ -183,24 +209,6 @@ async function processData() {
     return;
   }
 
-  const lowerData = shopeeData.toLowerCase();
-  const hasValidIndicator = lowerData.includes('shopee') || 
-                            lowerData.includes('tiktok') || 
-                            lowerData.includes('pesanan') || 
-                            lowerData.includes('order') || 
-                            lowerData.includes('no.') ||
-                            shopeeData.split('\n').length > 1; 
-
-  if (!hasValidIndicator) {
-    showToast("⚠️ Peringatan: Format data terlihat tidak valid. Pastikan Anda mempaste laporan resmi Shopee/TikTok.", "warning");
-  }
-  
-  if (WEB_APP_URL.includes("MASUKKAN_URL")) {
-    alert('Harap isi URL Web App Apps Script di dalam file script.js terlebih dahulu!');
-    return;
-  }
-  
-  // Ubah tombol jadi mode loading terminal
   if (btn) btn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = 'block';
   if (btnText) btnText.innerHTML = `
@@ -210,7 +218,6 @@ async function processData() {
     </div>
   `;
   
-  // Rangkaian teks simulasi terminal real-time
   if (logDiv) logDiv.style.display = 'block';
   if (logTextSpan) logTextSpan.innerText = '[' + new Date().toLocaleTimeString() + '] 🔄 Menghubungkan ke Cloud Database Google Drive...';
   if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
@@ -242,13 +249,7 @@ async function processData() {
     }
 
     const result = await response.text();
-    
-    let res;
-    try {
-      res = JSON.parse(result);
-    } catch (parseError) {
-      throw new Error("Respon server bukan format JSON yang valid (Kemungkinan halaman error HTML / Gateway Timeout).");
-    }
+    let res = JSON.parse(result);
 
     if (res.status === 'success') {
       await new Promise(resolve => setTimeout(resolve, 400));
@@ -256,9 +257,7 @@ async function processData() {
       if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
 
       const now = new Date();
-      const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-      const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-      const formattedSyncTime = `${now.toLocaleDateString('id-ID', dateOptions)} - ${now.toLocaleTimeString('id-ID', timeOptions)} WIB`;
+      const formattedSyncTime = `${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} - ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB`;
       
       localStorage.setItem('gudang_last_sync', formattedSyncTime);
       updateLastSyncDisplay(formattedSyncTime);
@@ -271,10 +270,6 @@ async function processData() {
           if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
         }
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 400));
-      if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] 🔔 SUCCESS: Data berhasil diproses & disimpan ke Sheet.';
-      if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
       
       textarea.value = '';
       if (rowCounter) rowCounter.innerText = '📊 0 baris data';
@@ -297,9 +292,7 @@ async function processData() {
     } else {
       if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ Error: ' + res.message;
       if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
-      setTimeout(() => {
-        showCustomAlert('Terjadi Kesalahan: ' + res.message, '');
-      }, 800);
+      setTimeout(() => { showCustomAlert('Terjadi Kesalahan: ' + res.message, ''); }, 800);
     }
 
   } catch (error) {
@@ -309,9 +302,7 @@ async function processData() {
     }
     if (logTextSpan) logTextSpan.innerText += '\n[' + new Date().toLocaleTimeString() + '] ❌ System Error: ' + errorMessage;
     if (logDiv) logDiv.scrollTop = logDiv.scrollHeight;
-    setTimeout(() => {
-      showCustomAlert('Terjadi Kesalahan: ' + errorMessage, '');
-    }, 800);
+    setTimeout(() => { showCustomAlert('Terjadi Kesalahan: ' + errorMessage, ''); }, 800);
   }
   
   if (btn) btn.disabled = false;
@@ -332,25 +323,19 @@ function showCustomAlert(message, downloadUrl) {
   if (downloadBtn) downloadBtn.disabled = false;
   
   if (downloadBtn) {
-    if (downloadUrl && downloadUrl.trim() !== "") {
-      downloadBtn.style.display = 'flex';
-    } else {
-      downloadBtn.style.display = 'none';
-    }
+    downloadBtn.style.display = (downloadUrl && downloadUrl.trim() !== "") ? 'flex' : 'none';
   }
   
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'flex';
 }
+
 async function downloadExcelWithProgress(serverResponse) {
-  // Jika serverResponse dikirim langsung saat fungsi dipanggil, simpan ke global
   if (serverResponse) {
     window.globalServerResponse = serverResponse;
   }
 
-  // 🎯 Menggunakan targetUrl dari Plan B (bukan base64 lagi)
   const targetUrl = currentDownloadUrl || (window.globalServerResponse && window.globalServerResponse.downloadUrl) || "";
-
   if (!targetUrl) {
     alert("URL download belum tersedia dari server.");
     closeCustomAlert();
@@ -377,7 +362,6 @@ async function downloadExcelWithProgress(serverResponse) {
     if (progressBar) progressBar.style.width = progress + '%';
     if (downloadBtnText) downloadBtnText.innerText = `⏳ Mengambil Berkas... (${progress}%)`;
 
-    // Tarik file Excel langsung secara asinkron dari URL Google Sheets
     const response = await fetch(targetUrl);
     const blobData = await response.blob();
 
@@ -385,18 +369,15 @@ async function downloadExcelWithProgress(serverResponse) {
     if (progressBar) progressBar.style.width = progress + '%';
     if (downloadBtnText) downloadBtnText.innerText = `⏳ Merakit Berkas... (${progress}%)`;
 
-    // Buat nama file dinamis secara instan di sisi frontend
     const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
     const now = new Date();
     const day = ("0" + now.getDate()).slice(-2);
     const dynamicFileName = "TRANSAKSI GUDANG " + day + " " + months[now.getMonth()] + " " + now.getFullYear() + ".xlsx";
 
-    // Eksekusi download lokal menggunakan Blob URL
     const blobUrl = window.URL.createObjectURL(blobData);
     const a = document.createElement('a');
     a.href = blobUrl;
-    a.download = dynamicFileName; // 🎯 Nama kustom dipaksa masuk di sini dengan bersih!
-    
+    a.download = dynamicFileName;
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
@@ -430,9 +411,7 @@ function closeCustomAlert() {
   const modal = document.getElementById('customAlertModal');
   if (modal) modal.style.display = 'none';
 }
-// ==========================================
-// 🔄 ANIMASI TEKS & MONITORING JARINGAN
-// ==========================================
+
 const fadeTexts = [
   "📦 SISTEM MANAJEMEN GUDANG ONLINE",
   "📑 Scan Resi atau No Transaksi dengan Cepat & Akurat",
@@ -461,65 +440,6 @@ function initTextFadeRotator() {
   }, 5000); 
 }
 
-function showToast(message, type = "warning") {
-  let toastContainer = document.getElementById('custom-toast-container');
-  if (!toastContainer) {
-    toastContainer = document.createElement('div');
-    toastContainer.id = 'custom-toast-container';
-    toastContainer.style.cssText = `
-      position: fixed; top: 24px; right: 24px; z-index: 99999;
-      display: flex; flex-direction: column; gap: 10px; pointer-events: none;
-    `;
-    document.body.appendChild(toastContainer);
-  }
-
-  const toast = document.createElement('div');
-  let bgColor = '#1e293b', borderColor = '#334155', icon = '⚠️';
-  
-  if (type === 'error') { bgColor = '#7f1d1d'; borderColor = '#991b1b'; icon = '❌'; }
-  else if (type === 'success') { bgColor = '#065f46'; borderColor = '#047857'; icon = '✅'; }
-  else if (type === 'warning') { bgColor = '#78350f'; borderColor = '#92400e'; icon = '⚠️'; }
-
-  toast.style.cssText = `
-    background: ${bgColor}; border: 1px solid ${borderColor}; color: #f8fafc;
-    padding: 14px 18px; border-radius: 10px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
-    font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 12px;
-    min-width: 300px; max-width: 420px; pointer-events: auto; opacity: 0;
-    transform: translateY(-15px) scale(0.98); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  `;
-  
-  toast.innerHTML = `<span style="font-size: 18px; flex-shrink: 0;">${icon}</span><div style="flex: 1; line-height: 1.4; word-break: break-word;">${message}</div>`;
-  toastContainer.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateY(0) scale(1)';
-  }, 20);
-
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-15px) scale(0.98)';
-    setTimeout(() => { toast.remove(); }, 350);
-  }, 4500);
-}
-
-function updateNetworkStatus() {
-  const netStatusEl = document.getElementById('net-status-text');
-  if (navigator.onLine) {
-    if (netStatusEl) { netStatusEl.innerText = "Online"; netStatusEl.style.color = "#22c55e"; }
-    showToast("Koneksi internet kembali terhubung! Database siap disinkronkan.", "success");
-  } else {
-    if (netStatusEl) { netStatusEl.innerText = "Offline (Terputus)"; netStatusEl.style.color = "#ef4444"; }
-    showToast("PERHATIAN: Koneksi internet terputus! Sinkronisasi database tertunda.", "warning");
-  }
-}
-
-window.addEventListener('online', updateNetworkStatus);
-window.addEventListener('offline', updateNetworkStatus);
-
-// ==========================================
-// ⏱️ LAST SYNC, PANDUAN, AUDIO & PENDING/CANCEL
-// ==========================================
 function updateLastSyncDisplay(timeString) {
   const lastSyncEl = document.getElementById('last-sync-text');
   if (lastSyncEl) {
@@ -527,33 +447,16 @@ function updateLastSyncDisplay(timeString) {
     else { lastSyncEl.innerText = "Belum ada"; lastSyncEl.style.color = "#e2e8f0"; }
   }
 }
+
 function initLastSync() {
   const savedLastSync = localStorage.getItem('gudang_last_sync');
   if (savedLastSync) updateLastSyncDisplay(savedLastSync);
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initLastSync);
-} else {
-  initLastSync();
-}
+document.addEventListener('DOMContentLoaded', initLastSync);
 
 function openGuideModal() { const modal = document.getElementById('guideModal'); if (modal) modal.style.display = 'flex'; }
 function closeGuideModal() { const modal = document.getElementById('guideModal'); if (modal) modal.style.display = 'none'; }
-
-async function pasteFromClipboard() {
-  try {
-    const text = await navigator.clipboard.readText();
-    const textarea = document.getElementById('shopeeData');
-    if (textarea) {
-      textarea.value = text;
-      textarea.focus();
-      if (typeof updateRowCounter === 'function') updateRowCounter();
-    }
-  } catch (err) {
-    alert("Gagal membaca clipboard secara otomatis.");
-  }
-}
 
 function playSuccessSound() {
   try {
@@ -583,9 +486,6 @@ function renderCumulativeCounter() {
   if (badge) badge.innerText = `📦 Total: ${getCumulativeTotal().toLocaleString()} paket`;
 }
 
-// ==========================================
-// 🚀 INISIALISASI UTAMA & LOGIN CHECK (Dengan Auto-Login ElevenLabs Audio)
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderCumulativeCounter();
   
@@ -610,13 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if ((currentTime - loginTime) < oneWeekMilliseconds && operatorsProfile[operatorName]) {
         setOperatorProfile(operatorName);
         if (modal) modal.style.display = 'none';
-        
-        // 🔊 Auto-login: Putar file MP3 ElevenLabs sesuai operator aktif
-        //const operatorKey = operatorName.toUpperCase();
-        //const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=100`);
-        //welcomeAudio.volume = 0.9;
-        //welcomeAudio.play().catch(err => console.log("Audio play blocked/error:", err));
-
       } else {
         localStorage.removeItem('gudang_active_operator');
         if (modal) modal.style.display = 'flex';
@@ -629,12 +522,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) modal.style.display = 'flex';
   }
 });
-
- if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-     navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
- }
 
 function pilihYaPending() {
   document.getElementById('modalKonfirmasi').style.display = 'none';
@@ -701,7 +588,7 @@ async function kirimAksiPendingCancel(actionType) {
     const res = JSON.parse(text);
 
     if (res.status === 'success') {
-      window.globalServerResponse = res; // <--- Tambahkan baris ini di sini!
+      window.globalServerResponse = res;
       const foundUrl = res.downloadUrl || res.fileUrl || res.spreadsheetUrl;
       if (foundUrl) {
         currentDownloadUrl = foundUrl;
@@ -733,7 +620,6 @@ async function kirimAksiPendingCancel(actionType) {
         btn.innerHTML = `Set ${actionLabel}`;
       }
 
-      // 🚀 PERBAIKAN UTAMA: Tutup toast, lalu MUNCULKAN MODAL DOWNLOAD DENGAN LINK KUSTOM!
       setTimeout(() => {
         if (toast) toast.classList.remove('show');
         showCustomAlert(res.message || `Transaksi ${noTransaksi} berhasil diproses.`, foundUrl);
@@ -774,82 +660,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     const gate = document.getElementById('tap-to-enter-gate');
     
     if (gate) {
         gate.addEventListener('click', () => {
-            // 1. PUTAR AUDIO Welcome.mp3 DARI GITHUB (Dijamin lolos dari satpam browser!)
             const welcomeAudio = new Audio(`https://raw.githubusercontent.com/Nov-dev02/Gudang-Web-App/main/audio/Welcome.mp3?v=${new Date().getTime()}`);
             welcomeAudio.volume = 0.9;
             welcomeAudio.play().catch(err => console.log("Audio welcome error:", err));
 
-            // 2. TUTUP & HILANGKAN LAYAR BLUR DENGAN HALUS
             gate.style.opacity = '0';
             setTimeout(() => {
                 gate.style.display = 'none';
             }, 500);
-            
-            console.log("Gerbang dibuka, Welcome.mp3 diputar!");
-        }, { once: true }); // Hanya tereksekusi sekali pada klik pertama user
+        }, { once: true });
     }
 });
-// ==========================================
-// 🎨 SCRIPT PENGATUR 5 TEMA GLOBAL
-// ==========================================
 
-// 1. Fungsi untuk mengganti tema dan menyimpannya ke memori browser
-function setTheme(themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
-    localStorage.setItem('gudang_theme', themeName);
-}
-
-// 2. Otomatis terapkan tema yang terakhir dipilih saat halaman dimuat
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('gudang_theme') || 'cyber-blue';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-});
-
-
-// Fungsi untuk menjemput data Kolom H dengan efek Loading
 async function ambilDanPasteRekapan(btn) {
-  // Simpan teks asli tombol dan ubah jadi loading
   const originalText = btn ? btn.innerHTML : '⚡ Sync';
   if (btn) {
-    btn.disabled = true; // Cegah klik beruntun
+    btn.disabled = true;
     btn.innerHTML = '⏳ Loading...';
   }
 
   try {
-    // Menarik data dari Apps Script spreadsheet "TRANSAKSI JUNI"
     const response = await fetch(SCRIPT_URL_REKAPAN);
     const res = await response.json();
     
-    // Cek jika ada error dari server
     if (res.error) {
       alert("⚠ Error: " + res.error);
       return;
     }
     
-    // Cek jika data kosong
     if (!res.transactions || res.transactions.length === 0) {
       alert("⚠️ Tidak ada No Transaksi yang ditemukan di Kolom H sheet 'ALL' spreadsheet TRANSAKSI JUNI!");
       return;
     }
     
-    // Gabungkan nomor transaksi dengan baris baru (enter)
     const teksGabungan = res.transactions.join('\n');
-    
-    // Cari kotak teks (textarea) utama di halaman web app kamu
     const textarea = document.querySelector('textarea'); 
     if (textarea) {
-      // Masukkan teks secara otomatis ke dalam kotak teks
       textarea.value = teksGabungan;
-      
-      // Memicu event input supaya sistem web app membaca perubahan (counter baris ikut ter-update)
       textarea.dispatchEvent(new Event('input'));
-      
-      console.log(`✅ Berhasil menarik ${res.transactions.length} No Transaksi dari TRANSAKSI JUNI.`);
     } else {
       alert("⚠️ Kotak teks (textarea) tidak ditemukan di halaman ini!");
     }
@@ -857,11 +711,9 @@ async function ambilDanPasteRekapan(btn) {
   } catch (err) {
     alert("❌ Gagal mengambil data rekapan: " + err);
   } finally {
-    // Kembalikan tombol ke kondisi semula (apapun yang terjadi: sukses atau gagal)
     if (btn) {
       btn.disabled = false;
       btn.innerHTML = originalText;
     }
   }
 }
-
