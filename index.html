@@ -302,16 +302,18 @@ function getNextOperator() {
   // PAKSA JALANKAN PROGRESS BAR PAKAI JS INTERVAL (DIJAMIN TEMBUS!)
   if (bootProgressFill) {
     let startTime = null;
-    let duration = totalDuration; // Mengikuti total durasi step (29 detik)
+    let duration = totalDuration; // Mengambil total durasi asli dari semua step
 
     function updateProgress(timestamp) {
       if (!startTime) startTime = timestamp;
       let elapsed = timestamp - startTime;
+      
+      // Hitung persentase murni berdasarkan waktu yang berjalan dibagi total durasi step
       let progress = Math.min((elapsed / duration) * 100, 100);
       
-      // Paksa set lebar secara langsung lewat inline style
       bootProgressFill.style.width = progress + "%";
 
+      // Selama belum mencapai 100% dan durasi belum habis, terus update
       if (progress < 100) {
         requestAnimationFrame(updateProgress);
       }
