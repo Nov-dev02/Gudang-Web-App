@@ -238,7 +238,7 @@ button:not(#submitBtn) {
     overflow-y: auto;
     box-sizing: border-box;
     white-space: pre-wrap;
-    word-break: break-all;
+    word-break: normal;
 }
 
 /* TOAST NOTIFICATION CONTAINER */
