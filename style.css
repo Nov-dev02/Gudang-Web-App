@@ -412,40 +412,28 @@ button:not(#submitBtn) {
   50% { opacity: 0; }
 }
 /* ==========================================
-   ✨ ANIMASI MASUK BERURUTAN (STAGGERED ENTRANCE)
+   ✨ ANIMASI MASUK BERURUTAN (STAGGERED)
    ========================================== */
 @keyframes smoothEntrance {
-  0% {
-    opacity: 0;
-    transform: translateY(35px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  0% { opacity: 0; transform: translateY(35px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes contentFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* 1. Kotak Utama Masuk Pertama */
+/* Kotak Utama */
 .container {
   animation: smoothEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* 2. Elemen di dalam kotak muncul berurutan (Staggered Delay) */
-.enterprise-status-bar { animation: contentFadeIn 0.5s ease 0.1s forwards; opacity: 0; }
-.fade-text-container   { animation: contentFadeIn 0.5s ease 0.2s forwards; opacity: 0; }
-#app-content h2        { animation: contentFadeIn 0.5s ease 0.3s forwards; opacity: 0; }
-#app-content p.desc    { animation: contentFadeIn 0.5s ease 0.4s forwards; opacity: 0; }
-.form-group            { animation: contentFadeIn 0.5s ease 0.5s forwards; opacity: 0; }
-#submitBtn             { animation: contentFadeIn 0.5s ease 0.6s forwards; opacity: 0; }
-#log                   { animation: contentFadeIn 0.5s ease 0.7s forwards; opacity: 0; }
+/* Elemen di dalam muncul berurutan satu per satu */
+.enterprise-status-bar { animation: contentFadeIn 0.5s ease 0.15s forwards; opacity: 0; }
+.fade-text-container   { animation: contentFadeIn 0.5s ease 0.3s forwards; opacity: 0; }
+#app-content h2        { animation: contentFadeIn 0.5s ease 0.45s forwards; opacity: 0; }
+#app-content p.desc    { animation: contentFadeIn 0.5s ease 0.6s forwards; opacity: 0; }
+.form-group            { animation: contentFadeIn 0.5s ease 0.75s forwards; opacity: 0; }
+#submitBtn             { animation: contentFadeIn 0.5s ease 0.9s forwards; opacity: 0; }
+#log                   { animation: contentFadeIn 0.5s ease 1.05s forwards; opacity: 0; }
