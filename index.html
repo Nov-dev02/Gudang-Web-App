@@ -288,71 +288,86 @@ function getNextOperator() {
     }
 
     function runBootSequence() {
-      const bootTextEl = document.getElementById("boot-text");
-      const bootIconEl = document.getElementById("boot-icon");
-      const bootScreenEl = document.getElementById("boot-screen");
-      const bootProgressFill = document.getElementById("boot-progress-fill");
+  const bootTextEl = document.getElementById("boot-text");
+  const bootIconEl = document.getElementById("boot-icon");
+  const bootScreenEl = document.getElementById("boot-screen");
+  const bootProgressFill = document.getElementById("boot-progress-fill");
 
-      if (!bootScreenEl) return;
+  if (!bootScreenEl) return;
 
-      // Hitung total durasi dari semua step
-      const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
-      console.log("Total durasi booting:", totalDuration);
+  // Hitung total durasi dari semua step
+  const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
+  console.log("Total durasi booting:", totalDuration);
 
-      // Tambahkan kelas 'running' agar animasi CSS keyframes berjalan mulus
-      if (bootProgressFill) {
-        bootProgressFill.classList.add("running");
-        console.log("Kelas .running berhasil ditambahkan!");
+  // PAKSA JALANKAN PROGRESS BAR PAKAI JS INTERVAL (DIJAMIN TEMBUS!)
+  if (bootProgressFill) {
+    let startTime = null;
+    let duration = totalDuration; // Mengikuti total durasi step (29 detik)
+
+    function updateProgress(timestamp) {
+      if (!startTime) startTime = timestamp;
+      let elapsed = timestamp - startTime;
+      let progress = Math.min((elapsed / duration) * 100, 100);
+      
+      // Paksa set lebar secara langsung lewat inline style
+      bootProgressFill.style.width = progress + "%";
+
+      if (progress < 100) {
+        requestAnimationFrame(updateProgress);
       }
-
-      let currentStep = 0;
-
-      function executeStep() {
-        if (currentStep < bootSteps.length) {
-          const step = bootSteps[currentStep];
-          
-          if (bootTextEl) bootTextEl.innerText = step.text;
-          if (bootIconEl) {
-            bootIconEl.style.backgroundColor = step.color;
-            bootIconEl.style.boxShadow = `0 0 10px ${step.color}`;
-          }
-
-          let stepDuration = step.duration;
-          currentStep++;
-
-          if (currentStep < bootSteps.length) {
-            setTimeout(executeStep, stepDuration);
-          } else {
-            setTimeout(() => {
-              if (typeof speakSystemReady === 'function') speakSystemReady(); 
-              
-              bootScreenEl.style.opacity = "0";
-              bootScreenEl.style.visibility = "hidden";
-              
-              const mainContainer = document.querySelector('.container');
-              if (mainContainer) mainContainer.classList.add('run-animation');
-              
-              if (typeof showToast === 'function') {
-                showToast("Sistem siap beroperasi secara maksimal!", "🟢");
-              }
-              
-              const initBtn = document.getElementById("init-btn");
-              if (initBtn) {
-                initBtn.style.opacity = "1";
-                initBtn.style.pointerEvents = "auto";
-                initBtn.innerText = "⚡ [ CLICK TO INITIALIZE SYSTEM ]";
-              }
-              
-              if (typeof initTextFadeRotator === 'function') {
-                initTextFadeRotator(); 
-              }
-            }, stepDuration);
-          }
-        }
-      }
-
-      executeStep();
     }
+    
+    requestAnimationFrame(updateProgress);
+  }
+
+  let currentStep = 0;
+
+  function executeStep() {
+    if (currentStep < bootSteps.length) {
+      const step = bootSteps[currentStep];
+      
+      if (bootTextEl) bootTextEl.innerText = step.text;
+      if (bootIconEl) {
+        bootIconEl.style.backgroundColor = step.color;
+        bootIconEl.style.boxShadow = `0 0 10px ${step.color}`;
+      }
+
+      let stepDuration = step.duration;
+      currentStep++;
+
+      if (currentStep < bootSteps.length) {
+        setTimeout(executeStep, stepDuration);
+      } else {
+        setTimeout(() => {
+          if (typeof speakSystemReady === 'function') speakSystemReady(); 
+          
+          bootScreenEl.style.opacity = "0";
+          bootScreenEl.style.visibility = "hidden";
+          
+          const mainContainer = document.querySelector('.container');
+          if (mainContainer) mainContainer.classList.add('run-animation');
+          
+          if (typeof showToast === 'function') {
+            showToast("Sistem siap beroperasi secara maksimal!", "🟢");
+          }
+          
+          const initBtn = document.getElementById("init-btn");
+          if (initBtn) {
+            initBtn.style.opacity = "1";
+            initBtn.style.pointerEvents = "auto";
+            initBtn.innerText = "⚡ [ CLICK TO INITIALIZE SYSTEM ]";
+          }
+          
+          if (typeof initTextFadeRotator === 'function') {
+            initTextFadeRotator(); 
+          }
+        }, stepDuration);
+      }
+    }
+  }
+
+  executeStep();
+}
     function updateClock() {
       const clockEl = document.getElementById("live-clock");
       if (clockEl) {
