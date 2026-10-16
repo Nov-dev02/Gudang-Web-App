@@ -110,14 +110,13 @@
         <span>Sistem Aktif</span>
       </div>
 
-      <!-- Sisi Kanan: Tombol Toggle Tema Dark / Light -->
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">🎨 Tema:</span>
-        <button id="themeToggleBtn" onclick="toggleDarkLightMode()" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;">
-          <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
-        </button>
+    <!-- Sisi Kanan: Tombol Switch Tema Dark / Light -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">Tema:</span>
+        <div class="theme-switch-wrapper" onclick="toggleDarkLightMode()" title="Klik untuk ganti tema" style="display: flex; align-items: center; cursor: pointer; background: var(--card-border, #334155); padding: 3px; border-radius: 20px; width: 50px; height: 24px; position: relative; box-sizing: border-box; border: 1px solid rgba(56,189,248,0.3);">
+          <div id="themeSwitchThumb" style="width: 18px; height: 18px; background: #38bdf8; border-radius: 50%; position: absolute; left: 3px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🌙</div>
+        </div>
       </div>
-
     </div>
     
     <!-- KOTAK ANIMASI FADE-IN / FADE-OUT TEKS -->
