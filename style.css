@@ -412,7 +412,7 @@ button:not(#submitBtn) {
   50% { opacity: 0; }
 }
 /* ==========================================
-   ✨ ANIMASI MASUK BERURUTAN (STAGGERED)
+   ✨ ANIMASI MASUK BERURUTAN (STAGGERED) - FINAL FIX
    ========================================== */
 @keyframes smoothEntrance {
   0% { opacity: 0; transform: translateY(35px) scale(0.96); }
@@ -426,18 +426,19 @@ button:not(#submitBtn) {
 
 /* Kotak Utama */
 .container {
-  animation: smoothEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: smoothEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-/* Elemen di dalam muncul berurutan satu per satu */
-.enterprise-status-bar { animation: contentFadeIn 0.5s ease 0.15s forwards; opacity: 0; }
-.fade-text-container   { animation: contentFadeIn 0.5s ease 0.3s forwards; opacity: 0; }
-#app-content h2        { animation: contentFadeIn 0.5s ease 0.45s forwards; opacity: 0; }
-#app-content p.desc    { animation: contentFadeIn 0.5s ease 0.6s forwards; opacity: 0; }
-.form-group            { animation: contentFadeIn 0.5s ease 0.75s forwards; opacity: 0; }
-#submitBtn             { animation: contentFadeIn 0.5s ease 0.9s forwards; opacity: 0; }
-#log                   { animation: contentFadeIn 0.5s ease 1.05s forwards; opacity: 0; }
-/* Perintah geser tombol switch saat mode light di style.css */
+/* Memaksa elemen di dalam muncul berurutan satu per satu dengan delay */
+.enterprise-status-bar { animation: contentFadeIn 0.5s ease 0.15s forwards !important; }
+.fade-text-container   { animation: contentFadeIn 0.5s ease 0.3s forwards !important; }
+#app-content h2        { animation: contentFadeIn 0.5s ease 0.45s forwards !important; }
+#app-content p.desc    { animation: contentFadeIn 0.5s ease 0.6s forwards !important; }
+.form-group            { animation: contentFadeIn 0.5s ease 0.75s forwards !important; }
+#submitBtn             { animation: contentFadeIn 0.5s ease 0.9s forwards !important; }
+#log                   { animation: contentFadeIn 0.5s ease 1.05s forwards !important; }
+
+/* Perintah geser tombol switch saat mode light */
 [data-theme="light"] #themeSwitchThumb {
   transform: translateX(26px) !important;
   background: #f59e0b !important;
