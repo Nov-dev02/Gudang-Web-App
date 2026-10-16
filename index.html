@@ -299,15 +299,10 @@ function getNextOperator() {
       const totalDuration = bootSteps.reduce((acc, step) => acc + step.duration, 0);
       console.log("Total durasi booting:", totalDuration);
 
-      // Paksa langsung jalankan animasi lebar via JS ke 100% secara mulus
+      // Tambahkan kelas 'running' agar animasi CSS keyframes berjalan mulus
       if (bootProgressFill) {
-        bootProgressFill.style.width = "0%";
-        
-        setTimeout(() => {
-          bootProgressFill.style.transition = `width ${totalDuration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
-          bootProgressFill.style.width = "100%";
-          console.log("Animasi width diset ke 100%!");
-        }, 50);
+        bootProgressFill.classList.add("running");
+        console.log("Kelas .running berhasil ditambahkan!");
       }
 
       let currentStep = 0;
