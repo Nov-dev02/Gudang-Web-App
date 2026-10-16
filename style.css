@@ -448,13 +448,14 @@ button:not(#submitBtn) {
 }
 
 #boot-progress-fill {
+  height: 100% !important;
+  width: 0% !important;
   background: linear-gradient(90deg, #38bdf8, #22c55e, #38bdf8) !important;
   background-size: 200% 100%;
   box-shadow: 0 0 16px rgba(56, 189, 248, 0.8), 0 0 6px rgba(34, 197, 94, 0.8);
-  width: 0%;
+  border-radius: 4px;
 }
 
 #boot-progress-fill.running {
-  /* Atur durasi total misal 26 detik (total semua durasi step kamu) atau sesuaikan selera */
-  animation: continuousFlow 26s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: continuousFlow 5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
