@@ -1,4 +1,4 @@
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzukrX8QXwYKbgXIwyskJMHtuNS509kL5fTgK_WAxgQ7x4FoCAxHuumM-Dc02XA8zIY/exec";
+const WEB_APP_URL = "MASUKKAN_LINK_WEB_APP_DISINI";
 
 let currentDownloadUrl = "";
 const SCRIPT_URL_REKAPAN = "https://script.google.com/macros/s/AKfycbzLud58sY-o4azbshEww7-JSXCLoZ2sbmALaS2z6aRhmT-Q_vvXCzlDn4NqzBCedZpS/exec";
