@@ -722,3 +722,40 @@ async function ambilDanPasteRekapan(btn) {
     }
   }
 }
+// Konfigurasi Firebase Web (Nanti disesuaikan dengan project Firebase kamu)
+const firebaseConfig = {
+  apiKey: "API_KEY_KAMU_DARI_FIREBASE",
+  projectId: "PROJECT_ID_KAMU",
+  messagingSenderId: "SENDER_ID_KAMU",
+  appId: "APP_ID_KAMU"
+};
+
+// Inisialisasi Firebase di Frontend
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+// Fungsi untuk meminta izin notifikasi ke HP
+async function requestNotificationPermission() {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      console.log('Izin notifikasi diberikan.');
+      
+      // Ambil Token FCM perangkat ini
+      const token = await messaging.getToken({ 
+        vapidKey: 'VAPID_KEY_DARI_FIREBASE_CONSOLE' 
+      });
+      
+      if (token) {
+        console.log('FCM Token perangkat:', token);
+        // Simpan token ini ke Google Sheets/Database supaya bisa dikirimi pesan otomatis!
+      } else {
+        console.warn('Gagal mendapatkan token FCM.');
+      }
+    } else {
+      console.log('Izin notifikasi ditolak.');
+    }
+  } catch (error) {
+    console.error('Terjadi kesalahan saat meminta izin notifikasi:', error);
+  }
+}
